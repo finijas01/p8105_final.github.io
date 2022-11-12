@@ -10,6 +10,8 @@ Jasmine Niu (jn2855)
 
 Qing Zhou (qz2266)
 
+Zuoqiao Cui (zc2610)
+
 ## The tentative project title
 
 NYC Childcare Center Inspections
