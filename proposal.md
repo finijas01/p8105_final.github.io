@@ -31,8 +31,10 @@ centers in NYC.
 ## The intended final products
 
 1.  Interactive maps and dashboard (See “Visualization”)
-2.  A report that fits a linear regression model and summarizes
-    exploratory analysis results with corresponding plots.
+
+2.  A report that summarizes exploratory analysis results with
+    corresponding plots, fits three linear regression models about
+    different types of violation rate and relevant interpretations.
 
 ## The anticipated data sources
 
@@ -77,25 +79,32 @@ significant for the model.
 1.  Interactive maps that include the following information: average
     critical violation rate by boroughs in the past 3 years (2019-2022),
     distribution of childcare centers by violation categories
+
 2.  A dashboard that allows users to search for violation centers
     according to the violation description, zip code and so on
+
 3.  Time trend graph reflecting average critical violation rate over
     time
+
 4.  Histograms or scatterplots showing relevant information, e.g. the
     number of different age-range program in each borough
 
 ### Coding challenges
 
-We need a clear understanding and their relations on the four columns:
-violation rate, average violation rate, critical violation rate, average
-violation rate. Some other useful datasets influencing childcare should
-be found to produce a more comprehensive outcome.
+1.  We need a clear understanding and their relations on the four
+    columns: violation rate, average violation rate, critical violation
+    rate, average violation rate.
+
+2.  Some other useful datasets influencing childcare should be found to
+    produce a more comprehensive outcome.
 
 ## The planned timeline
 
 | Date                     | Plan                                                                             |
 |--------------------------|----------------------------------------------------------------------------------|
-| \- November 12           | Team registration and proposal                                                   |
+| November 8               | Group brainstorm meeting                                                         |
+| November 10              | Draft proposal and discussion meeting                                            |
+| November 12              | Team registration and proposal                                                   |
 | November 15 - 18         | Project review meeting                                                           |
 | November 21 - 25         | Discussion and adjustment based on the project review meeting                    |
 | November 28 - December 3 | Import, tidy and manipulate the data; conduct planned analysis and visualization |
