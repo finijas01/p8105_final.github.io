@@ -53,20 +53,18 @@ and summer camps over the past 3 years.
 
 Prior to data analysis, we will search for information such as yearly
 city budget on childcare and health care challenges in 2019-2022 and
-review relevant literature. Firstly, we will establish regression models
-to explore the association between the outcomes and the potential
-predictors, such as major demographic variables, total educational
-workers, program type, average annual income per capita, as well as
-government funding in specific districts where the childcare centers are
-located.
-
-Moreover, we will perform visualization to see if there are differences
-in key outcomes among different categories or levels of these predictor
+review relevant literature. First, we will explore the possible
+relationship between the outcomes and the potential predictors, such as
+major demographic variables, total educational workers, program type,
+average annual income per capita, as well as government funding in
+specific districts where the childcare centers are located.
+Visualization will be performed to see if there are differences in key
+outcomes among different categories or levels of these predictor
 candidates, followed by t-test or ANOVA to check if the differences are
 significant. Chi-squared tests will also be employed if necessary for
 the initial testing of the independence or association between outcomes
-and predictors. Last, linear or ordinal regression models will be built
-to confirm or refute our hypotheses.
+and predictors. Next, linear or ordinal regression models will be
+established to confirm or refute our hypotheses.
 
 We expect to have analyses on critical violation rate influenced by
 variables such as maximum capacity, different boroughs, numbers of
