@@ -12,6 +12,8 @@ Qing Zhou (qz2266)
 
 Zuoqiao Cui (zc2610)
 
+Yuhuan Lin (yl5221)
+
 ## The tentative project title
 
 NYC Childcare Center Inspections
@@ -68,11 +70,11 @@ the initial testing of the independence or association between outcomes
 and predictors. Next, linear or ordinal regression models will be
 established to confirm or refute our hypotheses.
 
-We expect to have analyses on critical violation rate influenced by
-variables such as maximum capacity, different boroughs, numbers of
-educational workers, maximum capacity of program, and age range of the
-program. We’ll choose variables whichever we find statistically
-significant for the model.
+We expect to have analyses on violation rate, public health hazard rate,
+and critical violation rate influenced by variables such as maximum
+capacity, different boroughs, numbers of educational workers, maximum
+capacity of program, and age range of the program. We’ll choose
+variables whichever we find statistically significant for the model.
 
 ### Visualizations
 
