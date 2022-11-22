@@ -28,3 +28,18 @@ b). Regression models: - linear - ordinal
     strength, limitation or future direction
 
 7.  Contact us
+
+## Option 2 based on publishable research article format:
+
+1.Abstract: Homepage
+
+2.Introduction- a).motivation b).data sets used
+
+3.  Methods and results: a). exploratory analysis b). statistical
+    analysis c). mapping
+
+4.Discussion
+
+5.Reference
+
+6.Authorship: contact us
