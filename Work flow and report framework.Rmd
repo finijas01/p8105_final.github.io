@@ -1,0 +1,12 @@
+---
+title: "Work flow and report framework"
+author: "Qing Zhou"
+date: "2022-11-22"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
