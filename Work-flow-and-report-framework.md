@@ -3,3 +3,28 @@ Work flow and report framework
 Qing Zhou
 2022-11-22
 
+## Option 1 based on p8105 examples:
+
+1.  Motivation
+
+2.  Data Processing and cleaning: External data resources might be
+    needed
+
+3.  Exploratory analysis through visualization– a).Violation rate over
+    time b).Violation rate over borough c).Violation rate across
+    different program type d).please add…
+
+4.  Statistical analysis– a). Statistical tests:
+
+-   ANOVA
+-   Chi-squared
+-   proportion test
+
+b). Regression models: - linear - ordinal
+
+5.  Additional: a).Mapping b). ?
+
+6.  Discussion: a). main conclusion b). insight or signification c).
+    strength, limitation or future direction
+
+7.  Contact us
