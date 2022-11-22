@@ -3,43 +3,54 @@ Work flow and report framework
 Qing Zhou
 2022-11-22
 
-## Option 1 based on p8105 examples:
+### Option 1 based on p8105 examples:
 
-1.  Motivation
+**1. Motivation**
 
-2.  Data Processing and cleaning: External data resources might be
-    needed
+**2. Data Processing and cleaning:**<br> External data resources might
+be needed
 
-3.  Exploratory analysis through visualization– a).Violation rate over
-    time b).Violation rate over borough c).Violation rate across
-    different program type d).please add…
+**3. Exploratory analysis through visualization:** <br> a).Violation
+rate over time<br> b).Violation rate over borough<br> c).Violation rate
+across different program types<br> d).Association<br> e).please add…
 
-4.  Statistical analysis– a). Statistical tests:
+**4. Statistical analysis:**<br> a). Statistical tests: <br> -
+ANOVA<br> - Chi-squared<br> - proportion test
 
--   ANOVA
--   Chi-squared
--   proportion test
+b). Regression models:<br> <font color=Blue>**Primary model:
+linear**</font>
 
-b). Regression models: - linear - ordinal
+i).descriptive: - the scatter plot <br> - the correlation plot
 
-5.  Additional: a).Mapping b). ?
+ii).model selection: <br> - raw <br> - forward<br> - criterion-based
 
-6.  Discussion: a). main conclusion b). insight or signification c).
-    strength, limitation or future direction
+iii).model diagnostic: <br> - residuals vs. fitted<br> - normal Q-Q
+<br> - box-cox <br> - std residuals vs. leverage
 
-7.  Contact us
+iv).model validation: <br> - cross-validation <br> - bootstrap
 
-## Option 2 based on publishable research article format:
+<font color=Blue>**Secondary model: ordinal**</font>
 
-1.Abstract: Homepage
+<font color=Blue>**Experimental model: longitudinal?**</font> Ask TA!
 
-2.Introduction- a).motivation b).data sets used
+**5. Additional analysis:**<br> a).mapping<br> b). ?
 
-3.  Methods and results: a). exploratory analysis b). statistical
-    analysis c). mapping
+**6. Discussion:**<br> a). main conclusion<br> b). insight or
+significance<br> c). strength, limitation or future direction
 
-4.Discussion
+**7. Contact us**
 
-5.Reference
+### Option 2 based on publishable research article format:
 
-6.Authorship: contact us
+**1.Abstract:** Homepage
+
+**2.Introduction:** <br> a).motivation<br> b).data sets used
+
+**3. Methods and results:**<br> a). exploratory analysis<br> b).
+statistical analysis<br> c). mapping
+
+**4.Discussion**
+
+**5.Reference**
+
+**6.Authorship:** contact us
