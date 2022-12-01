@@ -30,28 +30,3 @@ janitor::clean_names()
     ## 
     ## ℹ Use `spec()` to retrieve the full column specification for this data.
     ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-
-Basic data cleaning
-
-1.  We select 22 key variables in this dataset to finish our analysis
-
-2.  We separate the “inspection_summary_result” variable into two new
-    variables: “inspection_summary” and
-
-“inspection_result” to better show the summary and the result of the
-inspection for each center
-
-``` r
-childcare_inspection_df = childcare_inspection_df %>% 
-  select(center_name, borough, zip_code, status, age_range, maximum_capacity,program_type, facility_type, 
-         child_care_type, violation_category,
-         violation_status,violation_rate_percent:average_critical_violation_rate,regulation_summary,
-         inspection_summary_result) %>%
-  separate(inspection_summary_result,into = c("inspection_summary","inspection_result"),sep = "-") 
-```
-
-    ## Warning: Expected 2 pieces. Additional pieces discarded in 2326 rows [18, 83,
-    ## 92, 107, 131, 178, 184, 196, 197, 202, 204, 236, 238, 259, 263, 264, 275, 293,
-    ## 326, 328, ...].
-
-Data Description
