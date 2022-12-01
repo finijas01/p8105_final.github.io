@@ -32,5 +32,3 @@ childcare_inspection_df = childcare_inspection_df %>%
 ```
 
 Data Description
-
-1. 
