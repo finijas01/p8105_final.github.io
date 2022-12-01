@@ -53,3 +53,7 @@ childcare_inspection_df = childcare_inspection_df %>%
     ## Warning: Expected 2 pieces. Additional pieces discarded in 2326 rows [18, 83,
     ## 92, 107, 131, 178, 184, 196, 197, 202, 204, 236, 238, 259, 263, 264, 275, 293,
     ## 326, 328, ...].
+
+Data Description:
+
+1.  

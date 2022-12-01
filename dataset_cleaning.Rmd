@@ -30,3 +30,7 @@ childcare_inspection_df = childcare_inspection_df %>%
          inspection_summary_result) %>%
   separate(inspection_summary_result,into = c("inspection_summary","inspection_result"),sep = "-") 
 ```
+
+Data Description:
+
+1. 
