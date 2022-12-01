@@ -54,6 +54,6 @@ childcare_inspection_df = childcare_inspection_df %>%
     ## 92, 107, 131, 178, 184, 196, 197, 202, 204, 236, 238, 259, 263, 264, 275, 293,
     ## 326, 328, ...].
 
-Data Description:
+Data Description
 
 1.  
