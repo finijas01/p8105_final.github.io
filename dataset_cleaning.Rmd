@@ -13,3 +13,20 @@ Import original dataset
 childcare_inspection_df = read_csv("./data/DOHMH_Childcare_Center_Inspections.csv") %>% 
 janitor::clean_names()
 ```
+
+Basic data cleaning
+
+1. We select 22 key variables in this dataset to finish our analysis
+
+2. We separate the "inspection_summary_result" variable into two new variables: "inspection_summary" and
+
+"inspection_result" to better show the summary and the result of the inspection for each center
+
+```{r}
+childcare_inspection_df = childcare_inspection_df %>% 
+  select(center_name, borough, zip_code, status, age_range, maximum_capacity,program_type, facility_type, 
+         child_care_type, violation_category,
+         violation_status,violation_rate_percent:average_critical_violation_rate,regulation_summary,
+         inspection_summary_result) %>%
+  separate(inspection_summary_result,into = c("inspection_summary","inspection_result"),sep = "-") 
+```
