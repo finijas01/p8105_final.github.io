@@ -44,43 +44,18 @@ childcare_inspection_df = childcare_inspection_df %>%
          child_care_type, violation_category,
          violation_status,violation_rate_percent:average_critical_violation_rate,regulation_summary,
          inspection_summary_result) %>%
-  separate(inspection_summary_result,into = c("inspection_summary","inspection_result"),sep = "-") %>% 
+  
   drop_na(zip_code, age_range, violation_rate_percent,public_health_hazard_violation_rate, critical_violation_rate) %>% 
   filter(maximum_capacity != 0) %>% 
   mutate(
     educational_worker_ratio = total_educational_workers/maximum_capacity,
     program_type = tolower(program_type),
-    facility_type = tolower(facility_type)
+    facility_type = tolower(facility_type),
+    borough =  as.factor(borough),
+    status = as.factor(status),
+    program_type = as.factor(program_type),
+    facility_type = as.factor(facility_type),
+    child_care_type = as.factor(child_care_type)
   )
-<<<<<<< HEAD
-=======
-```
-6. Create dummy variables into a new dataframe for regression
 
-```{r}
-childcare_reg_df = childcare_inspection_df %>% 
-  dummy_cols(select_columns = "borough", remove_first_dummy = TRUE) %>%
-  dummy_cols(select_columns = "status", remove_first_dummy = TRUE) %>% 
-  dummy_cols(select_columns = "program_type", remove_first_dummy = TRUE) %>% 
-  dummy_cols(select_columns = "facility_type", remove_first_dummy = TRUE) %>%
-  dummy_cols(select_columns = "child_care_type", remove_first_dummy = TRUE) %>% 
-  janitor::clean_names() %>% 
-  select(-borough, -status, -program_type, -facility_type, -child_care_type)
->>>>>>> fd34831fae9351e7f31f426b2fbd9dd47dcc93ed
 ```
-6. Create dummy variables into a new dataframe for regression
-
-<<<<<<< HEAD
-```{r}
-childcare_reg_df = childcare_inspection_df %>% 
-  dummy_cols(select_columns = "borough", remove_first_dummy = TRUE) %>%
-  dummy_cols(select_columns = "status", remove_first_dummy = TRUE) %>% 
-  dummy_cols(select_columns = "program_type", remove_first_dummy = TRUE) %>% 
-  dummy_cols(select_columns = "facility_type", remove_first_dummy = TRUE) %>%
-  dummy_cols(select_columns = "child_care_type", remove_first_dummy = TRUE) %>% 
-  janitor::clean_names() %>% 
-  select(-borough, -status, -program_type, -facility_type, -child_care_type)
-```
-=======
-
->>>>>>> fd34831fae9351e7f31f426b2fbd9dd47dcc93ed

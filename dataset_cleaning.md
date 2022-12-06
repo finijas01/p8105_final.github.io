@@ -23,15 +23,9 @@ library(rvest)
 ```
 
     ## 
-<<<<<<< HEAD
     ## Attaching package: 'rvest'
     ## 
     ## The following object is masked from 'package:readr':
-=======
-    ## 載入套件：'rvest'
-    ## 
-    ## 下列物件被遮斷自 'package:readr':
->>>>>>> fd34831fae9351e7f31f426b2fbd9dd47dcc93ed
     ## 
     ##     guess_encoding
 
@@ -42,19 +36,11 @@ library(modelr)
 library(mgcv)
 ```
 
-<<<<<<< HEAD
     ## Loading required package: nlme
     ## 
     ## Attaching package: 'nlme'
     ## 
     ## The following object is masked from 'package:dplyr':
-=======
-    ## 載入需要的套件：nlme
-    ## 
-    ## 載入套件：'nlme'
-    ## 
-    ## 下列物件被遮斷自 'package:dplyr':
->>>>>>> fd34831fae9351e7f31f426b2fbd9dd47dcc93ed
     ## 
     ##     collapse
     ## 
@@ -65,21 +51,13 @@ library(patchwork)
 library(viridis)
 ```
 
-<<<<<<< HEAD
     ## Loading required package: viridisLite
-=======
-    ## 載入需要的套件：viridisLite
->>>>>>> fd34831fae9351e7f31f426b2fbd9dd47dcc93ed
 
 ``` r
 library(fastDummies)
 ```
 
-<<<<<<< HEAD
     ## Warning: package 'fastDummies' was built under R version 4.2.2
-=======
-    ## Warning: 套件 'fastDummies' 是用 R 版本 4.2.2 來建造的
->>>>>>> fd34831fae9351e7f31f426b2fbd9dd47dcc93ed
 
 ``` r
 set.seed(1)
@@ -124,29 +102,17 @@ childcare_inspection_df = childcare_inspection_df %>%
          child_care_type, violation_category,
          violation_status,violation_rate_percent:average_critical_violation_rate,regulation_summary,
          inspection_summary_result) %>%
-  separate(inspection_summary_result,into = c("inspection_summary","inspection_result"),sep = "-") %>% 
+  
   drop_na(zip_code, age_range, violation_rate_percent,public_health_hazard_violation_rate, critical_violation_rate) %>% 
   filter(maximum_capacity != 0) %>% 
   mutate(
     educational_worker_ratio = total_educational_workers/maximum_capacity,
     program_type = tolower(program_type),
-    facility_type = tolower(facility_type)
+    facility_type = tolower(facility_type),
+    borough =  as.factor(borough),
+    status = as.factor(status),
+    program_type = as.factor(program_type),
+    facility_type = as.factor(facility_type),
+    child_care_type = as.factor(child_care_type)
   )
-```
-
-    ## Warning: Expected 2 pieces. Additional pieces discarded in 2326 rows [18, 83,
-    ## 92, 107, 131, 178, 184, 196, 197, 202, 204, 236, 238, 259, 263, 264, 275, 293,
-    ## 326, 328, ...].
-
-6.  Create dummy variables into a new dataframe for regression
-
-``` r
-childcare_reg_df = childcare_inspection_df %>% 
-  dummy_cols(select_columns = "borough", remove_first_dummy = TRUE) %>%
-  dummy_cols(select_columns = "status", remove_first_dummy = TRUE) %>% 
-  dummy_cols(select_columns = "program_type", remove_first_dummy = TRUE) %>% 
-  dummy_cols(select_columns = "facility_type", remove_first_dummy = TRUE) %>%
-  dummy_cols(select_columns = "child_care_type", remove_first_dummy = TRUE) %>% 
-  janitor::clean_names() %>% 
-  select(-borough, -status, -program_type, -facility_type, -child_care_type)
 ```
