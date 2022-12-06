@@ -31,13 +31,17 @@ Basic data cleaning
 
 "inspection_result" to better show the summary and the result of the inspection for each center
 
+3. Drop NA
+
 ```{r}
 childcare_inspection_df = childcare_inspection_df %>% 
   select(center_name, borough, zip_code, status, age_range, maximum_capacity,program_type, facility_type, 
          child_care_type, violation_category,
          violation_status,violation_rate_percent:average_critical_violation_rate,regulation_summary,
          inspection_summary_result) %>%
-  separate(inspection_summary_result,into = c("inspection_summary","inspection_result"),sep = "-") 
+  separate(inspection_summary_result,into = c("inspection_summary","inspection_result"),sep = "-") %>% 
+  drop_na(zip_code, age_range, violation_rate_percent,public_health_hazard_violation_rate, critical_violation_rate) %>% 
+  filter(maximum_capacity != 0)
 ```
 
 

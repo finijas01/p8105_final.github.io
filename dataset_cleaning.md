@@ -7,7 +7,7 @@ library(tidyverse)
 ```
 
     ## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
-    ## ✔ ggplot2 3.3.6      ✔ purrr   0.3.4 
+    ## ✔ ggplot2 3.3.6      ✔ purrr   0.3.5 
     ## ✔ tibble  3.1.8      ✔ dplyr   1.0.10
     ## ✔ tidyr   1.2.0      ✔ stringr 1.4.1 
     ## ✔ readr   2.1.2      ✔ forcats 0.5.2 
@@ -21,9 +21,9 @@ library(rvest)
 ```
 
     ## 
-    ## 載入套件：'rvest'
+    ## Attaching package: 'rvest'
     ## 
-    ## 下列物件被遮斷自 'package:readr':
+    ## The following object is masked from 'package:readr':
     ## 
     ##     guess_encoding
 
@@ -34,11 +34,11 @@ library(modelr)
 library(mgcv)
 ```
 
-    ## 載入需要的套件：nlme
+    ## Loading required package: nlme
     ## 
-    ## 載入套件：'nlme'
+    ## Attaching package: 'nlme'
     ## 
-    ## 下列物件被遮斷自 'package:dplyr':
+    ## The following object is masked from 'package:dplyr':
     ## 
     ##     collapse
     ## 
@@ -49,7 +49,7 @@ library(patchwork)
 library(viridis)
 ```
 
-    ## 載入需要的套件：viridisLite
+    ## Loading required package: viridisLite
 
 ``` r
 set.seed(1)
@@ -81,13 +81,17 @@ Basic data cleaning
 “inspection_result” to better show the summary and the result of the
 inspection for each center
 
+3.  Drop NA
+
 ``` r
 childcare_inspection_df = childcare_inspection_df %>% 
   select(center_name, borough, zip_code, status, age_range, maximum_capacity,program_type, facility_type, 
          child_care_type, violation_category,
          violation_status,violation_rate_percent:average_critical_violation_rate,regulation_summary,
          inspection_summary_result) %>%
-  separate(inspection_summary_result,into = c("inspection_summary","inspection_result"),sep = "-") 
+  separate(inspection_summary_result,into = c("inspection_summary","inspection_result"),sep = "-") %>% 
+  drop_na(zip_code, age_range, violation_rate_percent,public_health_hazard_violation_rate, critical_violation_rate) %>% 
+  filter(maximum_capacity != 0)
 ```
 
     ## Warning: Expected 2 pieces. Additional pieces discarded in 2326 rows [18, 83,
