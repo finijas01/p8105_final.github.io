@@ -7,7 +7,7 @@ library(tidyverse)
 ```
 
     ## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
-    ## ✔ ggplot2 3.3.6      ✔ purrr   0.3.5 
+    ## ✔ ggplot2 3.3.6      ✔ purrr   0.3.4 
     ## ✔ tibble  3.1.8      ✔ dplyr   1.0.10
     ## ✔ tidyr   1.2.0      ✔ stringr 1.4.1 
     ## ✔ readr   2.1.2      ✔ forcats 0.5.2 
@@ -21,9 +21,9 @@ library(rvest)
 ```
 
     ## 
-    ## Attaching package: 'rvest'
+    ## 載入套件：'rvest'
     ## 
-    ## The following object is masked from 'package:readr':
+    ## 下列物件被遮斷自 'package:readr':
     ## 
     ##     guess_encoding
 
@@ -34,11 +34,11 @@ library(modelr)
 library(mgcv)
 ```
 
-    ## Loading required package: nlme
+    ## 載入需要的套件：nlme
     ## 
-    ## Attaching package: 'nlme'
+    ## 載入套件：'nlme'
     ## 
-    ## The following object is masked from 'package:dplyr':
+    ## 下列物件被遮斷自 'package:dplyr':
     ## 
     ##     collapse
     ## 
@@ -49,7 +49,13 @@ library(patchwork)
 library(viridis)
 ```
 
-    ## Loading required package: viridisLite
+    ## 載入需要的套件：viridisLite
+
+``` r
+library(fastDummies)
+```
+
+    ## Warning: 套件 'fastDummies' 是用 R 版本 4.2.2 來建造的
 
 ``` r
 set.seed(1)
@@ -107,3 +113,16 @@ childcare_inspection_df = childcare_inspection_df %>%
     ## Warning: Expected 2 pieces. Additional pieces discarded in 2326 rows [18, 83,
     ## 92, 107, 131, 178, 184, 196, 197, 202, 204, 236, 238, 259, 263, 264, 275, 293,
     ## 326, 328, ...].
+
+6.  Create dummy variables into a new dataframe for regression
+
+``` r
+childcare_reg_df = childcare_inspection_df %>% 
+  dummy_cols(select_columns = "borough", remove_first_dummy = TRUE) %>%
+  dummy_cols(select_columns = "status", remove_first_dummy = TRUE) %>% 
+  dummy_cols(select_columns = "program_type", remove_first_dummy = TRUE) %>% 
+  dummy_cols(select_columns = "facility_type", remove_first_dummy = TRUE) %>%
+  dummy_cols(select_columns = "child_care_type", remove_first_dummy = TRUE) %>% 
+  janitor::clean_names() %>% 
+  select(-borough, -status, -program_type, -facility_type, -child_care_type)
+```

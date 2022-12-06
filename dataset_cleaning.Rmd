@@ -13,6 +13,7 @@ library(modelr)
 library(mgcv)
 library(patchwork)
 library(viridis)
+library(fastDummies)
 set.seed(1)
 ```
 
@@ -52,6 +53,17 @@ childcare_inspection_df = childcare_inspection_df %>%
     facility_type = tolower(facility_type)
   )
 ```
+6. Create dummy variables into a new dataframe for regression
 
+```{r}
+childcare_reg_df = childcare_inspection_df %>% 
+  dummy_cols(select_columns = "borough", remove_first_dummy = TRUE) %>%
+  dummy_cols(select_columns = "status", remove_first_dummy = TRUE) %>% 
+  dummy_cols(select_columns = "program_type", remove_first_dummy = TRUE) %>% 
+  dummy_cols(select_columns = "facility_type", remove_first_dummy = TRUE) %>%
+  dummy_cols(select_columns = "child_care_type", remove_first_dummy = TRUE) %>% 
+  janitor::clean_names() %>% 
+  select(-borough, -status, -program_type, -facility_type, -child_care_type)
+```
 
 
