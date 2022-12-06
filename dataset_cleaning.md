@@ -85,6 +85,9 @@ inspection for each center
 
 4.  Create a new variable “educational_worker_ratio”
 
+5.  Make all data in “program_type” and “facility_type” columns show in
+    the same format : lower case
+
 ``` r
 childcare_inspection_df = childcare_inspection_df %>% 
   select(center_name, borough, zip_code, status, age_range, maximum_capacity,program_type, facility_type, 
@@ -95,7 +98,9 @@ childcare_inspection_df = childcare_inspection_df %>%
   drop_na(zip_code, age_range, violation_rate_percent,public_health_hazard_violation_rate, critical_violation_rate) %>% 
   filter(maximum_capacity != 0) %>% 
   mutate(
-    educational_worker_ratio = total_educational_workers/maximum_capacity
+    educational_worker_ratio = total_educational_workers/maximum_capacity,
+    program_type = tolower(program_type),
+    facility_type = tolower(facility_type)
   )
 ```
 
