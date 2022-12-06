@@ -23,9 +23,15 @@ library(rvest)
 ```
 
     ## 
+<<<<<<< HEAD
     ## Attaching package: 'rvest'
     ## 
     ## The following object is masked from 'package:readr':
+=======
+    ## 載入套件：'rvest'
+    ## 
+    ## 下列物件被遮斷自 'package:readr':
+>>>>>>> fd34831fae9351e7f31f426b2fbd9dd47dcc93ed
     ## 
     ##     guess_encoding
 
@@ -36,11 +42,19 @@ library(modelr)
 library(mgcv)
 ```
 
+<<<<<<< HEAD
     ## Loading required package: nlme
     ## 
     ## Attaching package: 'nlme'
     ## 
     ## The following object is masked from 'package:dplyr':
+=======
+    ## 載入需要的套件：nlme
+    ## 
+    ## 載入套件：'nlme'
+    ## 
+    ## 下列物件被遮斷自 'package:dplyr':
+>>>>>>> fd34831fae9351e7f31f426b2fbd9dd47dcc93ed
     ## 
     ##     collapse
     ## 
@@ -51,13 +65,21 @@ library(patchwork)
 library(viridis)
 ```
 
+<<<<<<< HEAD
     ## Loading required package: viridisLite
+=======
+    ## 載入需要的套件：viridisLite
+>>>>>>> fd34831fae9351e7f31f426b2fbd9dd47dcc93ed
 
 ``` r
 library(fastDummies)
 ```
 
+<<<<<<< HEAD
     ## Warning: package 'fastDummies' was built under R version 4.2.2
+=======
+    ## Warning: 套件 'fastDummies' 是用 R 版本 4.2.2 來建造的
+>>>>>>> fd34831fae9351e7f31f426b2fbd9dd47dcc93ed
 
 ``` r
 set.seed(1)
