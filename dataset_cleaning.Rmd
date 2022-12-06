@@ -13,6 +13,7 @@ library(modelr)
 library(mgcv)
 library(patchwork)
 library(viridis)
+library(fastDummies)
 set.seed(1)
 ```
 
@@ -31,14 +32,36 @@ Basic data cleaning
 
 "inspection_result" to better show the summary and the result of the inspection for each center
 
+3. Drop NA
+
+4. Create a new variable "educational_worker_ratio"
+
+5. Make all data in "program_type" and "facility_type" columns show in the same format : lower case
+
 ```{r}
 childcare_inspection_df = childcare_inspection_df %>% 
   select(center_name, borough, zip_code, status, age_range, maximum_capacity,program_type, facility_type, 
          child_care_type, violation_category,
          violation_status,violation_rate_percent:average_critical_violation_rate,regulation_summary,
          inspection_summary_result) %>%
-  separate(inspection_summary_result,into = c("inspection_summary","inspection_result"),sep = "-") 
+  separate(inspection_summary_result,into = c("inspection_summary","inspection_result"),sep = "-") %>% 
+  drop_na(zip_code, age_range, violation_rate_percent,public_health_hazard_violation_rate, critical_violation_rate) %>% 
+  filter(maximum_capacity != 0) %>% 
+  mutate(
+    educational_worker_ratio = total_educational_workers/maximum_capacity,
+    program_type = tolower(program_type),
+    facility_type = tolower(facility_type)
+  )
 ```
+6. Create dummy variables into a new dataframe for regression
 
-
-
+```{r}
+childcare_reg_df = childcare_inspection_df %>% 
+  dummy_cols(select_columns = "borough", remove_first_dummy = TRUE) %>%
+  dummy_cols(select_columns = "status", remove_first_dummy = TRUE) %>% 
+  dummy_cols(select_columns = "program_type", remove_first_dummy = TRUE) %>% 
+  dummy_cols(select_columns = "facility_type", remove_first_dummy = TRUE) %>%
+  dummy_cols(select_columns = "child_care_type", remove_first_dummy = TRUE) %>% 
+  janitor::clean_names() %>% 
+  select(-borough, -status, -program_type, -facility_type, -child_care_type)
+```
