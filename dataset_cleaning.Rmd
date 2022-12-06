@@ -5,6 +5,15 @@ output: github_document
 ---
 ```{r}
 library(tidyverse)
+library(dplyr)
+library(rvest)
+library(purrr)
+library(ggplot2)
+library(modelr)
+library(mgcv)
+library(patchwork)
+library(viridis)
+set.seed(1)
 ```
 
 Import original dataset
@@ -30,3 +39,6 @@ childcare_inspection_df = childcare_inspection_df %>%
          inspection_summary_result) %>%
   separate(inspection_summary_result,into = c("inspection_summary","inspection_result"),sep = "-") 
 ```
+
+
+
