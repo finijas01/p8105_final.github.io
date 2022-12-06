@@ -83,6 +83,8 @@ inspection for each center
 
 3.  Drop NA
 
+4.  Create a new variable “educational_worker_ratio”
+
 ``` r
 childcare_inspection_df = childcare_inspection_df %>% 
   select(center_name, borough, zip_code, status, age_range, maximum_capacity,program_type, facility_type, 
@@ -91,7 +93,10 @@ childcare_inspection_df = childcare_inspection_df %>%
          inspection_summary_result) %>%
   separate(inspection_summary_result,into = c("inspection_summary","inspection_result"),sep = "-") %>% 
   drop_na(zip_code, age_range, violation_rate_percent,public_health_hazard_violation_rate, critical_violation_rate) %>% 
-  filter(maximum_capacity != 0)
+  filter(maximum_capacity != 0) %>% 
+  mutate(
+    educational_worker_ratio = total_educational_workers/maximum_capacity
+  )
 ```
 
     ## Warning: Expected 2 pieces. Additional pieces discarded in 2326 rows [18, 83,
