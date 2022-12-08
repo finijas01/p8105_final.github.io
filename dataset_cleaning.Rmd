@@ -44,7 +44,6 @@ childcare_inspection_df = childcare_inspection_df %>%
          child_care_type, violation_category,
          violation_status,violation_rate_percent:average_critical_violation_rate,regulation_summary,
          inspection_summary_result) %>%
-  
   drop_na(zip_code, age_range, violation_rate_percent,public_health_hazard_violation_rate, critical_violation_rate) %>% 
   filter(maximum_capacity != 0) %>% 
   mutate(
@@ -59,3 +58,17 @@ childcare_inspection_df = childcare_inspection_df %>%
   )
 
 ```
+
+
+We calculated a new violation rate for each distinct program using violation category column.
+```{r}
+childcare_inspection_df %>% 
+  relocate(center_name, program_type) %>% 
+  group_by(center_name, program_type) %>% 
+  mutate(
+    n_na = sum(is.na(violation_category)), 
+    n_violation = sum(!is.na(violation_category)), 
+    rate = n_violation/(n_violation+n_na)) %>% 
+  arrange(center_name, program_type)
+```
+
