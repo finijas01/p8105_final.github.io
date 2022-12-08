@@ -17,26 +17,25 @@ library(fastDummies)
 set.seed(1)
 ```
 
-Import original dataset
+1. Import original dataset
+
+2. Remove repeated data
 
 ```{r}
 childcare_inspection_df = read_csv("./data/DOHMH_Childcare_Center_Inspections.csv") %>% 
-janitor::clean_names()
+janitor::clean_names() %>% 
+distinct()
 ```
 
 Basic data cleaning
 
 1. We select 22 key variables in this dataset to finish our analysis
 
-2. We separate the "inspection_summary_result" variable into two new variables: "inspection_summary" and
+2. Drop NA
 
-"inspection_result" to better show the summary and the result of the inspection for each center
+3. Create a new variable "educational_worker_ratio"
 
-3. Drop NA
-
-4. Create a new variable "educational_worker_ratio"
-
-5. Make all data in "program_type" and "facility_type" columns show in the same format : lower case
+4. Make all data in "program_type" and "facility_type" columns show in the same format : lower case
 
 ```{r}
 childcare_inspection_df = childcare_inspection_df %>% 
@@ -55,8 +54,7 @@ childcare_inspection_df = childcare_inspection_df %>%
     program_type = as.factor(program_type),
     facility_type = as.factor(facility_type),
     child_care_type = as.factor(child_care_type)
-  )
-
+  ) 
 ```
 
 
@@ -68,7 +66,7 @@ childcare_inspection_df %>%
   mutate(
     n_na = sum(is.na(violation_category)), 
     n_violation = sum(!is.na(violation_category)), 
-    rate = n_violation/(n_violation+n_na)) %>% 
+    rate = n_violation/(n_violation + n_na)) %>% 
   arrange(center_name, program_type)
 ```
 
