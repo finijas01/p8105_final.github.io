@@ -1,0 +1,7 @@
+---
+title: "logistic regression"
+author: "Han Bao"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
