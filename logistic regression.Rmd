@@ -2,6 +2,47 @@
 title: "logistic regression"
 author: "Han Bao"
 date: "`r Sys.Date()`"
-output: html_document
+output: github_document
 ---
+
+```{r, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(viridis)
+library(purrr)
+library(modelr)
+```
+
+```{r, warning=FALSE, message=FALSE}
+child_data = read_csv("./data/DOHMH_Childcare_Center_Inspections.csv") %>%
+  janitor::clean_names()%>%
+  distinct()
+```
+```{r, warning=FALSE, message=FALSE}
+child_data = child_data %>% 
+  select(center_name, borough, zip_code, status, age_range, maximum_capacity,program_type, facility_type, 
+         child_care_type, violation_category,
+         violation_status,violation_rate_percent:average_critical_violation_rate,regulation_summary,
+         inspection_summary_result) %>%
+  drop_na(zip_code, age_range, violation_rate_percent,public_health_hazard_violation_rate, critical_violation_rate) %>% 
+  filter(maximum_capacity != 0) %>% 
+  mutate(
+    educational_worker_ratio = total_educational_workers/maximum_capacity,
+    program_type = tolower(program_type),
+    facility_type = tolower(facility_type),
+    borough =  as.factor(borough),
+    status = as.factor(status),
+    program_type = as.factor(program_type),
+    facility_type = as.factor(facility_type),
+    child_care_type = as.factor(child_care_type)
+  )
+```
+```{r}
+head(child_data, 10)
+```
+```{r, warning=FALSE, message=FALSE}
+#create binary variable according to regulation_summary
+child_data %>%
+  mutate(violation = if_else(.$regulation_summary == 'There were no new violations observed at the time of this inspection/visit.','0','1'))
+
+```
 
