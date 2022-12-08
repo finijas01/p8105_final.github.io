@@ -6,8 +6,10 @@ dataset_cleaning
 library(tidyverse)
 ```
 
+    ## Warning: package 'tidyverse' was built under R version 4.2.2
+
     ## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
-    ## ✔ ggplot2 3.3.6      ✔ purrr   0.3.5 
+    ## ✔ ggplot2 3.3.6      ✔ purrr   0.3.4 
     ## ✔ tibble  3.1.8      ✔ dplyr   1.0.10
     ## ✔ tidyr   1.2.0      ✔ stringr 1.4.1 
     ## ✔ readr   2.1.2      ✔ forcats 0.5.2 
@@ -53,6 +55,11 @@ library(viridis)
 
 ``` r
 library(fastDummies)
+```
+
+    ## Warning: package 'fastDummies' was built under R version 4.2.2
+
+``` r
 set.seed(1)
 ```
 
@@ -102,7 +109,8 @@ childcare_inspection_df = childcare_inspection_df %>%
     status = as.factor(status),
     program_type = as.factor(program_type),
     facility_type = as.factor(facility_type),
-    child_care_type = as.factor(child_care_type)
+    child_care_type = as.factor(child_care_type),
+    age_range = as.factor(age_range)
   ) 
 ```
 
@@ -110,7 +118,7 @@ We calculated a new violation rate for each distinct program using
 violation category column.
 
 ``` r
-childcare_inspection_df %>% 
+center_specific_df = childcare_inspection_df %>% 
   relocate(center_name, program_type) %>% 
   group_by(center_name, program_type) %>% 
   mutate(
@@ -119,25 +127,3 @@ childcare_inspection_df %>%
     rate = n_violation/(n_violation + n_na)) %>% 
   arrange(center_name, program_type)
 ```
-
-    ## # A tibble: 16,454 × 25
-    ## # Groups:   center_name, program_type [1,917]
-    ##    center_name    progr…¹ borough zip_c…² status age_r…³ maxim…⁴ facil…⁵ child…⁶
-    ##    <chr>          <fct>   <fct>     <dbl> <fct>  <chr>     <dbl> <fct>   <fct>  
-    ##  1 'THE STUDIO S… presch… MANHAT…   10025 Permi… 2 YEAR…      51 gdc     Child …
-    ##  2 'THE STUDIO S… presch… MANHAT…   10025 Permi… 2 YEAR…      51 gdc     Child …
-    ##  3 'THE STUDIO S… presch… MANHAT…   10025 Permi… 2 YEAR…      51 gdc     Child …
-    ##  4 'THE STUDIO S… presch… MANHAT…   10025 Permi… 2 YEAR…      51 gdc     Child …
-    ##  5 'THE STUDIO S… presch… MANHAT…   10025 Permi… 2 YEAR…      51 gdc     Child …
-    ##  6 'THE STUDIO S… presch… MANHAT…   10025 Permi… 2 YEAR…      51 gdc     Child …
-    ##  7 'THE STUDIO S… presch… MANHAT…   10025 Permi… 2 YEAR…      51 gdc     Child …
-    ##  8 1332 FULTON  … presch… BRONX     10456 Expir… 2 YEAR…     148 gdc     Child …
-    ##  9 1332 FULTON  … presch… BRONX     10456 Expir… 2 YEAR…     148 gdc     Child …
-    ## 10 1332 FULTON  … presch… BRONX     10456 Expir… 2 YEAR…     148 gdc     Child …
-    ## # … with 16,444 more rows, 16 more variables: violation_category <chr>,
-    ## #   violation_status <chr>, violation_rate_percent <dbl>,
-    ## #   average_violation_rate_percent <dbl>, total_educational_workers <dbl>,
-    ## #   average_total_educational_workers <dbl>,
-    ## #   public_health_hazard_violation_rate <dbl>,
-    ## #   average_public_health_hazard_violation_rate <dbl>,
-    ## #   critical_violation_rate <dbl>, average_critical_violation_rate <dbl>, …
