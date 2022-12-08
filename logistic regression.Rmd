@@ -7,9 +7,11 @@ output: github_document
 
 ```{r, warning=FALSE, message=FALSE}
 library(tidyverse)
+library(broom)
 library(viridis)
 library(purrr)
 library(modelr)
+theme_set(theme_classic())
 ```
 
 ```{r, warning=FALSE, message=FALSE}
@@ -44,5 +46,8 @@ head(child_data, 10)
 child_data %>%
   mutate(violation = if_else(.$regulation_summary == 'There were no new violations observed at the time of this inspection/visit.','0','1'))
 
+```
+```{r, warning=FALSE, message=FALSE}
+model_log <- glm(violation ~borough + status + maximum_capacity + program_type + facility_type + child_care_type + total_educational_workers + average_total_educational_workers+average_public_health_hazard_violation_rate+educational_worker_ratio,data = child_data,family = binomial(link=logit))
 ```
 

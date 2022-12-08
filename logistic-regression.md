@@ -5,9 +5,11 @@ Han Bao
 
 ``` r
 library(tidyverse)
+library(broom)
 library(viridis)
 library(purrr)
 library(modelr)
+theme_set(theme_classic())
 ```
 
 ``` r
@@ -87,3 +89,7 @@ child_data %>%
     ## #   public_health_hazard_violation_rate <dbl>,
     ## #   average_public_health_hazard_violation_rate <dbl>,
     ## #   critical_violation_rate <dbl>, average_critical_violation_rate <dbl>, …
+
+``` r
+model_log <- glm(facility_type ~borough + status + maximum_capacity + program_type + facility_type + child_care_type + total_educational_workers + average_total_educational_workers+average_public_health_hazard_violation_rate+educational_worker_ratio,data = child_data,family = binomial(link=logit))
+```
