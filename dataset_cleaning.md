@@ -4,6 +4,7 @@ dataset_cleaning
 
 ``` r
 library(tidyverse)
+<<<<<<< HEAD
 ```
 
     ## Warning: package 'tidyverse' was built under R version 4.2.2
@@ -18,42 +19,16 @@ library(tidyverse)
     ## ✖ dplyr::lag()    masks stats::lag()
 
 ``` r
+=======
+>>>>>>> f3437e85eb0b3a15d3e2b919e9941763745e572b
 library(dplyr)
 library(rvest)
-```
-
-    ## 
-    ## Attaching package: 'rvest'
-    ## 
-    ## The following object is masked from 'package:readr':
-    ## 
-    ##     guess_encoding
-
-``` r
 library(purrr)
 library(ggplot2)
 library(modelr)
 library(mgcv)
-```
-
-    ## Loading required package: nlme
-    ## 
-    ## Attaching package: 'nlme'
-    ## 
-    ## The following object is masked from 'package:dplyr':
-    ## 
-    ##     collapse
-    ## 
-    ## This is mgcv 1.8-40. For overview type 'help("mgcv-package")'.
-
-``` r
 library(patchwork)
 library(viridis)
-```
-
-    ## Loading required package: viridisLite
-
-``` r
 library(fastDummies)
 ```
 
@@ -74,7 +49,7 @@ distinct()
 ```
 
     ## Rows: 26280 Columns: 34
-    ## ── Column specification ────────────────────────────────────────────────────────
+    ## ── Column specification ─────────────────────────────────────────────
     ## Delimiter: ","
     ## chr (22): Center Name, Legal Name, Building, Street, Borough, Phone, Permit ...
     ## dbl (11): ZipCode, Permit Number, Building Identification Number, Violation ...

@@ -1,8 +1,10 @@
 ---
-title: "dataset_cleaning"
-date: "2022-12-01"
+title: "Linear regression model of center/program specific rate"
+author: "Qing Zhou"
+date: "2022-12-08"
 output: github_document
 ---
+
 ```{r}
 library(tidyverse)
 library(dplyr)
@@ -72,5 +74,25 @@ center_specific_df = childcare_inspection_df %>%
 ```
 
 
+1. Select all possible independent variables to fit a full model based on center-specific distinct records
+```{r}
+# select distinct records of each center
+
+center_distinct_df = center_specific_df %>%
+  select(center_name, program_type, borough, status, age_range, facility_type, educational_worker_ratio, rate) %>%
+  distinct()
+
+# fit the full model
+full_lm = center_distinct_df %>%
+ lm(rate ~ program_type + borough + status + age_range + facility_type + educational_worker_ratio, data = .) 
+summary(full_lm)
+```
+
+#### Summary of the current data set
+```{r}
+skimr::skim(center_distinct_df) %>% 
+  select(-c(factor.ordered, factor.n_unique, factor.top_counts,numeric.hist)) %>% 
+  knitr::kable()
+```
 
 

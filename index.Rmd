@@ -1,0 +1,20 @@
+---
+title: "DOHMH Childcare Center Inspections"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    theme: flatly
+---
+
+<style type="text/css">
+
+h1.title {
+
+  font-size: 38px;
+  color: Black;
+  text-align: center;
+}
+</style>
+
+
