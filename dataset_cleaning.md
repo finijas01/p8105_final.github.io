@@ -61,11 +61,14 @@ library(fastDummies)
 set.seed(1)
 ```
 
-Import original dataset
+1.  Import original dataset
+
+2.  Remove repeated data
 
 ``` r
 childcare_inspection_df = read_csv("./data/DOHMH_Childcare_Center_Inspections.csv") %>% 
-janitor::clean_names()
+janitor::clean_names() %>% 
+distinct()
 ```
 
     ## Rows: 26280 Columns: 34
@@ -81,17 +84,11 @@ Basic data cleaning
 
 1.  We select 22 key variables in this dataset to finish our analysis
 
-2.  We separate the “inspection_summary_result” variable into two new
-    variables: “inspection_summary” and
+2.  Drop NA
 
-“inspection_result” to better show the summary and the result of the
-inspection for each center
+3.  Create a new variable “educational_worker_ratio”
 
-3.  Drop NA
-
-4.  Create a new variable “educational_worker_ratio”
-
-5.  Make all data in “program_type” and “facility_type” columns show in
+4.  Make all data in “program_type” and “facility_type” columns show in
     the same format : lower case
 
 ``` r
@@ -111,7 +108,7 @@ childcare_inspection_df = childcare_inspection_df %>%
     program_type = as.factor(program_type),
     facility_type = as.factor(facility_type),
     child_care_type = as.factor(child_care_type)
-  )
+  ) 
 ```
 
 We calculated a new violation rate for each distinct program using
@@ -124,11 +121,11 @@ childcare_inspection_df %>%
   mutate(
     n_na = sum(is.na(violation_category)), 
     n_violation = sum(!is.na(violation_category)), 
-    rate = n_violation/(n_violation+n_na)) %>% 
+    rate = n_violation/(n_violation + n_na)) %>% 
   arrange(center_name, program_type)
 ```
 
-    ## # A tibble: 19,472 × 25
+    ## # A tibble: 16,454 × 25
     ## # Groups:   center_name, program_type [1,917]
     ##    center_name    progr…¹ borough zip_c…² status age_r…³ maxim…⁴ facil…⁵ child…⁶
     ##    <chr>          <fct>   <fct>     <dbl> <fct>  <chr>     <dbl> <fct>   <fct>  
@@ -142,7 +139,7 @@ childcare_inspection_df %>%
     ##  8 1332 FULTON  … presch… BRONX     10456 Expir… 2 YEAR…     148 gdc     Child …
     ##  9 1332 FULTON  … presch… BRONX     10456 Expir… 2 YEAR…     148 gdc     Child …
     ## 10 1332 FULTON  … presch… BRONX     10456 Expir… 2 YEAR…     148 gdc     Child …
-    ## # … with 19,462 more rows, 16 more variables: violation_category <chr>,
+    ## # … with 16,444 more rows, 16 more variables: violation_category <chr>,
     ## #   violation_status <chr>, violation_rate_percent <dbl>,
     ## #   average_violation_rate_percent <dbl>, total_educational_workers <dbl>,
     ## #   average_total_educational_workers <dbl>,
