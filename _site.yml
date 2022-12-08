@@ -1,0 +1,10 @@
+name: "Yay internet!"
+output_dir: "."
+navbar:
+  title: "Home"
+  right:
+    - icon: fa-github fa-lg
+      href: http://github.com/finijas01/
+output:
+  html_document:
+    theme: flatly

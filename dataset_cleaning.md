@@ -4,54 +4,14 @@ dataset_cleaning
 
 ``` r
 library(tidyverse)
-```
-
-    ## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
-    ## ✔ ggplot2 3.3.6      ✔ purrr   0.3.5 
-    ## ✔ tibble  3.1.8      ✔ dplyr   1.0.10
-    ## ✔ tidyr   1.2.0      ✔ stringr 1.4.1 
-    ## ✔ readr   2.1.2      ✔ forcats 0.5.2 
-    ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-    ## ✖ dplyr::filter() masks stats::filter()
-    ## ✖ dplyr::lag()    masks stats::lag()
-
-``` r
 library(dplyr)
 library(rvest)
-```
-
-    ## 
-    ## Attaching package: 'rvest'
-    ## 
-    ## The following object is masked from 'package:readr':
-    ## 
-    ##     guess_encoding
-
-``` r
 library(purrr)
 library(ggplot2)
 library(modelr)
 library(mgcv)
-```
-
-    ## Loading required package: nlme
-    ## 
-    ## Attaching package: 'nlme'
-    ## 
-    ## The following object is masked from 'package:dplyr':
-    ## 
-    ##     collapse
-    ## 
-    ## This is mgcv 1.8-40. For overview type 'help("mgcv-package")'.
-
-``` r
 library(patchwork)
 library(viridis)
-```
-
-    ## Loading required package: viridisLite
-
-``` r
 library(fastDummies)
 set.seed(1)
 ```
@@ -67,7 +27,7 @@ distinct()
 ```
 
     ## Rows: 26280 Columns: 34
-    ## ── Column specification ────────────────────────────────────────────────────────
+    ## ── Column specification ─────────────────────────────────────────────
     ## Delimiter: ","
     ## chr (22): Center Name, Legal Name, Building, Street, Borough, Phone, Permit ...
     ## dbl (11): ZipCode, Permit Number, Building Identification Number, Violation ...
