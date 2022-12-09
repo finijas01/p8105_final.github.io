@@ -38,9 +38,7 @@ child_data = child_data %>%
     child_care_type = as.factor(child_care_type)
   )
 ```
-```{r}
-head(child_data, 10)
-```
+
 ```{r, warning=FALSE, message=FALSE}
 #create binary variable according to regulation_summary
 child_data <- child_data %>%
@@ -48,12 +46,16 @@ child_data <- child_data %>%
          violation = as.factor(violation))
 
 ```
+```{r}
+head(child_data, 10)
+```
 
+###Fit the logistic regression model
 #fit a logistic regression with violation vs no violation as the outcome and the rest as predictors.And Obtain the estimate and CI of the adjusted odds ratio for having violation.
 
 
 ```{r}
-model_log <- glm(violation ~borough + status + maximum_capacity + program_type + facility_type + child_care_type + total_educational_workers + average_total_educational_workers+average_public_health_hazard_violation_rate+educational_worker_ratio,data = child_data,family = binomial(link=logit))
+model_log <- glm(violation ~borough + status  + program_type + facility_type + child_care_type + average_total_educational_workers+average_public_health_hazard_violation_rate+educational_worker_ratio,data = child_data,family = binomial(link=logit))
 model_log %>%
   broom::tidy(conf.int = T) %>% 
   mutate(OR = exp(estimate),
@@ -63,5 +65,46 @@ model_log %>%
   select(term, OR, CI_lower,CI_upper, p_val) %>% 
   knitr::kable(digits = 3, align = "lccc", 
                col.names = c("Term", "Estimated adjusted OR", "CI lower bound", "CI upper bound", "p-value"))
+# Predict the probability (p) of violation positivity
+probabilities <- predict(model_log, type = "response")
+predicted.classes <- ifelse(probabilities > 0.5, "pos", "neg")
+head(predicted.classes)
+#probabilities
+```
+```{r}
+child_data <- child_data %>%
+  dplyr::select(average_total_educational_workers,average_public_health_hazard_violation_rate,educational_worker_ratio) 
+predictors <- colnames(child_data)
+#predictors
+```
+
+###Model diagnostics
+#1. Remove categorical variables from the original data frame and bind the logit values to the data
+```{r}
+#select only numeric preditors
+#child_data <- child_data %>%
+  #dplyr::select(average_total_educational_workers,average_public_health_hazard_violation_rate,educational_worker_ratio) 
+#predictors <- colnames(child_data)
+# Bind the logit and tidying the data for plots
+child_data <- child_data %>%
+  mutate(logit = log(probabilities/(1-probabilities))) %>%
+  gather(key = "predictors", value = "predictor.value", -logit)
+```
+#2. Create the scatter plots:
+```{r}
+ggplot(child_data, aes(logit, predictor.value))+
+  geom_point(size = 0.5, alpha = 0.5) +
+  geom_smooth(method = "loess") + 
+  theme_bw() + 
+  facet_wrap(~predictors, scales = "free_y")
+```
+
+```{r}
+# Extract model results
+model_log.data <- augment(model_log) %>% 
+  mutate(index = 1:n()) 
+ggplot(model_log.data, aes(index, .std.resid)) + 
+  geom_point(aes(color = violation), alpha = .5) +
+  theme_bw()
 ```
 
