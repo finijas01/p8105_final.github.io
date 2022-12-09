@@ -9,11 +9,10 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Qing Zhou" />
 
 <meta name="date" content="2022-12-08" />
 
-<title>Linear regression model of center/program specific rate</title>
+<title>linear</title>
 
 <script src="site_libs/header-attrs-2.18/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -246,7 +245,49 @@ $(document).ready(function () {
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-        
+        <li class="dropdown-header"></li>
+<li class="dropdown-header"></li>
+<li class="dropdown-header"></li>
+<li class="dropdown-header"></li>
+<li class="dropdown-header"></li>
+<li class="dropdown-header"></li>
+<li>
+  <a href="proposal.html">Proposal</a>
+</li>
+<li>
+  <a href="http://github.com/finijas01/">Visualization</a>
+</li>
+<li>
+  <a href="http://github.com/finijas01/">FlexDashboard</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Model Analysis
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="model1.html">Model 1</a>
+    </li>
+    <li>
+      <a href="model2.html">Model 2</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="http://github.com/finijas01/">Project Report</a>
+</li>
+<li class="dropdown-header"></li>
+<li class="dropdown-header"></li>
+<li class="dropdown-header"></li>
+<li class="dropdown-header"></li>
+<li>
+  <a href="http://github.com/finijas01/">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
@@ -264,9 +305,7 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Linear regression model of center/program
-specific rate</h1>
-<h4 class="author">Qing Zhou</h4>
+<h1 class="title toc-ignore">linear</h1>
 <h4 class="date">2022-12-08</h4>
 
 </div>
@@ -672,14 +711,272 @@ summary(alt_lm)</code></pre>
 <pre class="r"><code># model diagnostics: residuals vs fitted plot, QQ plot, Scale_location, Residuals vs Leverage
 plot(alt_lm)</code></pre>
 <p><img src="linear_files/figure-html/unnamed-chunk-6-1.png" width="672" /><img src="linear_files/figure-html/unnamed-chunk-6-2.png" width="672" /><img src="linear_files/figure-html/unnamed-chunk-6-3.png" width="672" /><img src="linear_files/figure-html/unnamed-chunk-6-4.png" width="672" /></p>
-<pre class="r"><code># Boxblot
+<p>Decision: Keep full_lm model.</p>
+<div id="assessing-multicollinearity" class="section level3">
+<h3>Assessing Multicollinearity</h3>
+<pre class="r"><code># vif
+library(performance) </code></pre>
+<pre><code>## Warning: package &#39;performance&#39; was built under R version 4.2.2</code></pre>
+<pre><code>## 
+## Attaching package: &#39;performance&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:modelr&#39;:
+## 
+##     mae, mse, rmse</code></pre>
+<pre class="r"><code>check_collinearity(full_lm)</code></pre>
+<pre><code>## # Check for Multicollinearity
+## 
+## Low Correlation
+## 
+##                      Term  VIF   VIF 95% CI Increased SE Tolerance
+##              program_type 2.27 [2.13, 2.42]         1.51      0.44
+##                   borough 1.11 [1.07, 1.18]         1.06      0.90
+##                    status 1.69 [1.60, 1.80]         1.30      0.59
+##  educational_worker_ratio 1.53 [1.45, 1.63]         1.24      0.65
+##  Tolerance 95% CI
+##      [0.41, 0.47]
+##      [0.85, 0.93]
+##      [0.56, 0.63]
+##      [0.61, 0.69]</code></pre>
+<p>This full_lm model shows low collinearity.</p>
+</div>
+<div id="transformation" class="section level3">
+<h3>Transformation</h3>
+<pre class="r"><code># Boxblot to check the initial distribution of outcome and key predictor
 center_distinct_df  %&gt;%
-par(mfrow = c(1,3))</code></pre>
-<pre><code>## Warning in par(., mfrow = c(1, 3)): argument 1 does not name a graphical
+par(mfrow = c(1,2))</code></pre>
+<pre><code>## Warning in par(., mfrow = c(1, 2)): argument 1 does not name a graphical
 ## parameter</code></pre>
 <pre class="r"><code>boxplot(center_distinct_df$educational_worker_ratio, main = &quot;Edu-worker Ratio&quot;)
 boxplot(center_distinct_df$rate, main = &quot;Violation Rate&quot;)</code></pre>
-<p><img src="linear_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p><img src="linear_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<pre class="r"><code># Square root transformation
+full_lm_sqrt = center_distinct_df %&gt;%
+  lm(sqrt(rate) ~ program_type + borough + status + educational_worker_ratio, data = .)
+summary(full_lm_sqrt)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = sqrt(rate) ~ program_type + borough + status + educational_worker_ratio, 
+##     data = .)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -0.74243 -0.18213  0.07062  0.22368  0.61280 
+## 
+## Coefficients:
+##                              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)                  0.688844   0.045128  15.264  &lt; 2e-16 ***
+## program_typeinfant toddler   0.104993   0.034333   3.058  0.00226 ** 
+## program_typepreschool        0.138744   0.027231   5.095 3.79e-07 ***
+## program_typeschool age camp -0.070818   0.215453  -0.329  0.74242    
+## boroughBROOKLYN             -0.294240   0.022719 -12.951  &lt; 2e-16 ***
+## boroughMANHATTAN            -0.222850   0.023902  -9.324  &lt; 2e-16 ***
+## boroughQUEENS               -0.154797   0.024441  -6.334 2.91e-10 ***
+## boroughSTATEN ISLAND        -0.295042   0.034869  -8.461  &lt; 2e-16 ***
+## statusExpired-In Renewal    -0.006601   0.035870  -0.184  0.85402    
+## statusPermitted             -0.084241   0.032718  -2.575  0.01010 *  
+## educational_worker_ratio    -0.064460   0.051608  -1.249  0.21179    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.3032 on 2139 degrees of freedom
+## Multiple R-squared:  0.09868,    Adjusted R-squared:  0.09447 
+## F-statistic: 23.42 on 10 and 2139 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>Decision: Since there are 0 value in the outcome variable,
+log-transformation is not applicable. Moreover, sqrt transformation
+didn’t improve model goodness of fit. Thus, we will keep the initial
+model and decide no transformation needed.</p>
+</div>
+<div id="remove-influential-points" class="section level3">
+<h3>remove influential points</h3>
+<pre class="r"><code># exclude two influential records
+
+out_df = center_distinct_df[-c(381,551),]
+
+
+# fit model without influential points
+full_lm_out = lm(rate ~ program_type + borough + status + educational_worker_ratio, data = out_df)
+summary(full_lm_out)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = rate ~ program_type + borough + status + educational_worker_ratio, 
+##     data = out_df)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -0.57969 -0.23803 -0.00579  0.19624  0.71172 
+## 
+## Coefficients:
+##                            Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)                 0.66339    0.03943  16.826  &lt; 2e-16 ***
+## program_typeinfant toddler  0.03600    0.02999   1.200  0.23009    
+## program_typepreschool       0.06207    0.02378   2.610  0.00913 ** 
+## boroughBROOKLYN            -0.28068    0.01986 -14.133  &lt; 2e-16 ***
+## boroughMANHATTAN           -0.20785    0.02091  -9.941  &lt; 2e-16 ***
+## boroughQUEENS              -0.15365    0.02136  -7.193 8.74e-13 ***
+## boroughSTATEN ISLAND       -0.29008    0.03047  -9.521  &lt; 2e-16 ***
+## statusExpired-In Renewal   -0.08503    0.03133  -2.714  0.00670 ** 
+## statusPermitted            -0.14459    0.02858  -5.060 4.55e-07 ***
+## educational_worker_ratio   -0.08186    0.04508  -1.816  0.06948 .  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.2648 on 2138 degrees of freedom
+## Multiple R-squared:  0.1156, Adjusted R-squared:  0.1119 
+## F-statistic: 31.04 on 9 and 2138 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code>full_lm_out %&gt;% 
+  broom::tidy() %&gt;%
+  knitr::kable(digit = 3)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">term</th>
+<th align="right">estimate</th>
+<th align="right">std.error</th>
+<th align="right">statistic</th>
+<th align="right">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">(Intercept)</td>
+<td align="right">0.663</td>
+<td align="right">0.039</td>
+<td align="right">16.826</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="even">
+<td align="left">program_typeinfant toddler</td>
+<td align="right">0.036</td>
+<td align="right">0.030</td>
+<td align="right">1.200</td>
+<td align="right">0.230</td>
+</tr>
+<tr class="odd">
+<td align="left">program_typepreschool</td>
+<td align="right">0.062</td>
+<td align="right">0.024</td>
+<td align="right">2.610</td>
+<td align="right">0.009</td>
+</tr>
+<tr class="even">
+<td align="left">boroughBROOKLYN</td>
+<td align="right">-0.281</td>
+<td align="right">0.020</td>
+<td align="right">-14.133</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="odd">
+<td align="left">boroughMANHATTAN</td>
+<td align="right">-0.208</td>
+<td align="right">0.021</td>
+<td align="right">-9.941</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="even">
+<td align="left">boroughQUEENS</td>
+<td align="right">-0.154</td>
+<td align="right">0.021</td>
+<td align="right">-7.193</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="odd">
+<td align="left">boroughSTATEN ISLAND</td>
+<td align="right">-0.290</td>
+<td align="right">0.030</td>
+<td align="right">-9.521</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="even">
+<td align="left">statusExpired-In Renewal</td>
+<td align="right">-0.085</td>
+<td align="right">0.031</td>
+<td align="right">-2.714</td>
+<td align="right">0.007</td>
+</tr>
+<tr class="odd">
+<td align="left">statusPermitted</td>
+<td align="right">-0.145</td>
+<td align="right">0.029</td>
+<td align="right">-5.060</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="even">
+<td align="left">educational_worker_ratio</td>
+<td align="right">-0.082</td>
+<td align="right">0.045</td>
+<td align="right">-1.816</td>
+<td align="right">0.069</td>
+</tr>
+</tbody>
+</table>
+<p>Decision: Influential points should be removed.</p>
+</div>
+<div id="model-validation" class="section level3">
+<h3>model validation</h3>
+<pre class="r"><code>library(caret)</code></pre>
+<pre><code>## Warning: package &#39;caret&#39; was built under R version 4.2.2</code></pre>
+<pre><code>## Loading required package: lattice</code></pre>
+<pre><code>## 
+## Attaching package: &#39;caret&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:purrr&#39;:
+## 
+##     lift</code></pre>
+<pre class="r"><code># Use 5-fold validation and create the training sets
+train = trainControl(method = &quot;cv&quot;, number = 5)
+
+model_caret = train(rate ~ program_type + borough + status + educational_worker_ratio,
+                   data = out_df,
+                   trControl = train,
+                   method = &#39;lm&#39;,
+                   na.action = na.pass)</code></pre>
+<pre><code>## Warning in predict.lm(modelFit, newdata): prediction from a rank-deficient fit
+## may be misleading</code></pre>
+<pre><code>## Warning in predict.lm(modelFit, newdata): prediction from a rank-deficient fit
+## may be misleading
+
+## Warning in predict.lm(modelFit, newdata): prediction from a rank-deficient fit
+## may be misleading
+
+## Warning in predict.lm(modelFit, newdata): prediction from a rank-deficient fit
+## may be misleading
+
+## Warning in predict.lm(modelFit, newdata): prediction from a rank-deficient fit
+## may be misleading</code></pre>
+<pre class="r"><code>model_caret$finalModel</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = .outcome ~ ., data = dat)
+## 
+## Coefficients:
+##                   (Intercept)   `program_typeinfant toddler`  
+##                       0.66339                        0.03600  
+##         program_typepreschool  `program_typeschool age camp`  
+##                       0.06207                             NA  
+##               boroughBROOKLYN               boroughMANHATTAN  
+##                      -0.28068                       -0.20785  
+##                 boroughQUEENS         `boroughSTATEN ISLAND`  
+##                      -0.15365                       -0.29008  
+##    `statusExpired-In Renewal`                statusPermitted  
+##                      -0.08503                       -0.14459  
+##      educational_worker_ratio  
+##                      -0.08186</code></pre>
+<pre class="r"><code>print(model_caret)</code></pre>
+<pre><code>## Linear Regression 
+## 
+## 2148 samples
+##    4 predictor
+## 
+## No pre-processing
+## Resampling: Cross-Validated (5 fold) 
+## Summary of sample sizes: 1718, 1720, 1718, 1718, 1718 
+## Resampling results:
+## 
+##   RMSE       Rsquared   MAE      
+##   0.2653523  0.1110992  0.2202588
+## 
+## Tuning parameter &#39;intercept&#39; was held constant at a value of TRUE</code></pre>
+<p>Final linear model: full_lm_out</p>
+</div>
 
 
 
