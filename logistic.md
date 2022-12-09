@@ -1,7 +1,7 @@
 logistic regression
 ================
 Han Bao
-2022-12-08
+2022-12-09
 
 ``` r
 library(tidyverse)
@@ -156,7 +156,7 @@ ggplot(child_data, aes(logit, predictor.value))+
 
     ## `geom_smooth()` using formula 'y ~ x'
 
-![](logistic-regression_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+![](logistic_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
 
 ``` r
 # Extract model results
@@ -167,4 +167,4 @@ ggplot(model_log.data, aes(index, .std.resid)) +
   theme_bw()
 ```
 
-![](logistic-regression_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+![](logistic_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
