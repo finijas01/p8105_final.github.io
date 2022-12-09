@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Qing Zhou" />
+
+<meta name="date" content="2022-12-08" />
+
+<title>Linear regression model of center/program specific rate</title>
+
+<script src="site_libs/header-attrs-2.18/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Home</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="http://github.com/finijas01/">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Linear regression model of center/program
+specific rate</h1>
+<h4 class="author">Qing Zhou</h4>
+<h4 class="date">2022-12-08</h4>
+
+</div>
+
+
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## Warning: package &#39;tidyverse&#39; was built under R version 4.2.2</code></pre>
+<pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
+## ✔ ggplot2 3.4.0      ✔ purrr   0.3.5 
+## ✔ tibble  3.1.8      ✔ dplyr   1.0.10
+## ✔ tidyr   1.2.1      ✔ stringr 1.5.0 
+## ✔ readr   2.1.3      ✔ forcats 0.5.2</code></pre>
+<pre><code>## Warning: package &#39;ggplot2&#39; was built under R version 4.2.2</code></pre>
+<pre><code>## Warning: package &#39;tidyr&#39; was built under R version 4.2.2</code></pre>
+<pre><code>## Warning: package &#39;readr&#39; was built under R version 4.2.2</code></pre>
+<pre><code>## Warning: package &#39;purrr&#39; was built under R version 4.2.2</code></pre>
+<pre><code>## Warning: package &#39;stringr&#39; was built under R version 4.2.2</code></pre>
+<pre><code>## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>library(dplyr)
+library(rvest)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;rvest&#39;
+## 
+## The following object is masked from &#39;package:readr&#39;:
+## 
+##     guess_encoding</code></pre>
+<pre class="r"><code>library(purrr)
+library(ggplot2)
+library(modelr)</code></pre>
+<pre><code>## Warning: package &#39;modelr&#39; was built under R version 4.2.2</code></pre>
+<pre class="r"><code>library(mgcv)</code></pre>
+<pre><code>## Warning: package &#39;mgcv&#39; was built under R version 4.2.2</code></pre>
+<pre><code>## Loading required package: nlme</code></pre>
+<pre><code>## Warning: package &#39;nlme&#39; was built under R version 4.2.2</code></pre>
+<pre><code>## 
+## Attaching package: &#39;nlme&#39;
+## 
+## The following object is masked from &#39;package:dplyr&#39;:
+## 
+##     collapse
+## 
+## This is mgcv 1.8-41. For overview type &#39;help(&quot;mgcv-package&quot;)&#39;.</code></pre>
+<pre class="r"><code>library(patchwork)
+library(viridis)</code></pre>
+<pre><code>## Loading required package: viridisLite</code></pre>
+<pre class="r"><code>library(fastDummies)</code></pre>
+<pre><code>## Warning: package &#39;fastDummies&#39; was built under R version 4.2.2</code></pre>
+<pre class="r"><code>set.seed(1)</code></pre>
+<ol style="list-style-type: decimal">
+<li><p>Import original dataset</p></li>
+<li><p>Remove repeated data</p></li>
+</ol>
+<pre class="r"><code>childcare_inspection_df = read_csv(&quot;./data/DOHMH_Childcare_Center_Inspections.csv&quot;) %&gt;% 
+janitor::clean_names() %&gt;% 
+distinct()</code></pre>
+<pre><code>## Rows: 26280 Columns: 34
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## chr (22): Center Name, Legal Name, Building, Street, Borough, Phone, Permit ...
+## dbl (11): ZipCode, Permit Number, Building Identification Number, Violation ...
+## num  (1): Maximum Capacity
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<p>Basic data cleaning</p>
+<ol style="list-style-type: decimal">
+<li><p>We select 22 key variables in this dataset to finish our
+analysis</p></li>
+<li><p>Drop NA</p></li>
+<li><p>Create a new variable “educational_worker_ratio”</p></li>
+<li><p>Make all data in “program_type” and “facility_type” columns show
+in the same format : lower case</p></li>
+</ol>
+<pre class="r"><code>childcare_inspection_df = childcare_inspection_df %&gt;% 
+  select(center_name, borough, zip_code, status, age_range, maximum_capacity,program_type, facility_type, 
+         child_care_type, violation_category,
+         violation_status,violation_rate_percent:average_critical_violation_rate,regulation_summary,
+         inspection_summary_result) %&gt;%
+  drop_na(zip_code, age_range, violation_rate_percent,public_health_hazard_violation_rate, critical_violation_rate) %&gt;% 
+  filter(maximum_capacity != 0) %&gt;% 
+  mutate(
+    educational_worker_ratio = total_educational_workers/maximum_capacity,
+    program_type = tolower(program_type),
+    facility_type = tolower(facility_type),
+    borough =  as.factor(borough),
+    status = as.factor(status),
+    program_type = as.factor(program_type),
+    facility_type = as.factor(facility_type),
+    child_care_type = as.factor(child_care_type),
+    age_range = as.factor(age_range)
+  ) </code></pre>
+<p>We calculated a new violation rate for each distinct program using
+violation category column.</p>
+<pre class="r"><code>center_specific_df = childcare_inspection_df %&gt;% 
+  relocate(center_name, program_type) %&gt;% 
+  group_by(center_name, program_type) %&gt;% 
+  mutate(
+    n_na = sum(is.na(violation_category)), 
+    n_violation = sum(!is.na(violation_category)), 
+    rate = n_violation/(n_violation + n_na)) %&gt;% 
+  arrange(center_name, program_type)</code></pre>
+<p>Select all possible independent variables to fit a full model based
+on center-specific distinct records:</p>
+<pre class="r"><code># select distinct records of each center
+
+center_distinct_df = center_specific_df %&gt;%
+  select(center_name, program_type, borough, status, maximum_capacity, total_educational_workers, educational_worker_ratio, rate) %&gt;%
+  distinct()
+
+# fit the full model
+full_lm = center_distinct_df %&gt;%
+ lm(rate ~ program_type + borough + status + educational_worker_ratio, data = .) 
+summary(full_lm)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = rate ~ program_type + borough + status + educational_worker_ratio, 
+##     data = .)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -0.60205 -0.23726 -0.00569  0.19621  0.71194 
+## 
+## Coefficients:
+##                             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)                  0.66051    0.03950  16.721  &lt; 2e-16 ***
+## program_typeinfant toddler   0.03605    0.03005   1.200  0.23038    
+## program_typepreschool        0.06220    0.02384   2.610  0.00913 ** 
+## program_typeschool age camp  0.02658    0.18859   0.141  0.88793    
+## boroughBROOKLYN             -0.27805    0.01989 -13.982  &lt; 2e-16 ***
+## boroughMANHATTAN            -0.20409    0.02092  -9.755  &lt; 2e-16 ***
+## boroughQUEENS               -0.15109    0.02139  -7.062 2.21e-12 ***
+## boroughSTATEN ISLAND        -0.28740    0.03052  -9.416  &lt; 2e-16 ***
+## statusExpired-In Renewal    -0.08504    0.03140  -2.709  0.00681 ** 
+## statusPermitted             -0.14425    0.02864  -5.037 5.13e-07 ***
+## educational_worker_ratio    -0.08238    0.04517  -1.824  0.06836 .  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.2654 on 2139 degrees of freedom
+## Multiple R-squared:  0.1141, Adjusted R-squared:  0.1099 
+## F-statistic: 27.54 on 10 and 2139 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code>full_lm %&gt;% 
+  broom::tidy() %&gt;%
+  knitr::kable(digit = 3)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">term</th>
+<th align="right">estimate</th>
+<th align="right">std.error</th>
+<th align="right">statistic</th>
+<th align="right">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">(Intercept)</td>
+<td align="right">0.661</td>
+<td align="right">0.040</td>
+<td align="right">16.721</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="even">
+<td align="left">program_typeinfant toddler</td>
+<td align="right">0.036</td>
+<td align="right">0.030</td>
+<td align="right">1.200</td>
+<td align="right">0.230</td>
+</tr>
+<tr class="odd">
+<td align="left">program_typepreschool</td>
+<td align="right">0.062</td>
+<td align="right">0.024</td>
+<td align="right">2.610</td>
+<td align="right">0.009</td>
+</tr>
+<tr class="even">
+<td align="left">program_typeschool age camp</td>
+<td align="right">0.027</td>
+<td align="right">0.189</td>
+<td align="right">0.141</td>
+<td align="right">0.888</td>
+</tr>
+<tr class="odd">
+<td align="left">boroughBROOKLYN</td>
+<td align="right">-0.278</td>
+<td align="right">0.020</td>
+<td align="right">-13.982</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="even">
+<td align="left">boroughMANHATTAN</td>
+<td align="right">-0.204</td>
+<td align="right">0.021</td>
+<td align="right">-9.755</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="odd">
+<td align="left">boroughQUEENS</td>
+<td align="right">-0.151</td>
+<td align="right">0.021</td>
+<td align="right">-7.062</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="even">
+<td align="left">boroughSTATEN ISLAND</td>
+<td align="right">-0.287</td>
+<td align="right">0.031</td>
+<td align="right">-9.416</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="odd">
+<td align="left">statusExpired-In Renewal</td>
+<td align="right">-0.085</td>
+<td align="right">0.031</td>
+<td align="right">-2.709</td>
+<td align="right">0.007</td>
+</tr>
+<tr class="even">
+<td align="left">statusPermitted</td>
+<td align="right">-0.144</td>
+<td align="right">0.029</td>
+<td align="right">-5.037</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="odd">
+<td align="left">educational_worker_ratio</td>
+<td align="right">-0.082</td>
+<td align="right">0.045</td>
+<td align="right">-1.824</td>
+<td align="right">0.068</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code># model diagnostics: Residuals vs Fitted plot, QQ plot, Scale_location, Residuals vs Leverage
+plot(full_lm)</code></pre>
+<p><img src="linear_files/figure-html/unnamed-chunk-5-1.png" width="672" /><img src="linear_files/figure-html/unnamed-chunk-5-2.png" width="672" /><img src="linear_files/figure-html/unnamed-chunk-5-3.png" width="672" /><img src="linear_files/figure-html/unnamed-chunk-5-4.png" width="672" /></p>
+<p>Fit an alternative model:</p>
+<pre class="r"><code># fit an alternative model
+alt_lm = center_distinct_df %&gt;%
+ lm(rate ~ program_type + borough + status + maximum_capacity * total_educational_workers, data = .) 
+summary(alt_lm)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = rate ~ program_type + borough + status + maximum_capacity * 
+##     total_educational_workers, data = .)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -0.60254 -0.24408 -0.00761  0.19708  0.72506 
+## 
+## Coefficients:
+##                                              Estimate Std. Error t value
+## (Intercept)                                 6.565e-01  4.220e-02  15.558
+## program_typeinfant toddler                  1.338e-02  3.034e-02   0.441
+## program_typepreschool                       4.920e-02  2.672e-02   1.841
+## program_typeschool age camp                 2.844e-02  1.891e-01   0.150
+## boroughBROOKLYN                            -2.806e-01  1.987e-02 -14.121
+## boroughMANHATTAN                           -2.053e-01  2.095e-02  -9.800
+## boroughQUEENS                              -1.530e-01  2.140e-02  -7.146
+## boroughSTATEN ISLAND                       -2.917e-01  3.047e-02  -9.574
+## statusExpired-In Renewal                   -8.288e-02  3.139e-02  -2.641
+## statusPermitted                            -1.415e-01  2.862e-02  -4.945
+## maximum_capacity                            1.823e-05  6.949e-05   0.262
+## total_educational_workers                  -5.254e-04  1.425e-03  -0.369
+## maximum_capacity:total_educational_workers  5.805e-06  7.101e-06   0.817
+##                                            Pr(&gt;|t|)    
+## (Intercept)                                 &lt; 2e-16 ***
+## program_typeinfant toddler                  0.65919    
+## program_typepreschool                       0.06569 .  
+## program_typeschool age camp                 0.88047    
+## boroughBROOKLYN                             &lt; 2e-16 ***
+## boroughMANHATTAN                            &lt; 2e-16 ***
+## boroughQUEENS                              1.22e-12 ***
+## boroughSTATEN ISLAND                        &lt; 2e-16 ***
+## statusExpired-In Renewal                    0.00833 ** 
+## statusPermitted                            8.21e-07 ***
+## maximum_capacity                            0.79313    
+## total_educational_workers                   0.71231    
+## maximum_capacity:total_educational_workers  0.41374    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.2656 on 2137 degrees of freedom
+## Multiple R-squared:  0.1134, Adjusted R-squared:  0.1084 
+## F-statistic: 22.78 on 12 and 2137 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code>alt_lm %&gt;% 
+  broom::tidy() %&gt;%
+  knitr::kable(digit = 3)</code></pre>
+<table>
+<colgroup>
+<col width="53%" />
+<col width="11%" />
+<col width="12%" />
+<col width="12%" />
+<col width="10%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">term</th>
+<th align="right">estimate</th>
+<th align="right">std.error</th>
+<th align="right">statistic</th>
+<th align="right">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">(Intercept)</td>
+<td align="right">0.657</td>
+<td align="right">0.042</td>
+<td align="right">15.558</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="even">
+<td align="left">program_typeinfant toddler</td>
+<td align="right">0.013</td>
+<td align="right">0.030</td>
+<td align="right">0.441</td>
+<td align="right">0.659</td>
+</tr>
+<tr class="odd">
+<td align="left">program_typepreschool</td>
+<td align="right">0.049</td>
+<td align="right">0.027</td>
+<td align="right">1.841</td>
+<td align="right">0.066</td>
+</tr>
+<tr class="even">
+<td align="left">program_typeschool age camp</td>
+<td align="right">0.028</td>
+<td align="right">0.189</td>
+<td align="right">0.150</td>
+<td align="right">0.880</td>
+</tr>
+<tr class="odd">
+<td align="left">boroughBROOKLYN</td>
+<td align="right">-0.281</td>
+<td align="right">0.020</td>
+<td align="right">-14.121</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="even">
+<td align="left">boroughMANHATTAN</td>
+<td align="right">-0.205</td>
+<td align="right">0.021</td>
+<td align="right">-9.800</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="odd">
+<td align="left">boroughQUEENS</td>
+<td align="right">-0.153</td>
+<td align="right">0.021</td>
+<td align="right">-7.146</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="even">
+<td align="left">boroughSTATEN ISLAND</td>
+<td align="right">-0.292</td>
+<td align="right">0.030</td>
+<td align="right">-9.574</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="odd">
+<td align="left">statusExpired-In Renewal</td>
+<td align="right">-0.083</td>
+<td align="right">0.031</td>
+<td align="right">-2.641</td>
+<td align="right">0.008</td>
+</tr>
+<tr class="even">
+<td align="left">statusPermitted</td>
+<td align="right">-0.142</td>
+<td align="right">0.029</td>
+<td align="right">-4.945</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="odd">
+<td align="left">maximum_capacity</td>
+<td align="right">0.000</td>
+<td align="right">0.000</td>
+<td align="right">0.262</td>
+<td align="right">0.793</td>
+</tr>
+<tr class="even">
+<td align="left">total_educational_workers</td>
+<td align="right">-0.001</td>
+<td align="right">0.001</td>
+<td align="right">-0.369</td>
+<td align="right">0.712</td>
+</tr>
+<tr class="odd">
+<td align="left">maximum_capacity:total_educational_workers</td>
+<td align="right">0.000</td>
+<td align="right">0.000</td>
+<td align="right">0.817</td>
+<td align="right">0.414</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code># model diagnostics: residuals vs fitted plot, QQ plot, Scale_location, Residuals vs Leverage
+plot(alt_lm)</code></pre>
+<p><img src="linear_files/figure-html/unnamed-chunk-6-1.png" width="672" /><img src="linear_files/figure-html/unnamed-chunk-6-2.png" width="672" /><img src="linear_files/figure-html/unnamed-chunk-6-3.png" width="672" /><img src="linear_files/figure-html/unnamed-chunk-6-4.png" width="672" /></p>
+<pre class="r"><code># Boxblot
+center_distinct_df  %&gt;%
+par(mfrow = c(1,3))</code></pre>
+<pre><code>## Warning in par(., mfrow = c(1, 3)): argument 1 does not name a graphical
+## parameter</code></pre>
+<pre class="r"><code>boxplot(center_distinct_df$educational_worker_ratio, main = &quot;Edu-worker Ratio&quot;)
+boxplot(center_distinct_df$rate, main = &quot;Violation Rate&quot;)</code></pre>
+<p><img src="linear_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
