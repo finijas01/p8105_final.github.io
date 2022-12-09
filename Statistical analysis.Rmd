@@ -5,11 +5,6 @@ date: "2022-12-09"
 output: github_document
 ---
 
----
-title: "linear"
-date: "2022-12-08"
-output: github_document
----
 
 ```{r}
 library(tidyverse)
