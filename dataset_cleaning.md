@@ -5,6 +5,7 @@ dataset_cleaning
 ``` r
 library(tidyverse)
 <<<<<<< HEAD
+<<<<<<< HEAD
 ```
 
     ## Warning: package 'tidyverse' was built under R version 4.2.2
@@ -21,6 +22,8 @@ library(tidyverse)
 ``` r
 =======
 >>>>>>> f3437e85eb0b3a15d3e2b919e9941763745e572b
+=======
+>>>>>>> 37db35354b14f908a9cd1e396fab3259e4b6edca
 library(dplyr)
 library(rvest)
 library(purrr)
@@ -30,11 +33,14 @@ library(mgcv)
 library(patchwork)
 library(viridis)
 library(fastDummies)
+<<<<<<< HEAD
 ```
 
     ## Warning: package 'fastDummies' was built under R version 4.2.2
 
 ``` r
+=======
+>>>>>>> 37db35354b14f908a9cd1e396fab3259e4b6edca
 set.seed(1)
 ```
 

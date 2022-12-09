@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 
+<<<<<<< HEAD
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
@@ -593,27 +594,353 @@ body {
   margin: 0 auto;
   padding: 45px;
   padding-top: 0px;
+=======
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Proposal</title>
+
+<script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+>>>>>>> 37db35354b14f908a9cd1e396fab3259e4b6edca
 }
 </style>
 
 
+<<<<<<< HEAD
+=======
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+>>>>>>> 37db35354b14f908a9cd1e396fab3259e4b6edca
 </head>
 
 <body>
 
+<<<<<<< HEAD
 <h1 id="proposal">Proposal</h1>
 <p>2022-11-12</p>
 <h2 id="the-group-members-names-and-unis">The group members (names and
 UNIs)</h2>
+=======
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Home</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li class="dropdown-header"></li>
+<li class="dropdown-header"></li>
+<li class="dropdown-header"></li>
+<li class="dropdown-header"></li>
+<li class="dropdown-header"></li>
+<li class="dropdown-header"></li>
+<li>
+  <a href="proposal.html">Proposal</a>
+</li>
+<li>
+  <a href="http://github.com/finijas01/">Visualization</a>
+</li>
+<li>
+  <a href="http://github.com/finijas01/">FlexDashboard</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Model Analysis
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="model1.html">Model 1</a>
+    </li>
+    <li>
+      <a href="model2.html">Model 2</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="http://github.com/finijas01/">Project Report</a>
+</li>
+<li>
+  <a href="http://github.com/finijas01/">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Proposal</h1>
+
+</div>
+
+
+<style type="text/css">
+
+h1.title {
+  font-size: 38px;
+  color: Black;
+  text-align: center;
+}
+</style>
+<div id="the-group-members-names-and-unis" class="section level2">
+<h2>The group members (names and UNIs)</h2>
+>>>>>>> 37db35354b14f908a9cd1e396fab3259e4b6edca
 <p>Han Bao (hb2699)</p>
 <p>Jasmine Niu (jn2855)</p>
 <p>Qing Zhou (qz2266)</p>
 <p>Zuoqiao Cui (zc2610)</p>
 <p>Yuhuan Lin (yl5221)</p>
+<<<<<<< HEAD
 <h2 id="the-tentative-project-title">The tentative project title</h2>
 <p>NYC Childcare Center Inspections</p>
 <h2 id="the-motivation-for-this-project">The motivation for this
 project</h2>
+=======
+</div>
+<div id="the-tentative-project-title" class="section level2">
+<h2>The tentative project title</h2>
+<p>NYC Childcare Center Inspections</p>
+</div>
+<div id="the-motivation-for-this-project" class="section level2">
+<h2>The motivation for this project</h2>
+>>>>>>> 37db35354b14f908a9cd1e396fab3259e4b6edca
 <p>High-quality childcare is important for children safety and health.
 In our homework, we did some data visualization with the NYC restaurant
 inspection dataset. We find this very inspiring and the idea of
@@ -623,19 +950,32 @@ than violation in the restaurant and we would consider our project as a
 meaningful and realistic topic. We aim to find out some possible
 variables that would influence the rate of violation in child care
 centers in NYC.</p>
+<<<<<<< HEAD
 <h2 id="the-intended-final-products">The intended final products</h2>
+=======
+</div>
+<div id="the-intended-final-products" class="section level2">
+<h2>The intended final products</h2>
+>>>>>>> 37db35354b14f908a9cd1e396fab3259e4b6edca
 <ol style="list-style-type: decimal">
 <li><p>Interactive maps and dashboard (See “Visualization”)</p></li>
 <li><p>A report that summarizes exploratory analysis results with
 corresponding plots, fits three linear regression models about different
 types of violation rate and relevant interpretations.</p></li>
 </ol>
+<<<<<<< HEAD
 <h2 id="the-anticipated-data-sources">The anticipated data sources</h2>
+=======
+</div>
+<div id="the-anticipated-data-sources" class="section level2">
+<h2>The anticipated data sources</h2>
+>>>>>>> 37db35354b14f908a9cd1e396fab3259e4b6edca
 <p>Our research focuses on the DOHMH Childcare Center Inspections
 dataset and other related datasets, aiming to investigate and visualize
 the overall trends for key outcomes including childcare violation rate
 percent, public health hazardous violation rate, critical violation
 rate, etc. across NYC five boroughs over time. The DOHMH Childcare
+<<<<<<< HEAD
 Center Inspections dataset comes from the NYC Open Data (<a href="https://opendata.cityofnewyork.us/">https://opendata.cityofnewyork.us/</a>).
 It describes the results of DOHMH’s inspection on child care centers in
 NYC and any associated violations at active, city-regulated,
@@ -644,6 +984,20 @@ years.</p>
 <h2 id="the-planned-analyses--visualizations--coding-challenges">The
 planned analyses / visualizations / coding challenges</h2>
 <h3 id="planned-analyses">Planned analyses</h3>
+=======
+Center Inspections dataset comes from the NYC Open Data (<a
+href="https://opendata.cityofnewyork.us/"
+class="uri">https://opendata.cityofnewyork.us/</a>). It describes the
+results of DOHMH’s inspection on child care centers in NYC and any
+associated violations at active, city-regulated, center-based child care
+programs and summer camps over the past 3 years.</p>
+</div>
+<div id="the-planned-analyses-visualizations-coding-challenges"
+class="section level2">
+<h2>The planned analyses / visualizations / coding challenges</h2>
+<div id="planned-analyses" class="section level3">
+<h3>Planned analyses</h3>
+>>>>>>> 37db35354b14f908a9cd1e396fab3259e4b6edca
 <p>Prior to data analysis, we will search for information such as yearly
 city budget on childcare and health care challenges in 2019-2022 and
 review relevant literature. First, we will explore the possible
@@ -663,7 +1017,13 @@ rate, and critical violation rate influenced by variables such as
 maximum capacity, different boroughs, numbers of educational workers,
 maximum capacity of program, and age range of the program. We’ll choose
 variables whichever we find statistically significant for the model.</p>
+<<<<<<< HEAD
 <h3 id="visualizations">Visualizations</h3>
+=======
+</div>
+<div id="visualizations" class="section level3">
+<h3>Visualizations</h3>
+>>>>>>> 37db35354b14f908a9cd1e396fab3259e4b6edca
 <ol style="list-style-type: decimal">
 <li><p>Interactive maps that include the following information: average
 critical violation rate by boroughs in the past 3 years (2019-2022),
@@ -675,7 +1035,13 @@ time</p></li>
 <li><p>Histograms or scatterplots showing relevant information, e.g. the
 number of different age-range program in each borough</p></li>
 </ol>
+<<<<<<< HEAD
 <h3 id="coding-challenges">Coding challenges</h3>
+=======
+</div>
+<div id="coding-challenges" class="section level3">
+<h3>Coding challenges</h3>
+>>>>>>> 37db35354b14f908a9cd1e396fab3259e4b6edca
 <ol style="list-style-type: decimal">
 <li><p>We need a clear understanding and their relations on the four
 columns: violation rate, average violation rate, critical violation
@@ -683,8 +1049,20 @@ rate, average violation rate.</p></li>
 <li><p>Some other useful datasets influencing childcare should be found
 to produce a more comprehensive outcome.</p></li>
 </ol>
+<<<<<<< HEAD
 <h2 id="the-planned-timeline">The planned timeline</h2>
 <table>
+=======
+</div>
+</div>
+<div id="the-planned-timeline" class="section level2">
+<h2>The planned timeline</h2>
+<table>
+<colgroup>
+<col width="39%" />
+<col width="60%" />
+</colgroup>
+>>>>>>> 37db35354b14f908a9cd1e396fab3259e4b6edca
 <thead>
 <tr class="header">
 <th>Date</th>
@@ -727,7 +1105,13 @@ visualization</td>
 </tr>
 </tbody>
 </table>
+<<<<<<< HEAD
 <h2 id="work-flow">Work flow:</h2>
+=======
+</div>
+<div id="work-flow" class="section level2">
+<h2>Work flow:</h2>
+>>>>>>> 37db35354b14f908a9cd1e396fab3259e4b6edca
 <ol style="list-style-type: decimal">
 <li><p>Motivation</p></li>
 <li><p>Data Processing and cleaning: External data sets might be
@@ -750,6 +1134,55 @@ c).Violation rate across different program type</p>
 <li>insight or signification</li>
 <li>strength, limitation or future direction</li>
 </ul>
+<<<<<<< HEAD
+=======
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+>>>>>>> 37db35354b14f908a9cd1e396fab3259e4b6edca
 
 </body>
 </html>

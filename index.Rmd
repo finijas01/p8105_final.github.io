@@ -10,11 +10,37 @@ output:
 <style type="text/css">
 
 h1.title {
+<<<<<<< HEAD
 
+=======
+>>>>>>> 37db35354b14f908a9cd1e396fab3259e4b6edca
   font-size: 38px;
   color: Black;
   text-align: center;
 }
 </style>
 
+<<<<<<< HEAD
+=======
+## Introduction
+
+## Website Overview
+
+## Dataset
+
+## Screencast
+
+## Group Members
+
+Han Bao (hb2699)
+
+Jasmine Niu (jn2855)
+
+Qing Zhou (qz2266)
+
+Zuoqiao Cui (zc2610)
+
+Yuhuan Lin (yl5221)
+
+>>>>>>> 37db35354b14f908a9cd1e396fab3259e4b6edca
 
