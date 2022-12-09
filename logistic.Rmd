@@ -55,7 +55,7 @@ head(child_data, 10)
 
 
 ```{r}
-model_log <- glm(violation ~borough + status  + program_type + facility_type + child_care_type + average_total_educational_workers+average_public_health_hazard_violation_rate+educational_worker_ratio,data = child_data,family = binomial(link=logit))
+model_log <- glm(violation ~ status  + program_type + facility_type + child_care_type + average_total_educational_workers+average_public_health_hazard_violation_rate+educational_worker_ratio,data = child_data,family = binomial(link=logit))
 model_log %>%
   broom::tidy(conf.int = T) %>% 
   mutate(OR = exp(estimate),
@@ -71,21 +71,45 @@ predicted.classes <- ifelse(probabilities > 0.5, "pos", "neg")
 head(predicted.classes)
 #probabilities
 ```
-```{r}
-child_data <- child_data %>%
-  dplyr::select(average_total_educational_workers,average_public_health_hazard_violation_rate,educational_worker_ratio) 
-predictors <- colnames(child_data)
-#predictors
+###visualization
+```{r, warning=FALSE, message=FALSE}
+#  Extract the adjusted odds ratio (and CI) for solving homicides comparing male victims to female victims from all the cities.
+all_logistic = child_data %>% 
+  nest(data = -borough) %>% 
+  mutate(
+    models = map(data, ~glm(violation ~ status  + program_type + facility_type + child_care_type + average_total_educational_workers+average_public_health_hazard_violation_rate+educational_worker_ratio, data = ., family = binomial(link = "logit"))),
+    results = map(models, ~broom::tidy(.x, conf.int = T))) %>% 
+  select(borough, results) %>% 
+  unnest(results) %>% 
+  mutate(
+    OR = exp(estimate),
+    CI_lower = exp(conf.low),
+    CI_upper = exp(conf.high),
+    p_val = rstatix::p_format(p.value, digits = 2)
+  ) %>% 
+  filter(term == "statusExpired-In Renewal") %>% 
+  select(borough, OR, CI_lower,CI_upper, p_val) 
+all_logistic %>% 
+  knitr::kable(digits = 3, align = "llccc", col.names = c("Borough", "Estimated adjusted OR", "CI lower bound", "CI upper bound", "p-value"))
+```
+```{r, warning=FALSE, message=FALSE}
+# Create a plot showing the estimated ORs and CIs for each borough
+all_logistic %>% 
+  mutate(borough = fct_reorder(borough, OR)) %>%
+  ggplot(aes(x = borough, y = OR)) +
+  geom_point() +
+  geom_errorbar(aes(ymin = CI_lower, ymax = CI_upper)) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
+  labs(x = "Borough", y = "Estimated OR with CI")
 ```
 
 ###Model diagnostics
 #1. Remove categorical variables from the original data frame and bind the logit values to the data
 ```{r}
 #select only numeric preditors
-#child_data <- child_data %>%
-  #dplyr::select(average_total_educational_workers,average_public_health_hazard_violation_rate,educational_worker_ratio) 
-#predictors <- colnames(child_data)
-# Bind the logit and tidying the data for plots
+child_data <- child_data %>%
+  dplyr::select(average_total_educational_workers,average_public_health_hazard_violation_rate,educational_worker_ratio) 
+predictors <- colnames(child_data)
 child_data <- child_data %>%
   mutate(logit = log(probabilities/(1-probabilities))) %>%
   gather(key = "predictors", value = "predictor.value", -logit)
@@ -107,4 +131,5 @@ ggplot(model_log.data, aes(index, .std.resid)) +
   geom_point(aes(color = violation), alpha = .5) +
   theme_bw()
 ```
+
 

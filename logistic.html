@@ -374,7 +374,7 @@ child_data &lt;- child_data %&gt;%
 violation vs no violation as the outcome and the rest as predictors.And
 Obtain the estimate and CI of the adjusted odds ratio for having
 violation.</p>
-<pre class="r"><code>model_log &lt;- glm(violation ~borough + status  + program_type + facility_type + child_care_type + average_total_educational_workers+average_public_health_hazard_violation_rate+educational_worker_ratio,data = child_data,family = binomial(link=logit))
+<pre class="r"><code>model_log &lt;- glm(violation ~ status  + program_type + facility_type + child_care_type + average_total_educational_workers+average_public_health_hazard_violation_rate+educational_worker_ratio,data = child_data,family = binomial(link=logit))
 model_log %&gt;%
   broom::tidy(conf.int = T) %&gt;% 
   mutate(OR = exp(estimate),
@@ -404,73 +404,45 @@ model_log %&gt;%
 <tbody>
 <tr class="odd">
 <td align="left">(Intercept)</td>
-<td align="center">4.715</td>
-<td align="center">38.429</td>
-<td align="center">4.501930e+02</td>
-<td align="left">&lt;0.0001</td>
-</tr>
-<tr class="even">
-<td align="left">boroughBROOKLYN</td>
-<td align="center">0.351</td>
-<td align="center">1.376</td>
-<td align="center">1.472000e+00</td>
-<td align="left">&lt;0.0001</td>
-</tr>
-<tr class="odd">
-<td align="left">boroughMANHATTAN</td>
-<td align="center">0.454</td>
-<td align="center">1.506</td>
-<td align="center">1.652000e+00</td>
-<td align="left">&lt;0.0001</td>
-</tr>
-<tr class="even">
-<td align="left">boroughQUEENS</td>
-<td align="center">0.648</td>
-<td align="center">1.798</td>
-<td align="center">2.045000e+00</td>
-<td align="left">&lt;0.0001</td>
-</tr>
-<tr class="odd">
-<td align="left">boroughSTATEN ISLAND</td>
-<td align="center">0.247</td>
-<td align="center">1.230</td>
-<td align="center">1.342000e+00</td>
+<td align="center">2.546</td>
+<td align="center">7.396</td>
+<td align="center">2.575800e+01</td>
 <td align="left">&lt;0.0001</td>
 </tr>
 <tr class="even">
 <td align="left">statusExpired-In Renewal</td>
-<td align="center">0.448</td>
-<td align="center">1.438</td>
-<td align="center">1.736000e+00</td>
+<td align="center">0.379</td>
+<td align="center">1.360</td>
+<td align="center">1.593000e+00</td>
 <td align="left">&lt;0.0001</td>
 </tr>
 <tr class="odd">
 <td align="left">statusPermitted</td>
-<td align="center">0.355</td>
-<td align="center">1.337</td>
-<td align="center">1.541000e+00</td>
+<td align="center">0.358</td>
+<td align="center">1.341</td>
+<td align="center">1.544000e+00</td>
 <td align="left">&lt;0.0001</td>
 </tr>
 <tr class="even">
 <td align="left">program_typeinfant toddler</td>
-<td align="center">0.908</td>
-<td align="center">2.123</td>
-<td align="center">2.992000e+00</td>
-<td align="left">0.3159</td>
+<td align="center">0.981</td>
+<td align="center">2.264</td>
+<td align="center">3.248000e+00</td>
+<td align="left">0.84</td>
 </tr>
 <tr class="odd">
 <td align="left">program_typepreschool</td>
-<td align="center">1.001</td>
-<td align="center">2.355</td>
-<td align="center">3.218000e+00</td>
-<td align="left">0.9944</td>
+<td align="center">1.060</td>
+<td align="center">2.485</td>
+<td align="center">3.434000e+00</td>
+<td align="left">0.45</td>
 </tr>
 <tr class="even">
 <td align="left">program_typeschool age camp</td>
-<td align="center">1.644</td>
-<td align="center">1.164</td>
-<td align="center">4.762402e+15</td>
-<td align="left">0.6894</td>
+<td align="center">2.072</td>
+<td align="center">1.219</td>
+<td align="center">2.510005e+19</td>
+<td align="left">0.55</td>
 </tr>
 <tr class="odd">
 <td align="left">facility_typegdc</td>
@@ -523,10 +495,10 @@ model_log %&gt;%
 </tr>
 <tr class="even">
 <td align="left">educational_worker_ratio</td>
-<td align="center">0.706</td>
-<td align="center">1.721</td>
-<td align="center">2.503000e+00</td>
-<td align="left">0.0093</td>
+<td align="center">0.474</td>
+<td align="center">1.444</td>
+<td align="center">1.843000e+00</td>
+<td align="left">&lt;0.0001</td>
 </tr>
 </tbody>
 </table>
@@ -535,19 +507,97 @@ probabilities &lt;- predict(model_log, type = &quot;response&quot;)
 predicted.classes &lt;- ifelse(probabilities &gt; 0.5, &quot;pos&quot;, &quot;neg&quot;)
 head(predicted.classes)</code></pre>
 <pre><code>##     1     2     3     4     5     6 
-## &quot;neg&quot; &quot;neg&quot; &quot;neg&quot; &quot;neg&quot; &quot;neg&quot; &quot;pos&quot;</code></pre>
+## &quot;neg&quot; &quot;neg&quot; &quot;neg&quot; &quot;neg&quot; &quot;neg&quot; &quot;neg&quot;</code></pre>
 <pre class="r"><code>#probabilities</code></pre>
-<pre class="r"><code>child_data &lt;- child_data %&gt;%
-  dplyr::select(average_total_educational_workers,average_public_health_hazard_violation_rate,educational_worker_ratio) 
-predictors &lt;- colnames(child_data)
-#predictors</code></pre>
+<p>###visualization</p>
+<pre class="r"><code>#  Extract the adjusted odds ratio (and CI) for solving homicides comparing male victims to female victims from all the cities.
+all_logistic = child_data %&gt;% 
+  nest(data = -borough) %&gt;% 
+  mutate(
+    models = map(data, ~glm(violation ~ status  + program_type + facility_type + child_care_type + average_total_educational_workers+average_public_health_hazard_violation_rate+educational_worker_ratio, data = ., family = binomial(link = &quot;logit&quot;))),
+    results = map(models, ~broom::tidy(.x, conf.int = T))) %&gt;% 
+  select(borough, results) %&gt;% 
+  unnest(results) %&gt;% 
+  mutate(
+    OR = exp(estimate),
+    CI_lower = exp(conf.low),
+    CI_upper = exp(conf.high),
+    p_val = rstatix::p_format(p.value, digits = 2)
+  ) %&gt;% 
+  filter(term == &quot;statusExpired-In Renewal&quot;) %&gt;% 
+  select(borough, OR, CI_lower,CI_upper, p_val) 
+all_logistic %&gt;% 
+  knitr::kable(digits = 3, align = &quot;llccc&quot;, col.names = c(&quot;Borough&quot;, &quot;Estimated adjusted OR&quot;, &quot;CI lower bound&quot;, &quot;CI upper bound&quot;, &quot;p-value&quot;))</code></pre>
+<table>
+<colgroup>
+<col width="18%" />
+<col width="28%" />
+<col width="20%" />
+<col width="20%" />
+<col width="11%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Borough</th>
+<th align="left">Estimated adjusted OR</th>
+<th align="center">CI lower bound</th>
+<th align="center">CI upper bound</th>
+<th align="center">p-value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">BROOKLYN</td>
+<td align="left">0.406</td>
+<td align="center">0.265</td>
+<td align="center">0.614</td>
+<td align="center">&lt;0.0001</td>
+</tr>
+<tr class="even">
+<td align="left">BRONX</td>
+<td align="left">0.357</td>
+<td align="center">0.165</td>
+<td align="center">0.708</td>
+<td align="center">0.00519</td>
+</tr>
+<tr class="odd">
+<td align="left">QUEENS</td>
+<td align="left">0.644</td>
+<td align="center">0.390</td>
+<td align="center">1.057</td>
+<td align="center">0.08323</td>
+</tr>
+<tr class="even">
+<td align="left">MANHATTAN</td>
+<td align="left">0.592</td>
+<td align="center">0.413</td>
+<td align="center">0.843</td>
+<td align="center">0.00395</td>
+</tr>
+<tr class="odd">
+<td align="left">STATEN ISLAND</td>
+<td align="left">0.721</td>
+<td align="center">0.235</td>
+<td align="center">2.323</td>
+<td align="center">0.56915</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code># Create a plot showing the estimated ORs and CIs for each borough
+all_logistic %&gt;% 
+  mutate(borough = fct_reorder(borough, OR)) %&gt;%
+  ggplot(aes(x = borough, y = OR)) +
+  geom_point() +
+  geom_errorbar(aes(ymin = CI_lower, ymax = CI_upper)) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
+  labs(x = &quot;Borough&quot;, y = &quot;Estimated OR with CI&quot;)</code></pre>
+<p><img src="logistic_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 <p>###Model diagnostics #1. Remove categorical variables from the
 original data frame and bind the logit values to the data</p>
 <pre class="r"><code>#select only numeric preditors
-#child_data &lt;- child_data %&gt;%
-  #dplyr::select(average_total_educational_workers,average_public_health_hazard_violation_rate,educational_worker_ratio) 
-#predictors &lt;- colnames(child_data)
-# Bind the logit and tidying the data for plots
+child_data &lt;- child_data %&gt;%
+  dplyr::select(average_total_educational_workers,average_public_health_hazard_violation_rate,educational_worker_ratio) 
+predictors &lt;- colnames(child_data)
 child_data &lt;- child_data %&gt;%
   mutate(logit = log(probabilities/(1-probabilities))) %&gt;%
   gather(key = &quot;predictors&quot;, value = &quot;predictor.value&quot;, -logit)</code></pre>
@@ -558,14 +608,14 @@ child_data &lt;- child_data %&gt;%
   theme_bw() + 
   facet_wrap(~predictors, scales = &quot;free_y&quot;)</code></pre>
 <pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
-<p><img src="logistic_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p><img src="logistic_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
 <pre class="r"><code># Extract model results
 model_log.data &lt;- augment(model_log) %&gt;% 
   mutate(index = 1:n()) 
 ggplot(model_log.data, aes(index, .std.resid)) + 
   geom_point(aes(color = violation), alpha = .5) +
   theme_bw()</code></pre>
-<p><img src="logistic_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p><img src="logistic_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
 
 
 
