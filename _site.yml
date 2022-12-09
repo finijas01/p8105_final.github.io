@@ -29,6 +29,14 @@ navbar:
         href:  model2.html
    - text: 'Project Report'
      href: http://github.com/finijas01/
+   - text: ''
+     href:
+   - text: ''
+     href:
+   - text: ''
+     href:
+   - text: ''
+     href:
    - icon: fa-github fa-lg
      href: http://github.com/finijas01/
 output:
