@@ -11,7 +11,7 @@
 
 
 
-<title>DOHMH Childcare Center Inspections</title>
+<title>Proposal</title>
 
 <script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -29,9 +29,6 @@
        h6 {font-size: 12px;}
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
-<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
-<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
-<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
@@ -231,69 +228,6 @@ $(document).ready(function () {
 
 
 
-<style type="text/css">
-
-#TOC {
-  margin: 25px 0px 20px 0px;
-}
-@media (max-width: 768px) {
-#TOC {
-  position: relative;
-  width: 100%;
-}
-}
-
-@media print {
-.toc-content {
-  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
-  float: right;
-}
-}
-
-.toc-content {
-  padding-left: 30px;
-  padding-right: 40px;
-}
-
-div.main-container {
-  max-width: 1200px;
-}
-
-div.tocify {
-  width: 20%;
-  max-width: 260px;
-  max-height: 85%;
-}
-
-@media (min-width: 768px) and (max-width: 991px) {
-  div.tocify {
-    width: 25%;
-  }
-}
-
-@media (max-width: 767px) {
-  div.tocify {
-    width: 100%;
-    max-width: none;
-  }
-}
-
-.tocify ul, .tocify li {
-  line-height: 20px;
-}
-
-.tocify-subheader .tocify-item {
-  font-size: 0.90em;
-}
-
-.tocify .list-group-item {
-  border-radius: 0px;
-}
-
-
-</style>
-
-
 
 </head>
 
@@ -301,16 +235,6 @@ div.tocify {
 
 
 <div class="container-fluid main-container">
-
-
-<!-- setup 3col/9col grid for toc_float and main content  -->
-<div class="row">
-<div class="col-xs-12 col-sm-4 col-md-3">
-<div id="TOC" class="tocify">
-</div>
-</div>
-
-<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -357,7 +281,9 @@ div.tocify {
     </li>
   </ul>
 </li>
-<li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
   <a href="http://github.com/finijas01/">Project Report</a>
 </li>
 <li>
@@ -367,9 +293,6 @@ div.tocify {
   </a>
 </li>
       </ul>
-      <ul class="nav navbar-nav navbar-right">
-        
-      </ul>
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -378,7 +301,7 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">DOHMH Childcare Center Inspections</h1>
+<h1 class="title toc-ignore">Proposal</h1>
 
 </div>
 
@@ -391,31 +314,181 @@ h1.title {
   text-align: center;
 }
 </style>
-<div id="introduction" class="section level2">
-<h2>Introduction</h2>
-</div>
-<div id="website-overview" class="section level2">
-<h2>Website Overview</h2>
-</div>
-<div id="dataset" class="section level2">
-<h2>Dataset</h2>
-</div>
-<div id="screencast" class="section level2">
-<h2>Screencast</h2>
-</div>
-<div id="group-members" class="section level2">
-<h2>Group Members</h2>
+<div id="the-group-members-names-and-unis" class="section level2">
+<h2>The group members (names and UNIs)</h2>
 <p>Han Bao (hb2699)</p>
 <p>Jasmine Niu (jn2855)</p>
 <p>Qing Zhou (qz2266)</p>
 <p>Zuoqiao Cui (zc2610)</p>
 <p>Yuhuan Lin (yl5221)</p>
 </div>
-
-
-
+<div id="the-tentative-project-title" class="section level2">
+<h2>The tentative project title</h2>
+<p>NYC Childcare Center Inspections</p>
+</div>
+<div id="the-motivation-for-this-project" class="section level2">
+<h2>The motivation for this project</h2>
+<p>High-quality childcare is important for children safety and health.
+In our homework, we did some data visualization with the NYC restaurant
+inspection dataset. We find this very inspiring and the idea of
+analyzing child care center inspections’ data came to our mind. A
+violation in a health care center would be, to some extent, more serious
+than violation in the restaurant and we would consider our project as a
+meaningful and realistic topic. We aim to find out some possible
+variables that would influence the rate of violation in child care
+centers in NYC.</p>
+</div>
+<div id="the-intended-final-products" class="section level2">
+<h2>The intended final products</h2>
+<ol style="list-style-type: decimal">
+<li><p>Interactive maps and dashboard (See “Visualization”)</p></li>
+<li><p>A report that summarizes exploratory analysis results with
+corresponding plots, fits three linear regression models about different
+types of violation rate and relevant interpretations.</p></li>
+</ol>
+</div>
+<div id="the-anticipated-data-sources" class="section level2">
+<h2>The anticipated data sources</h2>
+<p>Our research focuses on the DOHMH Childcare Center Inspections
+dataset and other related datasets, aiming to investigate and visualize
+the overall trends for key outcomes including childcare violation rate
+percent, public health hazardous violation rate, critical violation
+rate, etc. across NYC five boroughs over time. The DOHMH Childcare
+Center Inspections dataset comes from the NYC Open Data (<a
+href="https://opendata.cityofnewyork.us/"
+class="uri">https://opendata.cityofnewyork.us/</a>). It describes the
+results of DOHMH’s inspection on child care centers in NYC and any
+associated violations at active, city-regulated, center-based child care
+programs and summer camps over the past 3 years.</p>
+</div>
+<div id="the-planned-analyses-visualizations-coding-challenges"
+class="section level2">
+<h2>The planned analyses / visualizations / coding challenges</h2>
+<div id="planned-analyses" class="section level3">
+<h3>Planned analyses</h3>
+<p>Prior to data analysis, we will search for information such as yearly
+city budget on childcare and health care challenges in 2019-2022 and
+review relevant literature. First, we will explore the possible
+relationship between the outcomes and the potential predictors, such as
+major demographic variables, total educational workers, program type,
+average annual income per capita, as well as government funding in
+specific districts where the childcare centers are located.
+Visualization will be performed to see if there are differences in key
+outcomes among different categories or levels of these predictor
+candidates, followed by t-test or ANOVA to check if the differences are
+significant. Chi-squared tests will also be employed if necessary for
+the initial testing of the independence or association between outcomes
+and predictors. Next, linear or ordinal regression models will be
+established to confirm or refute our hypotheses.</p>
+<p>We expect to have analyses on violation rate, public health hazard
+rate, and critical violation rate influenced by variables such as
+maximum capacity, different boroughs, numbers of educational workers,
+maximum capacity of program, and age range of the program. We’ll choose
+variables whichever we find statistically significant for the model.</p>
+</div>
+<div id="visualizations" class="section level3">
+<h3>Visualizations</h3>
+<ol style="list-style-type: decimal">
+<li><p>Interactive maps that include the following information: average
+critical violation rate by boroughs in the past 3 years (2019-2022),
+distribution of childcare centers by violation categories</p></li>
+<li><p>A dashboard that allows users to search for violation centers
+according to the violation description, zip code and so on</p></li>
+<li><p>Time trend graph reflecting average critical violation rate over
+time</p></li>
+<li><p>Histograms or scatterplots showing relevant information, e.g. the
+number of different age-range program in each borough</p></li>
+</ol>
+</div>
+<div id="coding-challenges" class="section level3">
+<h3>Coding challenges</h3>
+<ol style="list-style-type: decimal">
+<li><p>We need a clear understanding and their relations on the four
+columns: violation rate, average violation rate, critical violation
+rate, average violation rate.</p></li>
+<li><p>Some other useful datasets influencing childcare should be found
+to produce a more comprehensive outcome.</p></li>
+</ol>
 </div>
 </div>
+<div id="the-planned-timeline" class="section level2">
+<h2>The planned timeline</h2>
+<table>
+<colgroup>
+<col width="39%" />
+<col width="60%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Date</th>
+<th>Plan</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>November 8</td>
+<td>Group brainstorm meeting</td>
+</tr>
+<tr class="even">
+<td>November 10</td>
+<td>Draft proposal and discussion meeting</td>
+</tr>
+<tr class="odd">
+<td>November 12</td>
+<td>Team registration and proposal</td>
+</tr>
+<tr class="even">
+<td>November 15 - 18</td>
+<td>Project review meeting</td>
+</tr>
+<tr class="odd">
+<td>November 21 - 25</td>
+<td>Discussion and adjustment based on the project review meeting</td>
+</tr>
+<tr class="even">
+<td>November 28 - December 3</td>
+<td>Import, tidy and manipulate the data; conduct planned analysis and
+visualization</td>
+</tr>
+<tr class="odd">
+<td>December 4 - 8</td>
+<td>Finish the report, webpage and screencast</td>
+</tr>
+<tr class="even">
+<td>December 9 - 10</td>
+<td>Revise (if necessary) and submit the project</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="work-flow" class="section level2">
+<h2>Work flow:</h2>
+<ol style="list-style-type: decimal">
+<li><p>Motivation</p></li>
+<li><p>Data Processing and cleaning: External data sets might be
+needed</p></li>
+<li><p>Exploratory analysis through visualization–</p></li>
+</ol>
+<p>a).Violation rate over time b).Violation rate over borough
+c).Violation rate across different program type</p>
+<ol start="4" style="list-style-type: decimal">
+<li>Statistical analysis–</li>
+</ol>
+<p>a). Statistical tests: - ANOVA - Chi-squared - proportion test</p>
+<p>b). Regression models: - linear - ordinal</p>
+<ol start="5" style="list-style-type: decimal">
+<li><p>Mapping</p></li>
+<li><p>Conclusion and discussion:</p></li>
+</ol>
+<ul>
+<li>main conclusion</li>
+<li>insight or signification</li>
+<li>strength, limitation or future direction</li>
+</ul>
+</div>
+
+
+
 
 </div>
 
@@ -448,35 +521,6 @@ $(document).ready(function () {
 
 <!-- code folding -->
 
-<script>
-$(document).ready(function ()  {
-
-    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
-    $('.unlisted.unnumbered').addClass('toc-ignore')
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>

@@ -3,11 +3,23 @@ output_dir: "."
 navbar:
   title: "Home"
   left:
+   - text: ''
+     href:
+   - text: ''
+     href:
+   - text: ''
+     href:
+   - text: ''
+     href:
+   - text: ''
+     href:
+   - text: ''
+     href:
    - text: 'Proposal'
      href: proposal.html
    - text: 'Visualization'
      href: http://github.com/finijas01/
-   - text: 'Dashboard'
+   - text: 'FlexDashboard'
      href: http://github.com/finijas01/
    - text: 'Model Analysis'
      menu:
@@ -15,7 +27,6 @@ navbar:
         href:  model1.html
       - text: "Model 2"
         href:  model2.html
-  right:     
    - text: 'Project Report'
      href: http://github.com/finijas01/
    - icon: fa-github fa-lg
