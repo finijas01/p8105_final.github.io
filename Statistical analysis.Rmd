@@ -1,0 +1,133 @@
+---
+title: "Statistical analysis"
+author: "Qing Zhou"
+date: "2022-12-09"
+output: github_document
+---
+
+
+```{r}
+library(tidyverse)
+library(dplyr)
+library(rvest)
+library(purrr)
+library(ggplot2)
+library(modelr)
+library(mgcv)
+library(patchwork)
+library(viridis)
+library(fastDummies)
+set.seed(1)
+```
+
+1. Import original dataset
+
+2. Remove repeated data
+
+```{r}
+childcare_inspection_df = read_csv("./data/DOHMH_Childcare_Center_Inspections.csv") %>% 
+janitor::clean_names() %>% 
+distinct()
+```
+
+Basic data cleaning
+
+1. We select 22 key variables in this dataset to finish our analysis
+
+2. Drop NA
+
+3. Create a new variable "educational_worker_ratio"
+
+4. Make all data in "program_type" and "facility_type" columns show in the same format : lower case
+
+```{r}
+childcare_inspection_df = childcare_inspection_df %>% 
+  select(center_name, borough, zip_code, status, age_range, maximum_capacity,program_type, facility_type, 
+         child_care_type, violation_category,
+         violation_status,violation_rate_percent:average_critical_violation_rate,regulation_summary,
+         inspection_summary_result) %>%
+  drop_na(zip_code, age_range, violation_rate_percent,public_health_hazard_violation_rate, critical_violation_rate) %>% 
+  filter(maximum_capacity != 0) %>% 
+  mutate(
+    educational_worker_ratio = total_educational_workers/maximum_capacity,
+    program_type = tolower(program_type),
+    facility_type = tolower(facility_type),
+    borough =  as.factor(borough),
+    status = as.factor(status),
+    program_type = as.factor(program_type),
+    facility_type = as.factor(facility_type),
+    child_care_type = as.factor(child_care_type),
+    age_range = as.factor(age_range)
+  ) 
+```
+
+
+We calculated a new violation rate for each distinct program using violation category column.
+```{r}
+center_specific_df = childcare_inspection_df %>% 
+  relocate(center_name, program_type) %>% 
+  group_by(center_name, program_type) %>% 
+  mutate(
+    n_na = sum(is.na(violation_category)), 
+    n_violation = sum(!is.na(violation_category)), 
+    rate = n_violation/(n_violation + n_na)) %>% 
+  arrange(center_name, program_type)
+```
+
+### Statistical analysis
+
+#### 1. Anova test
+
+H0: The average number of violation in each center are not different across boroughs
+
+H1: The average number of violation in each center are not different across boroughs
+```{r}
+# select distinct records of each center
+
+center_distinct_df_2 = center_specific_df %>%
+  select(center_name, program_type, borough, status, maximum_capacity, total_educational_workers, educational_worker_ratio, n_violation, rate) %>%
+  distinct()
+
+vio_borough = center_distinct_df_2 %>%
+  group_by(borough, center_name) %>%
+  summarize(n_violate = sum(n_violation))
+
+
+fit_borough = lm(n_violate ~ borough, data = vio_borough)
+summary(fit_borough)
+anova(fit_borough) %>% knitr::kable(caption = "One way anova of violation frequency and borough")
+```
+The p-value of the above Anova test is 3.106e-10. Thus, at 0.05 significance level, we reject the null hypothesis and conclude that during the past 3 years, the average number of violations per center varies across boroughs. 
+
+#### 2. Chi-square Test - 3 Violation Types and Boroughs
+
+H0:  the proportions of ciritical violation among borough levels are equal;
+AND  the proportions of general violation among borough levels are equal;
+AND  the proportions of public health hazard violation among borough levels are equal;
+vs.
+H1:  not all proportions are equal.
+```{r}
+three_violation = 
+  childcare_inspection_df %>%
+  select(borough, violation_category) %>% 
+  filter(violation_category != "NA")  %>% 
+  count(borough, violation_category,) %>% 
+  pivot_wider(
+    names_from = "violation_category",
+    values_from = "n"
+  ) %>% 
+  data.matrix() %>% 
+  subset(select = -c(borough))
+
+rownames(three_violation) <- c("Bronx", "Brooklyn", "Manhattan", "Queens", "Staten Island")
+
+three_violation %>% 
+  knitr::kable(caption = "Results Table")
+```
+```{r}
+chisq.test(three_violation)
+```
+
+The result of chi-square shows that , at significant level α=0.05, so we reject the null hypothesis and conclude that there does exist at least one borough’s proportion of violation amounts is different from others.
+At 0.05 significance level, χ2>χcritical, with p-value < 2.2e-16. Thus, we reject the null hypothesis and conclude that there
+is sufficient evidence that the category of violation is significantly different by borough.

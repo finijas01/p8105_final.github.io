@@ -1,10 +1,7 @@
 ---
 title: "logistic regression"
 author: "Han Bao"
-<<<<<<< HEAD
-date: "r Sys.Date()"
-=======
->>>>>>> 8e09d533aa89599338f7f25eccb81f1aaacad1d9
+date: "12-9-2022"
 output: github_document
 ---
 
@@ -54,11 +51,12 @@ head(child_data, 10)
 ```
 
 ###Fit the logistic regression model
+
 #fit a logistic regression with violation vs no violation as the outcome and the rest as predictors.And Obtain the estimate and CI of the adjusted odds ratio for having violation.
 
 
 ```{r}
-model_log <- glm(violation ~borough + status  + program_type + facility_type + child_care_type + average_total_educational_workers+average_public_health_hazard_violation_rate+educational_worker_ratio,data = child_data,family = binomial(link=logit))
+model_log <- glm(violation ~ status  + facility_type + educational_worker_ratio,data = child_data,family = binomial(link=logit))
 model_log %>%
   broom::tidy(conf.int = T) %>% 
   mutate(OR = exp(estimate),
@@ -75,20 +73,50 @@ head(predicted.classes)
 #probabilities
 ```
 ```{r}
-child_data <- child_data %>%
-  dplyr::select(average_total_educational_workers,average_public_health_hazard_violation_rate,educational_worker_ratio) 
-predictors <- colnames(child_data)
-#predictors
+summary(model_log)
 ```
 
+###visualization
+```{r, warning=FALSE, message=FALSE}
+#  Extract the adjusted odds ratio (and CI) for having violation comparing licence type of "permitted" against "Expired-in renewal" from all the boroughs.
+all_logistic = child_data %>% 
+  nest(data = -borough) %>% 
+  mutate(
+    models = map(data, ~glm(violation ~ status  +  facility_type + educational_worker_ratio, data = ., family = binomial(link = "logit"))),
+    results = map(models, ~broom::tidy(.x, conf.int = T))) %>% 
+  select(borough, results) %>% 
+  unnest(results) %>% 
+  mutate(
+    OR = exp(estimate),
+    CI_lower = exp(conf.low),
+    CI_upper = exp(conf.high),
+    p_val = rstatix::p_format(p.value, digits = 2)
+  ) %>% 
+  filter(term == "statusExpired-In Renewal") %>% 
+  select(borough, OR, CI_lower,CI_upper, p_val) 
+all_logistic %>% 
+  knitr::kable(digits = 3, align = "llccc", col.names = c("Borough", "Estimated adjusted OR", "CI lower bound", "CI upper bound", "p-value"))
+```
+```{r, warning=FALSE, message=FALSE}
+# Create a plot showing the estimated ORs and CIs for each borough
+all_logistic %>% 
+  mutate(borough = fct_reorder(borough, OR)) %>%
+  ggplot(aes(x = borough, y = OR)) +
+  geom_point() +
+  geom_errorbar(aes(ymin = CI_lower, ymax = CI_upper)) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
+  labs(x = "Borough", y = "Estimated OR with CI")
+```
+
+
+##From this plot we can see that in Brooklyn, Bronx, Queens and Manhattan, the 95% confidence interval of odds ratio doesn't include 1 and this tells us that in these four regions, cases with licence status of permitted generally have less violation than cases with status of expired or in-renewal.
 ###Model diagnostics
 #1. Remove categorical variables from the original data frame and bind the logit values to the data
 ```{r}
 #select only numeric preditors
-#child_data <- child_data %>%
-  #dplyr::select(average_total_educational_workers,average_public_health_hazard_violation_rate,educational_worker_ratio) 
-#predictors <- colnames(child_data)
-# Bind the logit and tidying the data for plots
+child_data <- child_data %>%
+  dplyr::select(educational_worker_ratio) 
+predictors <- colnames(child_data)
 child_data <- child_data %>%
   mutate(logit = log(probabilities/(1-probabilities))) %>%
   gather(key = "predictors", value = "predictor.value", -logit)
@@ -102,6 +130,7 @@ ggplot(child_data, aes(logit, predictor.value))+
   facet_wrap(~predictors, scales = "free_y")
 ```
 
+##From this plot we can see that variable educational_worker_ratio is quite linearly associated with the violation rate in logit scale.
 ```{r}
 # Extract model results
 model_log.data <- augment(model_log) %>% 
@@ -110,4 +139,5 @@ ggplot(model_log.data, aes(index, .std.resid)) +
   geom_point(aes(color = violation), alpha = .5) +
   theme_bw()
 ```
+
 
