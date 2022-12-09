@@ -1,7 +1,10 @@
 ---
 title: "logistic regression"
 author: "Han Bao"
-date: "`r Sys.Date()`"
+<<<<<<< HEAD
+date: "r Sys.Date()"
+=======
+>>>>>>> 8e09d533aa89599338f7f25eccb81f1aaacad1d9
 output: github_document
 ---
 

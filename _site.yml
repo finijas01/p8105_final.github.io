@@ -2,6 +2,14 @@ name: "Yay internet!"
 output_dir: "."
 navbar:
   title: "Home"
+<<<<<<< HEAD
+<<<<<<< HEAD
+  right:
+    - icon: fa-github fa-lg
+      href: http://github.com/finijas01/
+=======
+=======
+>>>>>>> 8e09d533aa89599338f7f25eccb81f1aaacad1d9
   left:
    - text: ''
      href:
@@ -39,6 +47,10 @@ navbar:
      href:
    - icon: fa-github fa-lg
      href: http://github.com/finijas01/
+<<<<<<< HEAD
+>>>>>>> 37db35354b14f908a9cd1e396fab3259e4b6edca
+=======
+>>>>>>> 8e09d533aa89599338f7f25eccb81f1aaacad1d9
 output:
   html_document:
     theme: flatly

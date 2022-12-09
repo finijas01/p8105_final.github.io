@@ -112,3 +112,28 @@ variables whichever we find statistically significant for the model.
 | November 28 - December 3 | Import, tidy and manipulate the data; conduct planned analysis and visualization |
 | December 4 - 8           | Finish the report, webpage and screencast                                        |
 | December 9 - 10          | Revise (if necessary) and submit the project                                     |
+
+## Work flow:
+
+1.  Motivation
+
+2.  Data Processing and cleaning: External data sets might be needed
+
+3.  Exploratory analysis through visualization–
+
+a).Violation rate over time b).Violation rate over borough c).Violation
+rate across different program type
+
+4.  Statistical analysis–
+
+a). Statistical tests: - ANOVA - Chi-squared - proportion test
+
+b). Regression models: - linear - ordinal
+
+5.  Mapping
+
+6.  Conclusion and discussion:
+
+-   main conclusion
+-   insight or signification
+-   strength, limitation or future direction

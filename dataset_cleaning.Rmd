@@ -53,14 +53,15 @@ childcare_inspection_df = childcare_inspection_df %>%
     status = as.factor(status),
     program_type = as.factor(program_type),
     facility_type = as.factor(facility_type),
-    child_care_type = as.factor(child_care_type)
+    child_care_type = as.factor(child_care_type),
+    age_range = as.factor(age_range)
   ) 
 ```
 
 
 We calculated a new violation rate for each distinct program using violation category column.
 ```{r}
-childcare_inspection_df %>% 
+center_specific_df = childcare_inspection_df %>% 
   relocate(center_name, program_type) %>% 
   group_by(center_name, program_type) %>% 
   mutate(
@@ -69,4 +70,7 @@ childcare_inspection_df %>%
     rate = n_violation/(n_violation + n_na)) %>% 
   arrange(center_name, program_type)
 ```
+
+
+
 
