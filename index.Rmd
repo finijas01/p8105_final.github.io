@@ -1,0 +1,37 @@
+---
+title: "DOHMH Childcare Center Inspections"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    theme: flatly
+---
+
+<style type="text/css">
+
+h1.title {
+  font-size: 38px;
+  color: Black;
+  text-align: center;
+}
+</style>
+
+# Introduction
+
+# Website Overview
+
+# Screencast
+
+# Group Members
+
+Han Bao (hb2699)
+
+Jasmine Niu (jn2855)
+
+Qing Zhou (qz2266)
+
+Zuoqiao Cui (zc2610)
+
+Yuhuan Lin (yl5221)
+
+
