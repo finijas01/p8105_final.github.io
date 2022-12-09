@@ -39,10 +39,17 @@ child_data = child_data %>%
 ```
 
 ``` r
+#create binary variable according to regulation_summary
+child_data <- child_data %>%
+  mutate(violation = if_else(.$regulation_summary == 'There were no new violations observed at the time of this inspection/visit.','0','1'),
+         violation = as.factor(violation))
+```
+
+``` r
 head(child_data, 10)
 ```
 
-    ## # A tibble: 10 × 22
+    ## # A tibble: 10 × 23
     ##    center_name    borough zip_c…¹ status age_r…² maxim…³ progr…⁴ facil…⁵ child…⁶
     ##    <chr>          <fct>     <dbl> <fct>  <chr>     <dbl> <fct>   <fct>   <fct>  
     ##  1 TRADITIONAL E… BROOKL…   11221 Expir… 0 YEAR…      60 infant… gdc     Child …
@@ -55,7 +62,7 @@ head(child_data, 10)
     ##  8 BRIGHT START … QUEENS    11101 Permi… 2 YEAR…      72 presch… gdc     Child …
     ##  9 UNIVERSITY SE… BROOKL…   11201 Expir… 0 YEAR…     550 all ag… camp    Camp   
     ## 10 THE FRIENDS O… BROOKL…   11213 Permi… 2 YEAR…     100 presch… gdc     Child …
-    ## # … with 13 more variables: violation_category <chr>, violation_status <chr>,
+    ## # … with 14 more variables: violation_category <chr>, violation_status <chr>,
     ## #   violation_rate_percent <dbl>, average_violation_rate_percent <dbl>,
     ## #   total_educational_workers <dbl>, average_total_educational_workers <dbl>,
     ## #   public_health_hazard_violation_rate <dbl>,
@@ -63,19 +70,13 @@ head(child_data, 10)
     ## #   critical_violation_rate <dbl>, average_critical_violation_rate <dbl>,
     ## #   regulation_summary <chr>, inspection_summary_result <chr>, …
 
-``` r
-#create binary variable according to regulation_summary
-child_data <- child_data %>%
-  mutate(violation = if_else(.$regulation_summary == 'There were no new violations observed at the time of this inspection/visit.','0','1'),
-         violation = as.factor(violation))
-```
-
-\#fit a logistic regression with violation vs no violation as the
-outcome and the rest as predictors.And Obtain the estimate and CI of the
-adjusted odds ratio for having violation.
+\###Fit the logistic regression model \#fit a logistic regression with
+violation vs no violation as the outcome and the rest as predictors.And
+Obtain the estimate and CI of the adjusted odds ratio for having
+violation.
 
 ``` r
-model_log <- glm(violation ~borough + status + maximum_capacity + program_type + facility_type + child_care_type + total_educational_workers + average_total_educational_workers+average_public_health_hazard_violation_rate+educational_worker_ratio,data = child_data,family = binomial(link=logit))
+model_log <- glm(violation ~borough + status  + program_type + facility_type + child_care_type + average_total_educational_workers+average_public_health_hazard_violation_rate+educational_worker_ratio,data = child_data,family = binomial(link=logit))
 model_log %>%
   broom::tidy(conf.int = T) %>% 
   mutate(OR = exp(estimate),
@@ -89,23 +90,81 @@ model_log %>%
 
 | Term                                         | Estimated adjusted OR | CI lower bound | CI upper bound | p-value  |
 |:---------------------------------------------|:---------------------:|:--------------:|:--------------:|:---------|
-| (Intercept)                                  |         4.594         |     31.953     |  4.486230e+02  | \<0.0001 |
-| boroughBROOKLYN                              |         0.352         |     1.376      |  1.472000e+00  | \<0.0001 |
-| boroughMANHATTAN                             |         0.456         |     1.509      |  1.656000e+00  | \<0.0001 |
-| boroughQUEENS                                |         0.648         |     1.798      |  2.044000e+00  | \<0.0001 |
-| boroughSTATEN ISLAND                         |         0.248         |     1.231      |  1.343000e+00  | \<0.0001 |
-| statusExpired-In Renewal                     |         0.446         |     1.435      |  1.731000e+00  | \<0.0001 |
-| statusPermitted                              |         0.354         |     1.336      |  1.539000e+00  | \<0.0001 |
-| maximum_capacity                             |         1.000         |     2.717      |  2.720000e+00  | 0.608    |
-| program_typeinfant toddler                   |         0.929         |     2.133      |  3.129000e+00  | 0.484    |
-| program_typepreschool                        |         1.007         |     2.325      |  3.325000e+00  | 0.941    |
-| program_typeschool age camp                  |         1.683         |     1.168      |  1.173805e+16  | 0.675    |
+| (Intercept)                                  |         4.715         |     38.429     |  4.501930e+02  | \<0.0001 |
+| boroughBROOKLYN                              |         0.351         |     1.376      |  1.472000e+00  | \<0.0001 |
+| boroughMANHATTAN                             |         0.454         |     1.506      |  1.652000e+00  | \<0.0001 |
+| boroughQUEENS                                |         0.648         |     1.798      |  2.045000e+00  | \<0.0001 |
+| boroughSTATEN ISLAND                         |         0.247         |     1.230      |  1.342000e+00  | \<0.0001 |
+| statusExpired-In Renewal                     |         0.448         |     1.438      |  1.736000e+00  | \<0.0001 |
+| statusPermitted                              |         0.355         |     1.337      |  1.541000e+00  | \<0.0001 |
+| program_typeinfant toddler                   |         0.908         |     2.123      |  2.992000e+00  | 0.3159   |
+| program_typepreschool                        |         1.001         |     2.355      |  3.218000e+00  | 0.9944   |
+| program_typeschool age camp                  |         1.644         |     1.164      |  4.762402e+15  | 0.6894   |
 | facility_typegdc                             |          NA           |       NA       |       NA       | NA       |
 | facility_typesbcc                            |          NA           |       NA       |       NA       | NA       |
 | child_care_typeChild Care - Infants/Toddlers |          NA           |       NA       |       NA       | NA       |
 | child_care_typeChild Care - Pre School       |          NA           |       NA       |       NA       | NA       |
 | child_care_typeSchool Based Child Care       |          NA           |       NA       |       NA       | NA       |
-| total_educational_workers                    |         1.002         |     2.712      |  2.733000e+00  | 0.45     |
 | average_total_educational_workers            |          NA           |       NA       |       NA       | NA       |
 | average_public_health_hazard_violation_rate  |          NA           |       NA       |       NA       | NA       |
-| educational_worker_ratio                     |         0.682         |     1.661      |  2.495000e+00  | 0.011    |
+| educational_worker_ratio                     |         0.706         |     1.721      |  2.503000e+00  | 0.0093   |
+
+``` r
+# Predict the probability (p) of violation positivity
+probabilities <- predict(model_log, type = "response")
+predicted.classes <- ifelse(probabilities > 0.5, "pos", "neg")
+head(predicted.classes)
+```
+
+    ##     1     2     3     4     5     6 
+    ## "neg" "neg" "neg" "neg" "neg" "pos"
+
+``` r
+#probabilities
+```
+
+``` r
+child_data <- child_data %>%
+  dplyr::select(average_total_educational_workers,average_public_health_hazard_violation_rate,educational_worker_ratio) 
+predictors <- colnames(child_data)
+#predictors
+```
+
+\###Model diagnostics \#1. Remove categorical variables from the
+original data frame and bind the logit values to the data
+
+``` r
+#select only numeric preditors
+#child_data <- child_data %>%
+  #dplyr::select(average_total_educational_workers,average_public_health_hazard_violation_rate,educational_worker_ratio) 
+#predictors <- colnames(child_data)
+# Bind the logit and tidying the data for plots
+child_data <- child_data %>%
+  mutate(logit = log(probabilities/(1-probabilities))) %>%
+  gather(key = "predictors", value = "predictor.value", -logit)
+```
+
+\#2. Create the scatter plots:
+
+``` r
+ggplot(child_data, aes(logit, predictor.value))+
+  geom_point(size = 0.5, alpha = 0.5) +
+  geom_smooth(method = "loess") + 
+  theme_bw() + 
+  facet_wrap(~predictors, scales = "free_y")
+```
+
+    ## `geom_smooth()` using formula 'y ~ x'
+
+![](logistic-regression_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+
+``` r
+# Extract model results
+model_log.data <- augment(model_log) %>% 
+  mutate(index = 1:n()) 
+ggplot(model_log.data, aes(index, .std.resid)) + 
+  geom_point(aes(color = violation), alpha = .5) +
+  theme_bw()
+```
+
+![](logistic-regression_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
