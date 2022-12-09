@@ -133,13 +133,14 @@ boxplot(center_distinct_df$educational_worker_ratio, main = "Edu-worker Ratio")
 boxplot(center_distinct_df$rate, main = "Violation Rate")
 ```
 
-
 ```{r}
 # Square root transformation
 full_lm_sqrt = center_distinct_df %>%
   lm(sqrt(rate) ~ program_type + borough + status + educational_worker_ratio, data = .)
 summary(full_lm_sqrt)
 ```
+Decision: Since there are 0 value in the outcome variable, log-transformation is not applicable. Moreover, sqrt transformation didn't improve model goodness of fit. Thus, we will keep the initial model and decide no transformation needed. 
+
 
 ### remove influential points
 
@@ -176,7 +177,7 @@ model_caret$finalModel
 print(model_caret)
 ```
 
-
+Final linear model: full_lm_out
 
 
 
