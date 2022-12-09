@@ -1,0 +1,53 @@
+---
+title: "DOHMH Childcare Center Inspections"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    theme: flatly
+---
+
+<style type="text/css">
+
+h1.title {
+  font-size: 38px;
+  color: Black;
+  text-align: center;
+}
+</style>
+
+## Introduction
+
+## Website Overview
+
+## Dataset
+
+In this project, the dataset we used is [here](https://data.cityofnewyork.us/Health/DOHMH-Childcare-Center-Inspections/dsg6-ifza), which is obtained from [NYC OpenData](https://opendata.cityofnewyork.us/)
+
+This dataset contains a list of all inspections conducted and any associated violations at active, city-regulated,
+
+center-based child care programs and summer camps over the past 3 years. The violations are pre-adjudicated.
+
+Violations that are subject to potential penalties (fines) are submitted to NYC Office of Administrative Trials and
+
+Hearing where they are adjudicated as either sustained/upheld or dismissed. The dataset also contains additional
+
+information on the programs, including license information. For more information on child care in NYC visit:
+
+https://www1.nyc.gov/site/doh/services/child-care.page.
+
+## Screencast
+
+## Group Members
+
+Han Bao (hb2699)
+
+Jasmine Niu (jn2855)
+
+Qing Zhou (qz2266)
+
+Zuoqiao Cui (zc2610)
+
+Yuhuan Lin (yl5221)
+
+

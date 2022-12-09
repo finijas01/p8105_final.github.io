@@ -1,0 +1,44 @@
+name: "Yay internet!"
+output_dir: "."
+navbar:
+  title: "Home"
+  left:
+   - text: ''
+     href:
+   - text: ''
+     href:
+   - text: ''
+     href:
+   - text: ''
+     href:
+   - text: ''
+     href:
+   - text: ''
+     href:
+   - text: 'Proposal'
+     href: proposal.html
+   - text: 'Visualization'
+     href: http://github.com/finijas01/
+   - text: 'FlexDashboard'
+     href: http://github.com/finijas01/
+   - text: 'Model Analysis'
+     menu:
+      - text: "Model 1"
+        href:  model1.html
+      - text: "Model 2"
+        href:  model2.html
+   - text: 'Project Report'
+     href: http://github.com/finijas01/
+   - text: ''
+     href:
+   - text: ''
+     href:
+   - text: ''
+     href:
+   - text: ''
+     href:
+   - icon: fa-github fa-lg
+     href: http://github.com/finijas01/
+output:
+  html_document:
+    theme: flatly
