@@ -11,9 +11,12 @@ output:
 
 h1.title {
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
 >>>>>>> 37db35354b14f908a9cd1e396fab3259e4b6edca
+=======
+>>>>>>> 8e09d533aa89599338f7f25eccb81f1aaacad1d9
   font-size: 38px;
   color: Black;
   text-align: center;
@@ -21,13 +24,33 @@ h1.title {
 </style>
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 8e09d533aa89599338f7f25eccb81f1aaacad1d9
 ## Introduction
 
 ## Website Overview
 
 ## Dataset
 
+<<<<<<< HEAD
+=======
+In this project, the dataset we used is [here](https://data.cityofnewyork.us/Health/DOHMH-Childcare-Center-Inspections/dsg6-ifza), which is obtained from [NYC OpenData](https://opendata.cityofnewyork.us/)
+
+This dataset contains a list of all inspections conducted and any associated violations at active, city-regulated,
+
+center-based child care programs and summer camps over the past 3 years. The violations are pre-adjudicated.
+
+Violations that are subject to potential penalties (fines) are submitted to NYC Office of Administrative Trials and
+
+Hearing where they are adjudicated as either sustained/upheld or dismissed. The dataset also contains additional
+
+information on the programs, including license information. For more information on child care in NYC visit:
+
+https://www1.nyc.gov/site/doh/services/child-care.page.
+
+>>>>>>> 8e09d533aa89599338f7f25eccb81f1aaacad1d9
 ## Screencast
 
 ## Group Members
@@ -42,5 +65,8 @@ Zuoqiao Cui (zc2610)
 
 Yuhuan Lin (yl5221)
 
+<<<<<<< HEAD
 >>>>>>> 37db35354b14f908a9cd1e396fab3259e4b6edca
+=======
+>>>>>>> 8e09d533aa89599338f7f25eccb81f1aaacad1d9
 
