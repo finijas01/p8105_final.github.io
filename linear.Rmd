@@ -1,10 +1,14 @@
 ---
-title: "linear"
-date: "2022-12-08"
-output: github_document
+title: "Linear Regression Model"
+output: 
+  html_document:
+    code_folding: hide
+    toc: true
+    toc_float: true
+    theme: flatly
 ---
 
-```{r}
+```{r warning= FALSE, message=FALSE}
 library(tidyverse)
 library(dplyr)
 library(rvest)
@@ -19,21 +23,19 @@ set.seed(1)
 ```
 
 
-### Linear regression model
-
-*Model selection:*
+###Model selection:
 
 To explore the possible predictors contributing to the center-specific violation rate under each program type, we built a linear regression model. In this model, we focused on the violation rate and properties of each individual center.
 
 To start with, we created a new variable named "rate", which represents the violation rate for each center, by using violation category column. Here, rate = number of total violation for each center and program / number of total inspection for each center and program, during the past 3 year. This variable was used as the outcome of the linear regression. 
 
-```{r echo = FALSE}
+```{r warning= FALSE, message=FALSE}
 childcare_inspection_df = read_csv("./data/DOHMH_Childcare_Center_Inspections.csv") %>% 
 janitor::clean_names() %>% 
 distinct()
 ```
 
-```{r echo = FALSE}
+```{r warning= FALSE, message=FALSE}
 childcare_inspection_df = childcare_inspection_df %>% 
   select(center_name, borough, zip_code, status, age_range, maximum_capacity,program_type, facility_type, 
          child_care_type, violation_category,
@@ -56,7 +58,7 @@ childcare_inspection_df = childcare_inspection_df %>%
   
 ```
 
-```{r echo = FALSE}
+```{r warning= FALSE, message=FALSE}
 # calculate a new violation rate for each distinct program using violation category column.
 center_specific_df = childcare_inspection_df %>% 
   relocate(center_name, program_type) %>% 
@@ -75,7 +77,7 @@ Linear model 1:
 
 First, we fit a full model using program type, borough, status, educational worker ratio of center-specific distinct records.
 
-```{r}
+```{r warning= FALSE, message=FALSE}
 # select distinct records and related variables of each center
 center_distinct_df = center_specific_df %>%
   select(center_name, program_type, borough, status, maximum_capacity, total_educational_workers, educational_worker_ratio, rate)
@@ -93,7 +95,7 @@ Linear model 2:
 
 Second, we also proposed an alternative model by using maximum_capacity, total educational workers and their interaction term as the predictors, instead of the educational worker ratio. 
 
-```{r}
+```{r warning= FALSE, message=FALSE}
 # fit an alternative model
 alt_lm = center_distinct_df %>%
  lm(rate ~ program_type + borough + status + maximum_capacity * total_educational_workers, data = .) 
@@ -105,7 +107,7 @@ alt_lm %>%
 
 After comparing these two models, we decided to keep full_lm model, due to its better goodness of fit and lower correlation among variables.  
 
-```{r}
+```{r warning= FALSE, message=FALSE}
 # assess multicollinearity by vif
 library(performance) 
 check_collinearity(full_lm) # low correlation
@@ -125,7 +127,7 @@ We checked the assumptions of the residuals by using 4 plots as follows. We foun
 4. Outliers: from the Residuals vs Leverage plot, we can see no case is
 outside of the dashed line of Cook’s distance 0.5, suggesting no influential observations. 
 
-```{r}
+```{r warning= FALSE, message=FALSE}
 # model diagnostics: Residuals vs Fitted plot, QQ plot, Scale_location, Residuals vs Leverage
 plot(full_lm)
 ```
@@ -138,7 +140,7 @@ the data more ‘normal’. From the boxplot of two numerical variables rate and
 
 Since there are 0 value in these variables, log-transformation is not applicable. Then we did square root transformation to the variable educational_worker_ratio. However, this step didn't significantly improved the model.So we decided to go without transformation.
 
-```{r}
+```{r warning= FALSE, message=FALSE}
 # Boxblot to check the initial distribution of outcome and key predictor
 center_distinct_df  %>%
 par(mfrow = c(1,2))
@@ -146,7 +148,7 @@ boxplot(center_distinct_df$educational_worker_ratio, main = "Edu-worker Ratio")
 boxplot(center_distinct_df$rate, main = "Violation Rate")
 ```
 
-```{r transformation}
+```{r warning= FALSE, message=FALSE}
 # Square root transformation
 full_lm_sqrt = center_distinct_df %>%
   lm(rate ~ program_type + borough + status + sqrt(educational_worker_ratio), data = .)
@@ -154,7 +156,7 @@ full_lm_sqrt = center_distinct_df %>%
 
 In addition, although there is no influential points, case 12349 and 12318 affect the regression assumption as shown repeatedly.So we tried to fit a new model named full_lm_out by removing these two cases. This model works better then full_lm due to its increased adjusted R-square. 
 
-```{r}
+```{r warning= FALSE, message=FALSE}
 # exclude two influential records
 out_df = center_distinct_df[-c(12349, 12318),]
 
@@ -173,7 +175,7 @@ plot(full_lm_out)
 
 We used 5-fold cross validation to test the model performance. Based on a rule of thumb, RMSE values between 0.2 and 0.5 shows that the model can relatively predict the data accurately. Thus our model boasts good RMSE value(RMSE = 0.24), suggesting relatively good predictive ability.
 
-```{r}
+```{r warning= FALSE, message=FALSE}
 library(caret)
 # Use 5-fold validation and create the training sets
 train = trainControl(method = "cv", number = 5)
@@ -206,7 +208,7 @@ The value of the estimated mean violation rate for centers with licence status a
 
 The value of the estimated mean violation rate for centers implement infant toddler program is 0.028 less than centers implement all age camp program, while holding other variables constant.
 
-```{r}
+```{r warning= FALSE, message=FALSE}
 # Scatter plot with regression line overlaid and 95% confidence bands, between rate and our main predictor:educational worker ratio 
 out_df %>% 
   ggplot(aes(educational_worker_ratio, rate)) + geom_point(color = 'blue') + 
