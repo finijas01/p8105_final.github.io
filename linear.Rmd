@@ -18,27 +18,22 @@ library(fastDummies)
 set.seed(1)
 ```
 
-1. Import original dataset
 
-2. Remove repeated data
+### Linear regression model
 
-```{r}
+*Model selection:*
+
+To explore the possible predictors contributing to the center-specific violation rate under each program type, we built a linear regression model. In this model, we focused on the violation rate and properties of each individual center.
+
+To start with, we created a new variable named "rate", which represents the violation rate for each center, by using violation category column. Here, rate = number of total violation for each center and program / number of total inspection for each center and program, during the past 3 year. This variable was used as the outcome of the linear regression. 
+
+```{r echo = FALSE}
 childcare_inspection_df = read_csv("./data/DOHMH_Childcare_Center_Inspections.csv") %>% 
 janitor::clean_names() %>% 
 distinct()
 ```
 
-Basic data cleaning
-
-1. We select 22 key variables in this dataset to finish our analysis
-
-2. Drop NA
-
-3. Create a new variable "educational_worker_ratio"
-
-4. Make all data in "program_type" and "facility_type" columns show in the same format : lower case
-
-```{r}
+```{r echo = FALSE}
 childcare_inspection_df = childcare_inspection_df %>% 
   select(center_name, borough, zip_code, status, age_range, maximum_capacity,program_type, facility_type, 
          child_care_type, violation_category,
@@ -56,19 +51,13 @@ childcare_inspection_df = childcare_inspection_df %>%
     facility_type = as.factor(facility_type),
     child_care_type = as.factor(child_care_type),
     age_range = as.factor(age_range)
-  ) 
+  ) %>% 
+  filter(program_type != "school age camp")
+  
 ```
 
-
-### Linear regression model
-
-*Model selection:*
-
-To explore the possible predictors contributing to the center-specific violation rate under each program type, we built a linear regression model. In this model, we focused on the violation rate and properties of each individual center.
-
-To start with, we created a new variable named "rate", which represents the violation rate for each center, by using violation category column. Here, rate = number of total violation for each center and program / number of total inspection for each center and program, during the past 3 year. This variable was used as the outcome of the linear regression. 
-
-```{r}
+```{r echo = FALSE}
+# calculate a new violation rate for each distinct program using violation category column.
 center_specific_df = childcare_inspection_df %>% 
   relocate(center_name, program_type) %>% 
   group_by(center_name, program_type) %>% 
@@ -78,6 +67,7 @@ center_specific_df = childcare_inspection_df %>%
     rate = n_violation/(n_violation + n_na)) %>% 
   arrange(center_name, program_type)
 ```
+
 
 Next, we selected several variables closely related to the properties of each center, as the potential predictors. After a thorough literature review, we chose variables based on a hypothesized structure for the factors underlying violation rate. 
 
@@ -128,12 +118,12 @@ We checked the assumptions of the residuals by using 4 plots as follows. We foun
 
 1. Linearity and homoscedasticity: from the Residuals vs Fitted plot, we can see residuals form a horizontal 'band' around zero and its value evenly dispersed around this reference line, suggesting the variance of our residuals should be constant across all fitted values.
 
-2. Normality: from the Normal QQ plot, we can see a straight line with small departures if we don't consider cases 3134 and 12320, suggesting the residuals follows a normal distribution.
+2. Normality: from the Normal QQ plot, we can see a straight line with small departures if we don't consider cases 12349 and 12318, suggesting the residuals follows a normal distribution.
 
 3. Equal variance: again, from the Scale_Location plot, we can see a horizontal line with roughly equally spread points, suggesting the residuals are spread equally along the range of the predictors.
 
-4. Outliers: from the Residuals vs Leverage plot, we can see case 3134 is
-outside of the dashed line of Cook’s distance 0.5, suggesting they might be influential observations. Moreover, from other plots we can also find cases 3134 and 12320 kept showing up as outliers. 
+4. Outliers: from the Residuals vs Leverage plot, we can see no case is
+outside of the dashed line of Cook’s distance 0.5, suggesting no influential observations. 
 
 ```{r}
 # model diagnostics: Residuals vs Fitted plot, QQ plot, Scale_location, Residuals vs Leverage
@@ -162,11 +152,11 @@ full_lm_sqrt = center_distinct_df %>%
   lm(rate ~ program_type + borough + status + sqrt(educational_worker_ratio), data = .)
 ```
 
-In addition, we removed influential point 3134 and fit a new model named full_lm_out. This model works better then full_lm. 
+In addition, although there is no influential points, case 12349 and 12318 affect the regression assumption as shown repeatedly.So we tried to fit a new model named full_lm_out by removing these two cases. This model works better then full_lm due to its increased adjusted R-square. 
 
 ```{r}
 # exclude two influential records
-out_df = center_distinct_df[-c(3134),]
+out_df = center_distinct_df[-c(12349, 12318),]
 
 # fit model without influential points
 full_lm_out = lm(rate ~ program_type + borough + status + educational_worker_ratio, data = out_df)
@@ -181,7 +171,7 @@ plot(full_lm_out)
 
 *Model validation:*
 
-We used 5-fold cross validation to test the model performance. Based on a rule of thumb, RMSE values between 0.2 and 0.5 shows that the model can relatively predict the data accurately. Thus our model boasts good RMSE value, suggesting relatively good predictive ability.
+We used 5-fold cross validation to test the model performance. Based on a rule of thumb, RMSE values between 0.2 and 0.5 shows that the model can relatively predict the data accurately. Thus our model boasts good RMSE value(RMSE = 0.24), suggesting relatively good predictive ability.
 
 ```{r}
 library(caret)
@@ -202,30 +192,27 @@ print(model_caret)
 
 We chose full_lm_out as our final linear model:
 
-rate = 0.865 + 0.511(program_type_school age camp) - 0.245(borough_BROOKLYN) -0.186(borough_MANHATTAN) - 0.104(borough_QUEENS) - 0.323(borough_STATEN ISLAND) - 0.19(status_Expired In Renewal) - 0.239(status_Permitted) - 0.083(educational_worker_ratio)
+rate = 0.868 - 0.027(program_type_infant toddler) - 0.245(borough_BROOKLYN) -0.186(borough_MANHATTAN) - 0.103(borough_QUEENS) - 0.323(borough_STATEN ISLAND) - 0.193(status_Expired In Renewal) - 0.242(status_Permitted) - 0.084(educational_worker_ratio)
 
 Interpretation:
 
-In this model, the outcome is "rate", indicating the violation rate for each center based on different program type. Our key predictor is the numeric variable of "educational_worker_ratio", which is the program-specific total number of educational worker in each center,  divided by the maximum capacity, based on the square footage of class and play rooms, the number of toilets and sinks, and overall estimates from the NYC Department of Buildings. Our model suggests the value of the estimated mean violation rate decreases by 0.083 for each unit increase in educational worker ratio, while holding all other variables fixed.  
+In this model, the outcome is "rate", indicating the violation rate for each center based on different program type. Our key predictor is the numeric variable of "educational_worker_ratio", which is the program-specific total number of educational worker in each center,  divided by the maximum capacity, based on the square footage of class and play rooms, the number of toilets and sinks, and overall estimates from the NYC Department of Buildings. As shown in the plot below, our model suggests the value of the estimated mean violation rate decreases by 0.084 for each unit increase in educational worker ratio, while holding all other variables fixed.  
 
 We also included several categorical variables into our model. Based on the output, the interpretations of coefficients estimates are as follows:
 
-The value of the estimated mean violation rate for centers located in Brooklyn,  Manhattan, Queens and Staten island are 0.245, 0.186, 0.104 and 0.323 less than centers located in Bronx, respectively, while holding other variables constant.
+The value of the estimated mean violation rate for centers located in Brooklyn,  Manhattan, Queens and Staten island are 0.245, 0.186, 0.103 and 0.323 less than centers located in Bronx, respectively, while holding other variables constant.
 
-The value of the estimated mean violation rate for centers with licence status as expired in renewal and as permitted is 0.19 and 0.239 less than  centers with licence status as active, while holding other variables constant.
+The value of the estimated mean violation rate for centers with licence status as expired in renewal and as permitted is 0.193 and 0.242 less than  centers with licence status as active, while holding other variables constant.
 
-The value of the estimated mean violation rate for centers implement school age camp program is 0.511 more than centers implement all age camp program, while holding other variables constant.
+The value of the estimated mean violation rate for centers implement infant toddler program is 0.028 less than centers implement all age camp program, while holding other variables constant.
 
-
-
-
-
-
-
-
-
-
-
-
+```{r}
+# Scatter plot with regression line overlaid and 95% confidence bands, between rate and our main predictor:educational worker ratio 
+out_df %>% 
+  ggplot(aes(educational_worker_ratio, rate)) + geom_point(color = 'blue') + 
+  theme_bw() +
+  geom_smooth(method = 'lm', se = TRUE, color = 'red') +
+  labs(x = "educational worker ratio", y = "Violation rate")
+```
 
 
