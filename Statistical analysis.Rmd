@@ -8,7 +8,7 @@ output:
     theme: flatly
 ---
 
-<<<<<<< HEAD
+
 
 ```{r warning= FALSE, message=FALSE}
 
@@ -57,11 +57,11 @@ center_specific_df = childcare_inspection_df %>%
   arrange(center_name, program_type)
 ```
 
-
+<br>
 ## Anova test - Violation Cases Number and Boroughs
-
-#### Introduction
-
+<br>
+### *Introduction*
+<br>
 We are curious about whether center location is associated with the frequency of their violation. For example, during the past 3 years, would the expected violation case number in a random center in Bronx varies from the expected violation case number in a random center in Manhattan? To explore the answer, We performed ANOVA test across boroughs.
 
 Our hypothesis is:
@@ -88,17 +88,17 @@ fit_borough = lm(n_violate ~ borough, data = vio_boro)
 summary(fit_borough)
 anova(fit_borough) %>% knitr::kable(caption = "One way anova of violation frequency and borough")
 ```
-
-#### Conclusion
-
+<br>
+### *Conclusion*
+<br>
 The p-value of the above Anova test is 3.106e-10. Thus, at 0.05 significance level, we reject the null hypothesis and conclude that during the past 3 years, the average number of violations per center varies across boroughs. 
 
-
-
+<br>
+<br>
 ## Chi-square Test - 3 Violation Types and Boroughs
-
-#### Introduction
-
+<br>
+### *Introduction*
+<br>
 In this dataset, there are three violation types exist: critical violation, general violation and public health hazard violation. We're interested if the proportion of each type of violation would vary among different boroughs. So we calculated the total number of cases under each violation category in each borough and did a chi-square test to see if this proportion is associated with its location.
 
 Our hypothesis is:
@@ -129,16 +129,18 @@ three_violation %>%
 
 chisq.test(three_violation)
 ```
-
-#### Conclusion
+<br>
+### *Conclusion*
+<br>
 At 0.05 significance level, χ2>χcritical, with p-value < 2.2e-16. Thus, we reject the null hypothesis and conclude that there is sufficient evidence that the proportion of violation category is significantly different by borough.
 
-
+<br>
+<br>
 
 ## Proportion Test - Total Violation Proportion within Center
-
-#### Introduction
-
+<br>
+### *Introduction*
+<br>
 With the belief that violation record is an important parameter to evaluate the performance of a child healthcare center, we conducted a proportion test to estimate the total violation proportion and its 95% confidence interval for each center, regardless of its program type. We defined the estimated total violation proportion > 0.8 as high proportion. Next, we pinpointed all the centers with high violation proportion in each borough. 
 
 ```{r warning= FALSE, message=FALSE}
@@ -164,7 +166,7 @@ verdiction_center =
     inspect_vio = sum(!is.na(verdiction)))
 ```
 
-* Plot for Staten island
+## Staten island
 
 ```{r warning= FALSE, message=FALSE}
 # prop.test for all centers in staten island
@@ -190,12 +192,12 @@ center_prop_staten %>%
   geom_errorbar(aes(ymin = conf.low, ymax = conf.high)) +
 
   theme(axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.6))) +
-  labs( x = "Center",
+  labs( x = "Center name",
     y = "Estimated proportion of violation",
     title = "Centers with high violation proportion in Staten Island")
 ```
 
-* Plot for Bronx
+### **Bronx**
 
 ```{r warning= FALSE, message=FALSE}
 # prop.test for all centers in Bronx
@@ -221,12 +223,12 @@ center_prop_bronx %>%
   geom_errorbar(aes(ymin = conf.low, ymax = conf.high)) +
 
   theme(axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.6))) +
-  labs( x = "Center",
+  labs( x = "Center name",
     y = "Estimated proportion of violation",
     title = "Centers with high violation proportion in Bronx")
 ```
 
-* Plot for Manhattan
+### **Manhattan**
 
 ```{r warning= FALSE, message=FALSE}
 # prop.test for all centers in Manhattan
@@ -252,12 +254,12 @@ center_prop_manhattan %>%
   geom_errorbar(aes(ymin = conf.low, ymax = conf.high)) +
 
   theme(axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.6))) +
-  labs( x = "Center",
+  labs( x = "Center name",
     y = "Estimated proportion of violation",
     title = "Centers with high violation proportion in Manhattan")
 ```
 
-* Plot for Brooklyn
+### **Brooklyn**
 
 ```{r warning= FALSE, message=FALSE}
 # prop.test for all centers in Brooklyn
@@ -283,12 +285,12 @@ center_prop_brooklyn %>%
   geom_errorbar(aes(ymin = conf.low, ymax = conf.high)) +
 
   theme(axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.6))) +
-  labs( x = "Center",
+  labs( x = "Center name",
     y = "Estimated proportion of violation",
     title = "Centers with high violation proportion in Brooklyn")
 ```
 
-* Plot for Queens
+### **Queens**
 
 ```{r warning= FALSE, message=FALSE}
 # prop.test for all centers in Queens
@@ -314,11 +316,12 @@ center_prop_manhattan %>%
   geom_errorbar(aes(ymin = conf.low, ymax = conf.high)) +
 
   theme(axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.6))) +
-  labs( x = "Center",
+  labs( x = "Center name",
     y = "Estimated proportion of violation",
     title = "Centers with high violation proportion in Queens")
 ```
 
-* Conclusion
-
+<br>
+### *Conclusion*
+<br>
 From the plot, we can see the names and estimates of the centers with high violation proportion in each borough. These plots can serve as a good reference for NYC residents when selecting the childcare centers for their kids. 

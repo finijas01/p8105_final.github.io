@@ -396,7 +396,6 @@ div.tocify {
 </div>
 
 
-<p>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</p>
 <pre class="r"><code>library(tidyverse)
 library(dplyr)
 library(rvest)
@@ -440,17 +439,13 @@ center_specific_df = childcare_inspection_df %&gt;%
     n_violation = sum(!is.na(violation_category)), 
     rate = n_violation/(n_violation + n_na)) %&gt;% 
   arrange(center_name, program_type)</code></pre>
-<div id="anova-test---violation-cases-number-and-boroughs"
-class="section level2">
-<h2>Anova test - Violation Cases Number and Boroughs</h2>
-<div id="introduction" class="section level4">
-<h4>Introduction</h4>
-<p>We are curious about whether center location is associated with the
-frequency of their violation. For example, during the past 3 years,
-would the expected violation case number in a random center in Bronx
-varies from the expected violation case number in a random center in
-Manhattan? To explore the answer, We performed ANOVA test across
-boroughs.</p>
+<p><br> ## Anova test - Violation Cases Number and Boroughs <br> ###
+<em>Introduction</em> <br> We are curious about whether center location
+is associated with the frequency of their violation. For example, during
+the past 3 years, would the expected violation case number in a random
+center in Bronx varies from the expected violation case number in a
+random center in Manhattan? To explore the answer, We performed ANOVA
+test across boroughs.</p>
 <p>Our hypothesis is:</p>
 <p>H0: The average number of violation in each center are not different
 across boroughs</p>
@@ -524,26 +519,18 @@ summary(fit_borough)</code></pre>
 </tr>
 </tbody>
 </table>
-</div>
-<div id="conclusion" class="section level4">
-<h4>Conclusion</h4>
-<p>The p-value of the above Anova test is 3.106e-10. Thus, at 0.05
-significance level, we reject the null hypothesis and conclude that
-during the past 3 years, the average number of violations per center
-varies across boroughs.</p>
-</div>
-</div>
-<div id="chi-square-test---3-violation-types-and-boroughs"
-class="section level2">
-<h2>Chi-square Test - 3 Violation Types and Boroughs</h2>
-<div id="introduction-1" class="section level4">
-<h4>Introduction</h4>
-<p>In this dataset, there are three violation types exist: critical
-violation, general violation and public health hazard violation. We’re
-interested if the proportion of each type of violation would vary among
-different boroughs. So we calculated the total number of cases under
-each violation category in each borough and did a chi-square test to see
-if this proportion is associated with its location.</p>
+<p><br> ### <em>Conclusion</em> <br> The p-value of the above Anova test
+is 3.106e-10. Thus, at 0.05 significance level, we reject the null
+hypothesis and conclude that during the past 3 years, the average number
+of violations per center varies across boroughs.</p>
+<p><br> <br> ## Chi-square Test - 3 Violation Types and Boroughs <br>
+### <em>Introduction</em> <br> In this dataset, there are three
+violation types exist: critical violation, general violation and public
+health hazard violation. We’re interested if the proportion of each type
+of violation would vary among different boroughs. So we calculated the
+total number of cases under each violation category in each borough and
+did a chi-square test to see if this proportion is associated with its
+location.</p>
 <p>Our hypothesis is:</p>
 <p>H0: the proportions of ciritical violation among borough levels are
 equal; AND the proportions of general violation among borough levels are
@@ -614,27 +601,22 @@ three_violation %&gt;%
 ## 
 ## data:  three_violation
 ## X-squared = 118.01, df = 8, p-value &lt; 2.2e-16</code></pre>
-</div>
-<div id="conclusion-1" class="section level4">
-<h4>Conclusion</h4>
-<p>At 0.05 significance level, χ2&gt;χcritical, with p-value &lt;
-2.2e-16. Thus, we reject the null hypothesis and conclude that there is
-sufficient evidence that the proportion of violation category is
-significantly different by borough.</p>
-</div>
-</div>
+<p><br> ### <em>Conclusion</em> <br> At 0.05 significance level,
+χ2&gt;χcritical, with p-value &lt; 2.2e-16. Thus, we reject the null
+hypothesis and conclude that there is sufficient evidence that the
+proportion of violation category is significantly different by
+borough.</p>
+<p><br> <br></p>
 <div id="proportion-test---total-violation-proportion-within-center"
 class="section level2">
 <h2>Proportion Test - Total Violation Proportion within Center</h2>
-<div id="introduction-2" class="section level4">
-<h4>Introduction</h4>
-<p>With the belief that violation record is an important parameter to
-evaluate the performance of a child healthcare center, we conducted a
-proportion test to estimate the total violation proportion and its 95%
-confidence interval for each center, regardless of its program type. We
-defined the estimated total violation proportion &gt; 0.8 as high
-proportion. Next, we pinpointed all the centers with high violation
-proportion in each borough.</p>
+<p><br> ### <em>Introduction</em> <br> With the belief that violation
+record is an important parameter to evaluate the performance of a child
+healthcare center, we conducted a proportion test to estimate the total
+violation proportion and its 95% confidence interval for each center,
+regardless of its program type. We defined the estimated total violation
+proportion &gt; 0.8 as high proportion. Next, we pinpointed all the
+centers with high violation proportion in each borough.</p>
 <pre class="r"><code># Divide the inspection results as violated vs. not violated
 vio_sum = 
 center_specific_df %&gt;%
@@ -655,9 +637,9 @@ verdiction_center =
   summarize(
     inspect_total = n(),
     inspect_vio = sum(!is.na(verdiction)))</code></pre>
-<ul>
-<li>Plot for Staten island</li>
-</ul>
+</div>
+<div id="staten-island" class="section level2">
+<h2>Staten island</h2>
 <pre class="r"><code># prop.test for all centers in staten island
 center_prop_staten = 
   verdiction_center %&gt;% 
@@ -681,13 +663,12 @@ center_prop_staten %&gt;%
   geom_errorbar(aes(ymin = conf.low, ymax = conf.high)) +
 
   theme(axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.6))) +
-  labs( x = &quot;Center&quot;,
+  labs( x = &quot;Center name&quot;,
     y = &quot;Estimated proportion of violation&quot;,
     title = &quot;Centers with high violation proportion in Staten Island&quot;)</code></pre>
 <p><img src="Statistical-analysis_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
-<ul>
-<li>Plot for Bronx</li>
-</ul>
+<div id="bronx" class="section level3">
+<h3><strong>Bronx</strong></h3>
 <pre class="r"><code># prop.test for all centers in Bronx
 center_prop_bronx = 
   verdiction_center %&gt;% 
@@ -711,13 +692,13 @@ center_prop_bronx %&gt;%
   geom_errorbar(aes(ymin = conf.low, ymax = conf.high)) +
 
   theme(axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.6))) +
-  labs( x = &quot;Center&quot;,
+  labs( x = &quot;Center name&quot;,
     y = &quot;Estimated proportion of violation&quot;,
     title = &quot;Centers with high violation proportion in Bronx&quot;)</code></pre>
 <p><img src="Statistical-analysis_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
-<ul>
-<li>Plot for Manhattan</li>
-</ul>
+</div>
+<div id="manhattan" class="section level3">
+<h3><strong>Manhattan</strong></h3>
 <pre class="r"><code># prop.test for all centers in Manhattan
 center_prop_manhattan = 
   verdiction_center %&gt;% 
@@ -741,13 +722,13 @@ center_prop_manhattan %&gt;%
   geom_errorbar(aes(ymin = conf.low, ymax = conf.high)) +
 
   theme(axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.6))) +
-  labs( x = &quot;Center&quot;,
+  labs( x = &quot;Center name&quot;,
     y = &quot;Estimated proportion of violation&quot;,
     title = &quot;Centers with high violation proportion in Manhattan&quot;)</code></pre>
 <p><img src="Statistical-analysis_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
-<ul>
-<li>Plot for Brooklyn</li>
-</ul>
+</div>
+<div id="brooklyn" class="section level3">
+<h3><strong>Brooklyn</strong></h3>
 <pre class="r"><code># prop.test for all centers in Brooklyn
 center_prop_brooklyn = 
   verdiction_center %&gt;% 
@@ -771,13 +752,13 @@ center_prop_brooklyn %&gt;%
   geom_errorbar(aes(ymin = conf.low, ymax = conf.high)) +
 
   theme(axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.6))) +
-  labs( x = &quot;Center&quot;,
+  labs( x = &quot;Center name&quot;,
     y = &quot;Estimated proportion of violation&quot;,
     title = &quot;Centers with high violation proportion in Brooklyn&quot;)</code></pre>
 <p><img src="Statistical-analysis_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
-<ul>
-<li>Plot for Queens</li>
-</ul>
+</div>
+<div id="queens" class="section level3">
+<h3><strong>Queens</strong></h3>
 <pre class="r"><code># prop.test for all centers in Queens
 center_prop_queens = 
   verdiction_center %&gt;% 
@@ -801,17 +782,14 @@ center_prop_manhattan %&gt;%
   geom_errorbar(aes(ymin = conf.low, ymax = conf.high)) +
 
   theme(axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.6))) +
-  labs( x = &quot;Center&quot;,
+  labs( x = &quot;Center name&quot;,
     y = &quot;Estimated proportion of violation&quot;,
     title = &quot;Centers with high violation proportion in Queens&quot;)</code></pre>
 <p><img src="Statistical-analysis_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
-<ul>
-<li>Conclusion</li>
-</ul>
-<p>From the plot, we can see the names and estimates of the centers with
-high violation proportion in each borough. These plots can serve as a
-good reference for NYC residents when selecting the childcare centers
-for their kids.</p>
+<p><br> ### <em>Conclusion</em> <br> From the plot, we can see the names
+and estimates of the centers with high violation proportion in each
+borough. These plots can serve as a good reference for NYC residents
+when selecting the childcare centers for their kids.</p>
 </div>
 </div>
 
