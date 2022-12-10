@@ -8,7 +8,14 @@ output:
     theme: flatly
 ---
 
+<style type="text/css">
 
+h1.title {
+  font-size: 38px;
+  color: Black;
+  text-align: center;
+}
+</style>
 
 ## Model selection
 
