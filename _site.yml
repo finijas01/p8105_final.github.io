@@ -6,39 +6,23 @@ navbar:
     - icon: fa-github fa-lg
       href: http://github.com/finijas01/
   left:
-   - text: ''
-     href:
-   - text: ''
-     href:
-   - text: ''
-     href:
-   - text: ''
-     href:
-   - text: ''
-     href:
-   - text: ''
-     href:
    - text: 'Visualization'
+     menu:
+      - text: "Model 1"
+        href:  model1.html
+      - text: "Model 2"
+        href:  model2.html
+   - text: 'Statistical analysis'
      href: http://github.com/finijas01/
    - text: 'Shiny Dashboard'
      href:  https://zuoqiaocui.shinyapps.io/shiny_violation/
-   - text: 'Model Analysis'
+   - text: 'Model Regression'
      menu:
       - text: "Model 1"
         href:  model1.html
       - text: "Model 2"
         href:  model2.html
    - text: 'Project Report'
-     href: http://github.com/finijas01/
-   - text: ''
-     href:
-   - text: ''
-     href:
-   - text: ''
-     href:
-   - text: ''
-     href:
-   - icon: fa-github fa-lg
      href: http://github.com/finijas01/
 output:
   html_document:
