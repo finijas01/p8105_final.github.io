@@ -653,11 +653,12 @@ in the same format : lower case</p></li>
 <span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">status =</span> <span class="fu">as.factor</span>(status),</span>
 <span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">program_type =</span> <span class="fu">as.factor</span>(program_type),</span>
 <span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">facility_type =</span> <span class="fu">as.factor</span>(facility_type),</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">child_care_type =</span> <span class="fu">as.factor</span>(child_care_type)</span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  ) </span></code></pre></div>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">child_care_type =</span> <span class="fu">as.factor</span>(child_care_type),</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">age_range =</span> <span class="fu">as.factor</span>(age_range)</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  ) </span></code></pre></div>
 <p>We calculated a new violation rate for each distinct program using
 violation category column.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>childcare_inspection_df <span class="sc">%&gt;%</span> </span>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>center_specific_df <span class="ot">=</span> childcare_inspection_df <span class="sc">%&gt;%</span> </span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(center_name, program_type) <span class="sc">%&gt;%</span> </span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(center_name, program_type) <span class="sc">%&gt;%</span> </span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
@@ -665,27 +666,6 @@ violation category column.</p>
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_violation =</span> <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(violation_category)), </span>
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">rate =</span> n_violation<span class="sc">/</span>(n_violation <span class="sc">+</span> n_na)) <span class="sc">%&gt;%</span> </span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(center_name, program_type)</span></code></pre></div>
-<pre><code>## # A tibble: 16,454 × 25
-## # Groups:   center_name, program_type [1,917]
-##    center_name    progr…¹ borough zip_c…² status age_r…³ maxim…⁴ facil…⁵ child…⁶
-##    &lt;chr&gt;          &lt;fct&gt;   &lt;fct&gt;     &lt;dbl&gt; &lt;fct&gt;  &lt;chr&gt;     &lt;dbl&gt; &lt;fct&gt;   &lt;fct&gt;  
-##  1 &#39;THE STUDIO S… presch… MANHAT…   10025 Permi… 2 YEAR…      51 gdc     Child …
-##  2 &#39;THE STUDIO S… presch… MANHAT…   10025 Permi… 2 YEAR…      51 gdc     Child …
-##  3 &#39;THE STUDIO S… presch… MANHAT…   10025 Permi… 2 YEAR…      51 gdc     Child …
-##  4 &#39;THE STUDIO S… presch… MANHAT…   10025 Permi… 2 YEAR…      51 gdc     Child …
-##  5 &#39;THE STUDIO S… presch… MANHAT…   10025 Permi… 2 YEAR…      51 gdc     Child …
-##  6 &#39;THE STUDIO S… presch… MANHAT…   10025 Permi… 2 YEAR…      51 gdc     Child …
-##  7 &#39;THE STUDIO S… presch… MANHAT…   10025 Permi… 2 YEAR…      51 gdc     Child …
-##  8 1332 FULTON  … presch… BRONX     10456 Expir… 2 YEAR…     148 gdc     Child …
-##  9 1332 FULTON  … presch… BRONX     10456 Expir… 2 YEAR…     148 gdc     Child …
-## 10 1332 FULTON  … presch… BRONX     10456 Expir… 2 YEAR…     148 gdc     Child …
-## # … with 16,444 more rows, 16 more variables: violation_category &lt;chr&gt;,
-## #   violation_status &lt;chr&gt;, violation_rate_percent &lt;dbl&gt;,
-## #   average_violation_rate_percent &lt;dbl&gt;, total_educational_workers &lt;dbl&gt;,
-## #   average_total_educational_workers &lt;dbl&gt;,
-## #   public_health_hazard_violation_rate &lt;dbl&gt;,
-## #   average_public_health_hazard_violation_rate &lt;dbl&gt;,
-## #   critical_violation_rate &lt;dbl&gt;, average_critical_violation_rate &lt;dbl&gt;, …</code></pre>
 
 </body>
 </html>

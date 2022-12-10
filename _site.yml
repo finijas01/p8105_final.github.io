@@ -18,12 +18,10 @@ navbar:
      href:
    - text: ''
      href:
-   - text: 'Proposal'
-     href: proposal.html
    - text: 'Visualization'
      href: http://github.com/finijas01/
-   - text: 'FlexDashboard'
-     href: http://github.com/finijas01/
+   - text: 'Shiny Dashboard'
+     href:  https://zuoqiaocui.shinyapps.io/shiny_violation/
    - text: 'Model Analysis'
      menu:
       - text: "Model 1"
