@@ -374,7 +374,7 @@ child_data &lt;- child_data %&gt;%
 <p>#fit a logistic regression with violation vs no violation as the
 outcome and the rest as predictors.And Obtain the estimate and CI of the
 adjusted odds ratio for having violation.</p>
-<pre class="r"><code>model_log &lt;- glm(violation ~ status  + program_type + educational_worker_ratio,data = child_data,family = binomial(link=logit))
+<pre class="r"><code>model_log &lt;- glm(violation ~ borough + status  + program_type + educational_worker_ratio,data = child_data,family = binomial(link=logit))
 model_log %&gt;%
   broom::tidy(conf.int = T) %&gt;% 
   mutate(OR = exp(estimate),
@@ -404,52 +404,80 @@ model_log %&gt;%
 <tbody>
 <tr class="odd">
 <td align="left">(Intercept)</td>
-<td align="center">2.546</td>
-<td align="center">7.396</td>
-<td align="center">2.575800e+01</td>
+<td align="center">4.715</td>
+<td align="center">38.429</td>
+<td align="center">4.501930e+02</td>
+<td align="left">&lt;0.0001</td>
+</tr>
+<tr class="even">
+<td align="left">boroughBROOKLYN</td>
+<td align="center">0.351</td>
+<td align="center">1.376</td>
+<td align="center">1.472000e+00</td>
+<td align="left">&lt;0.0001</td>
+</tr>
+<tr class="odd">
+<td align="left">boroughMANHATTAN</td>
+<td align="center">0.454</td>
+<td align="center">1.506</td>
+<td align="center">1.652000e+00</td>
+<td align="left">&lt;0.0001</td>
+</tr>
+<tr class="even">
+<td align="left">boroughQUEENS</td>
+<td align="center">0.648</td>
+<td align="center">1.798</td>
+<td align="center">2.045000e+00</td>
+<td align="left">&lt;0.0001</td>
+</tr>
+<tr class="odd">
+<td align="left">boroughSTATEN ISLAND</td>
+<td align="center">0.247</td>
+<td align="center">1.230</td>
+<td align="center">1.342000e+00</td>
 <td align="left">&lt;0.0001</td>
 </tr>
 <tr class="even">
 <td align="left">statusExpired-In Renewal</td>
-<td align="center">0.379</td>
-<td align="center">1.360</td>
-<td align="center">1.593000e+00</td>
+<td align="center">0.448</td>
+<td align="center">1.438</td>
+<td align="center">1.736000e+00</td>
 <td align="left">&lt;0.0001</td>
 </tr>
 <tr class="odd">
 <td align="left">statusPermitted</td>
-<td align="center">0.358</td>
-<td align="center">1.341</td>
-<td align="center">1.544000e+00</td>
+<td align="center">0.355</td>
+<td align="center">1.337</td>
+<td align="center">1.541000e+00</td>
 <td align="left">&lt;0.0001</td>
 </tr>
 <tr class="even">
 <td align="left">program_typeinfant toddler</td>
-<td align="center">0.981</td>
-<td align="center">2.264</td>
-<td align="center">3.248000e+00</td>
-<td align="left">0.84</td>
+<td align="center">0.908</td>
+<td align="center">2.123</td>
+<td align="center">2.992000e+00</td>
+<td align="left">0.3159</td>
 </tr>
 <tr class="odd">
 <td align="left">program_typepreschool</td>
-<td align="center">1.060</td>
-<td align="center">2.485</td>
-<td align="center">3.434000e+00</td>
-<td align="left">0.45</td>
+<td align="center">1.001</td>
+<td align="center">2.355</td>
+<td align="center">3.218000e+00</td>
+<td align="left">0.9944</td>
 </tr>
 <tr class="even">
 <td align="left">program_typeschool age camp</td>
-<td align="center">2.072</td>
-<td align="center">1.219</td>
-<td align="center">2.510005e+19</td>
-<td align="left">0.55</td>
+<td align="center">1.644</td>
+<td align="center">1.164</td>
+<td align="center">4.762402e+15</td>
+<td align="left">0.6894</td>
 </tr>
 <tr class="odd">
 <td align="left">educational_worker_ratio</td>
-<td align="center">0.474</td>
-<td align="center">1.444</td>
-<td align="center">1.843000e+00</td>
-<td align="left">&lt;0.0001</td>
+<td align="center">0.706</td>
+<td align="center">1.721</td>
+<td align="center">2.503000e+00</td>
+<td align="left">0.0093</td>
 </tr>
 </tbody>
 </table>
@@ -458,35 +486,39 @@ probabilities &lt;- predict(model_log, type = &quot;response&quot;)
 predicted.classes &lt;- ifelse(probabilities &gt; 0.5, &quot;pos&quot;, &quot;neg&quot;)
 head(predicted.classes)</code></pre>
 <pre><code>##     1     2     3     4     5     6 
-## &quot;neg&quot; &quot;neg&quot; &quot;neg&quot; &quot;neg&quot; &quot;neg&quot; &quot;neg&quot;</code></pre>
+## &quot;neg&quot; &quot;neg&quot; &quot;neg&quot; &quot;neg&quot; &quot;neg&quot; &quot;pos&quot;</code></pre>
 <pre class="r"><code>#probabilities</code></pre>
 <pre class="r"><code>summary(model_log)</code></pre>
 <pre><code>## 
 ## Call:
-## glm(formula = violation ~ status + program_type + educational_worker_ratio, 
+## glm(formula = violation ~ borough + status + program_type + educational_worker_ratio, 
 ##     family = binomial(link = logit), data = child_data)
 ## 
 ## Deviance Residuals: 
-##    Min      1Q  Median      3Q     Max  
-## -1.617  -1.117  -1.012   1.233   1.624  
+##     Min       1Q   Median       3Q      Max  
+## -1.8520  -1.0508  -0.8782   1.1727   1.7934  
 ## 
 ## Coefficients:
-##                             Estimate Std. Error z value Pr(&gt;|z|)    
-## (Intercept)                  0.93445    0.12360   7.560 4.02e-14 ***
-## statusExpired-In Renewal    -0.96972    0.10542  -9.199  &lt; 2e-16 ***
-## statusPermitted             -1.02804    0.10052 -10.227  &lt; 2e-16 ***
-## program_typeinfant toddler  -0.01907    0.09333  -0.204    0.838    
-## program_typepreschool        0.05803    0.07757   0.748    0.454    
-## program_typeschool age camp  0.72841    1.22644   0.594    0.553    
-## educational_worker_ratio    -0.74612    0.13009  -5.735 9.73e-09 ***
+##                               Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)                  1.5508044  0.1314607  11.797  &lt; 2e-16 ***
+## boroughBROOKLYN             -1.0465054  0.0487599 -21.462  &lt; 2e-16 ***
+## boroughMANHATTAN            -0.7905779  0.0518737 -15.240  &lt; 2e-16 ***
+## boroughQUEENS               -0.4339075  0.0503992  -8.609  &lt; 2e-16 ***
+## boroughSTATEN ISLAND        -1.3983570  0.0896874 -15.591  &lt; 2e-16 ***
+## statusExpired-In Renewal    -0.8025015  0.1065993  -7.528 5.14e-14 ***
+## statusPermitted             -1.0349521  0.1013003 -10.217  &lt; 2e-16 ***
+## program_typeinfant toddler  -0.0960457  0.0957691  -1.003  0.31591    
+## program_typepreschool        0.0005541  0.0792675   0.007  0.99442    
+## program_typeschool age camp  0.4969849  1.2435739   0.400  0.68942    
+## educational_worker_ratio    -0.3480415  0.1339063  -2.599  0.00935 ** 
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
 ## (Dispersion parameter for binomial family taken to be 1)
 ## 
 ##     Null deviance: 22719  on 16453  degrees of freedom
-## Residual deviance: 22548  on 16447  degrees of freedom
-## AIC: 22562
+## Residual deviance: 21933  on 16443  degrees of freedom
+## AIC: 21955
 ## 
 ## Number of Fisher Scoring iterations: 4</code></pre>
 <p>##We can see from the summary that the licence status and educational
@@ -690,10 +722,27 @@ ggplot(model_log.data, aes(index, .std.resid)) +
   geom_point(aes(color = violation), alpha = .5) +
   theme_bw()</code></pre>
 <p><img src="logistic_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
-<p>###Diagnostic Conclusion</p>
-<p>From the plot we can see that the standard deviation of the data are
-all in acceptable region which means there’s no significant outliers in
-the dataset.</p>
+<p>###Diagnostic Conclusion From the plot we can see that the standard
+deviation of the data are all in acceptable region which means there’s
+no significant outliers in the dataset.</p>
+<p>###Model interpretation In this model, the outcome is log of odds
+ratio of violation rate. Our key predictor is the numeric variable of
+“educational_worker_ratio”, which is the program-specific total number
+of educational worker in each center, divided by the maximum capacity,
+based on the square footage of class and play rooms, the number of
+toilets and sinks, and overall estimates from the NYC Department of
+Buildings. Our model suggests the log of odds ratio of estimated mean
+violation rate decreases by 34.8% for each unit increase in educational
+worker ratio, while holding all other variables fixed.</p>
+<p>We also included several categorical variables into our model. Based
+on the output, the interpretations of coefficients estimates are as
+follows:</p>
+<p>The estimated mean violation rates for centers located in Brooklyn,
+Manhattan, Queens and Staten island are less than centers located in
+Bronx, respectively, while holding other variables constant.</p>
+<p>The estimated mean violation rate for centers with licence status as
+expired in renewal and as permitted is less than centers with licence
+status as active, while holding other variables constant.</p>
 
 
 
