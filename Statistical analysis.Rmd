@@ -101,6 +101,9 @@ The p-value of the above Anova test is 3.106e-10. Thus, at 0.05 significance lev
 
 #### 2. Chi-square Test - 3 Violation Types and Boroughs
 
+In this dataset, there are three violation types exist: critical violation, general violation and public health hazard violation. We're interested if the proportion of each type of violation would vary among different boroughs. So we calculated the total number of cases under each violation category in each borough and did a chi-square test to see if this proportion is associated with its location.
+
+Our hypothesis is:
 H0:  the proportions of ciritical violation among borough levels are equal;
 AND  the proportions of general violation among borough levels are equal;
 AND  the proportions of public health hazard violation among borough levels are equal;
@@ -128,6 +131,5 @@ three_violation %>%
 chisq.test(three_violation)
 ```
 
-The result of chi-square shows that , at significant level α=0.05, so we reject the null hypothesis and conclude that there does exist at least one borough’s proportion of violation amounts is different from others.
-At 0.05 significance level, χ2>χcritical, with p-value < 2.2e-16. Thus, we reject the null hypothesis and conclude that there
-is sufficient evidence that the category of violation is significantly different by borough.
+Conclusion:
+At 0.05 significance level, χ2>χcritical, with p-value < 2.2e-16. Thus, we reject the null hypothesis and conclude that there is sufficient evidence that the proportion of violation category is significantly different by borough.

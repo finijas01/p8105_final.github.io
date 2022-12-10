@@ -26,21 +26,62 @@ library(tidyverse)
 >>>>>>> 37db35354b14f908a9cd1e396fab3259e4b6edca
 library(dplyr)
 library(rvest)
+<<<<<<< HEAD
+```
+
+    ## 
+    ## 載入套件：'rvest'
+    ## 
+    ## 下列物件被遮斷自 'package:readr':
+    ## 
+    ##     guess_encoding
+
+``` r
+=======
+>>>>>>> b6b596b372cfb6c38a4e4363dfdefd877c8637da
 library(purrr)
 library(ggplot2)
 library(modelr)
 library(mgcv)
+<<<<<<< HEAD
+```
+
+    ## 載入需要的套件：nlme
+    ## 
+    ## 載入套件：'nlme'
+    ## 
+    ## 下列物件被遮斷自 'package:dplyr':
+    ## 
+    ##     collapse
+    ## 
+    ## This is mgcv 1.8-40. For overview type 'help("mgcv-package")'.
+
+``` r
+=======
+>>>>>>> b6b596b372cfb6c38a4e4363dfdefd877c8637da
 library(patchwork)
 library(viridis)
 library(fastDummies)
 <<<<<<< HEAD
 ```
 
+<<<<<<< HEAD
+    ## 載入需要的套件：viridisLite
+
+``` r
+library(fastDummies)
+```
+
+    ## Warning: 套件 'fastDummies' 是用 R 版本 4.2.2 來建造的
+
+``` r
+=======
     ## Warning: package 'fastDummies' was built under R version 4.2.2
 
 ``` r
 =======
 >>>>>>> 37db35354b14f908a9cd1e396fab3259e4b6edca
+>>>>>>> b6b596b372cfb6c38a4e4363dfdefd877c8637da
 set.seed(1)
 ```
 
