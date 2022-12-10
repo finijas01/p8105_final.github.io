@@ -8,7 +8,10 @@ output:
     theme: flatly
 ---
 
-```{r}
+<<<<<<< HEAD
+
+```{r warning= FALSE, message=FALSE}
+
 library(tidyverse)
 library(dplyr)
 library(rvest)
@@ -20,10 +23,7 @@ library(patchwork)
 library(viridis)
 library(fastDummies)
 set.seed(1)
-```
 
-
-```{r}
 # Initial data cleaning
 childcare_inspection_df = read_csv("./data/DOHMH_Childcare_Center_Inspections.csv") %>% 
 janitor::clean_names() %>% 
@@ -70,7 +70,7 @@ H0: The average number of violation in each center are not different across boro
 
 H1: The average number of violation in each center are not different across boroughs
 
-```{r}
+```{r warning= FALSE, message=FALSE}
 # select distinct records of each center
 
 center_distinct_df_2 = center_specific_df %>%
@@ -109,7 +109,7 @@ AND  the proportions of public health hazard violation among borough levels are 
 vs.
 H1:  not all proportions are equal.
 
-```{r}
+```{r warning= FALSE, message=FALSE}
 three_violation = 
   childcare_inspection_df %>%
   select(borough, violation_category) %>% 
@@ -141,7 +141,7 @@ At 0.05 significance level, χ2>χcritical, with p-value < 2.2e-16. Thus, we rej
 
 With the belief that violation record is an important parameter to evaluate the performance of a child healthcare center, we conducted a proportion test to estimate the total violation proportion and its 95% confidence interval for each center, regardless of its program type. We defined the estimated total violation proportion > 0.8 as high proportion. Next, we pinpointed all the centers with high violation proportion in each borough. 
 
-```{r classify}
+```{r warning= FALSE, message=FALSE}
 # Divide the inspection results as violated vs. not violated
 vio_sum = 
 center_specific_df %>%
@@ -166,7 +166,7 @@ verdiction_center =
 
 * Plot for Staten island
 
-```{r}
+```{r warning= FALSE, message=FALSE}
 # prop.test for all centers in staten island
 center_prop_staten = 
   verdiction_center %>% 
@@ -197,7 +197,7 @@ center_prop_staten %>%
 
 * Plot for Bronx
 
-```{r}
+```{r warning= FALSE, message=FALSE}
 # prop.test for all centers in Bronx
 center_prop_bronx = 
   verdiction_center %>% 
@@ -228,7 +228,7 @@ center_prop_bronx %>%
 
 * Plot for Manhattan
 
-```{r}
+```{r warning= FALSE, message=FALSE}
 # prop.test for all centers in Manhattan
 center_prop_manhattan = 
   verdiction_center %>% 
@@ -259,7 +259,7 @@ center_prop_manhattan %>%
 
 * Plot for Brooklyn
 
-```{r}
+```{r warning= FALSE, message=FALSE}
 # prop.test for all centers in Brooklyn
 center_prop_brooklyn = 
   verdiction_center %>% 
@@ -290,7 +290,7 @@ center_prop_brooklyn %>%
 
 * Plot for Queens
 
-```{r}
+```{r warning= FALSE, message=FALSE}
 # prop.test for all centers in Queens
 center_prop_queens = 
   verdiction_center %>% 
