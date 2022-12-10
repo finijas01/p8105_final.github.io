@@ -60,7 +60,8 @@ distinct() %>%
     facility_type = as.factor(facility_type),
     child_care_type = as.factor(child_care_type),
     age_range = as.factor(age_range)
-  ) 
+  ) %>% 
+  filter(program_type != "school age camp")
 ```
 
 

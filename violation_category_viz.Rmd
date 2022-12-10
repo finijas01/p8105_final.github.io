@@ -1,5 +1,5 @@
 ---
-title: "Number of violations by violation category"
+title: "Violation Frequency"
 output: 
   html_document:
     code_folding: hide
@@ -10,9 +10,16 @@ editor_options:
   chunk_output_type: inline
 ---
 
-## Frequency of violation category
 
-```{r, warning=FALSE, message=FALSE}
+```{r}
+knitr::opts_chunk$set(
+  warning = FALSE,
+  message = FALSE)
+```
+
+
+```{r}
+
 library(tidyverse)
 library(dplyr)
 library(rvest)
@@ -23,38 +30,8 @@ library(mgcv)
 library(patchwork)
 library(viridis)
 library(fastDummies)
-
-knitr::opts_chunk$set(
-	echo = TRUE,
-	warning = FALSE,
-  fig.width = 6,
-  fig.asp = .6,
-  out.width = "90%"
-)
-
-theme_set(theme_minimal() + theme(legend.position = "bottom"))
-
-options(
-  ggplot2.continuous.colour = "viridis",
-  ggplot2.continuous.fill = "viridis"
-)
-
-scale_colour_discrete = scale_colour_viridis_d
-scale_fill_discrete = scale_fill_viridis_d
 set.seed(1)
-```
 
-
-```{r}
-knitr::opts_chunk$set(
-  warning = FALSE,
-  message = FALSE)
-```
-
-
-
-
-```{r}
 childcare_inspection_df = read_csv("./data/DOHMH_Childcare_Center_Inspections.csv") %>% 
 janitor::clean_names() %>% 
 distinct() %>% 
@@ -74,11 +51,9 @@ distinct() %>%
     facility_type = as.factor(facility_type),
     child_care_type = as.factor(child_care_type),
     age_range = as.factor(age_range)
-  ) 
-```
+  ) %>% 
+  filter(program_type != "school age camp")
 
-
-```{r}
 center_specific_df = childcare_inspection_df %>% 
   relocate(center_name, program_type) %>% 
   group_by(center_name, program_type) %>% 
@@ -89,11 +64,10 @@ center_specific_df = childcare_inspection_df %>%
   arrange(center_name, program_type)
 ```
 
-## Frequency of program type
+## Number of violations by program type
 
 ```{r}
 frequency_program_type = childcare_inspection_df %>% 
-  drop_na(program_type) %>% 
   count(program_type) %>% 
   mutate(
     program_type = fct_reorder(program_type, n)
@@ -107,6 +81,25 @@ frequency_program_type = childcare_inspection_df %>%
     fill = "program_type") +
   theme(axis.text.x = element_text(angle = 0, hjust = 0.5),plot.title = element_text(hjust = 0.5))
 frequency_program_type
+```
+## Number of violations by violation category
+
+```{r}
+frequency_violation_category = childcare_inspection_df %>% 
+  drop_na(violation_category) %>% 
+  count(violation_category) %>% 
+  mutate(
+   violation_category = fct_reorder(violation_category, n)
+    ) %>% 
+  ggplot(aes(x = violation_category, y = n, fill = violation_category)) + 
+  geom_bar(stat = "identity") + 
+  labs(
+    title = "Frequency of Violations by Violation Category",
+    x = "Violation Category",
+    y = "Number of Violations",
+    fill = "program_type") +
+  theme(axis.text.x = element_text(angle = 0, hjust = 0.5),plot.title = element_text(hjust = 0.5))
+frequency_violation_category 
 ```
 
 

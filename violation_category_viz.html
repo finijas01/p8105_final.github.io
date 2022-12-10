@@ -11,7 +11,7 @@
 
 
 
-<title>Number of violations by violation category</title>
+<title>Violation Frequency</title>
 
 <script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -395,14 +395,14 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Number of violations by violation
-category</h1>
+<h1 class="title toc-ignore">Violation Frequency</h1>
 
 </div>
 
 
-<div id="frequency-of-violation-category" class="section level2">
-<h2>Frequency of violation category</h2>
+<pre class="r"><code>knitr::opts_chunk$set(
+  warning = FALSE,
+  message = FALSE)</code></pre>
 <pre class="r"><code>library(tidyverse)
 library(dplyr)
 library(rvest)
@@ -413,29 +413,9 @@ library(mgcv)
 library(patchwork)
 library(viridis)
 library(fastDummies)
+set.seed(1)
 
-knitr::opts_chunk$set(
-    echo = TRUE,
-    warning = FALSE,
-  fig.width = 6,
-  fig.asp = .6,
-  out.width = &quot;90%&quot;
-)
-
-theme_set(theme_minimal() + theme(legend.position = &quot;bottom&quot;))
-
-options(
-  ggplot2.continuous.colour = &quot;viridis&quot;,
-  ggplot2.continuous.fill = &quot;viridis&quot;
-)
-
-scale_colour_discrete = scale_colour_viridis_d
-scale_fill_discrete = scale_fill_viridis_d
-set.seed(1)</code></pre>
-<pre class="r"><code>knitr::opts_chunk$set(
-  warning = FALSE,
-  message = FALSE)</code></pre>
-<pre class="r"><code>childcare_inspection_df = read_csv(&quot;./data/DOHMH_Childcare_Center_Inspections.csv&quot;) %&gt;% 
+childcare_inspection_df = read_csv(&quot;./data/DOHMH_Childcare_Center_Inspections.csv&quot;) %&gt;% 
 janitor::clean_names() %&gt;% 
 distinct() %&gt;% 
     select(center_name, borough, zip_code, status, age_range, maximum_capacity,program_type, facility_type, 
@@ -454,8 +434,10 @@ distinct() %&gt;%
     facility_type = as.factor(facility_type),
     child_care_type = as.factor(child_care_type),
     age_range = as.factor(age_range)
-  ) </code></pre>
-<pre class="r"><code>center_specific_df = childcare_inspection_df %&gt;% 
+  ) %&gt;% 
+  filter(program_type != &quot;school age camp&quot;)
+
+center_specific_df = childcare_inspection_df %&gt;% 
   relocate(center_name, program_type) %&gt;% 
   group_by(center_name, program_type) %&gt;% 
   mutate(
@@ -463,11 +445,9 @@ distinct() %&gt;%
     n_violation = sum(!is.na(violation_category)), 
     rate = n_violation/(n_violation + n_na)) %&gt;% 
   arrange(center_name, program_type)</code></pre>
-</div>
-<div id="frequency-of-program-type" class="section level2">
-<h2>Frequency of program type</h2>
+<div id="number-of-violations-by-program-type" class="section level2">
+<h2>Number of violations by program type</h2>
 <pre class="r"><code>frequency_program_type = childcare_inspection_df %&gt;% 
-  drop_na(program_type) %&gt;% 
   count(program_type) %&gt;% 
   mutate(
     program_type = fct_reorder(program_type, n)
@@ -481,7 +461,24 @@ distinct() %&gt;%
     fill = &quot;program_type&quot;) +
   theme(axis.text.x = element_text(angle = 0, hjust = 0.5),plot.title = element_text(hjust = 0.5))
 frequency_program_type</code></pre>
-<p><img src="violation_category_viz_files/figure-html/unnamed-chunk-5-1.png" width="90%" /></p>
+<p><img src="violation_category_viz_files/figure-html/unnamed-chunk-3-1.png" width="672" />
+## Number of violations by violation category</p>
+<pre class="r"><code>frequency_violation_category = childcare_inspection_df %&gt;% 
+  drop_na(violation_category) %&gt;% 
+  count(violation_category) %&gt;% 
+  mutate(
+   violation_category = fct_reorder(violation_category, n)
+    ) %&gt;% 
+  ggplot(aes(x = violation_category, y = n, fill = violation_category)) + 
+  geom_bar(stat = &quot;identity&quot;) + 
+  labs(
+    title = &quot;Frequency of Violations by Violation Category&quot;,
+    x = &quot;Violation Category&quot;,
+    y = &quot;Number of Violations&quot;,
+    fill = &quot;program_type&quot;) +
+  theme(axis.text.x = element_text(angle = 0, hjust = 0.5),plot.title = element_text(hjust = 0.5))
+frequency_violation_category </code></pre>
+<p><img src="violation_category_viz_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 </div>
 
 

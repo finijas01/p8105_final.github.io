@@ -339,7 +339,7 @@ div.tocify {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="model1.html">Model 1</a>
+      <a href="rate_borough_viz.html">Violation Rate Distribution</a>
     </li>
     <li>
       <a href="model2.html">Model 2</a>
@@ -441,7 +441,8 @@ distinct() %&gt;%
     facility_type = as.factor(facility_type),
     child_care_type = as.factor(child_care_type),
     age_range = as.factor(age_range)
-  ) </code></pre>
+  ) %&gt;% 
+  filter(program_type != &quot;school age camp&quot;)</code></pre>
 <pre class="r"><code>center_specific_df = childcare_inspection_df %&gt;% 
   relocate(center_name, program_type) %&gt;% 
   group_by(center_name, program_type) %&gt;% 
