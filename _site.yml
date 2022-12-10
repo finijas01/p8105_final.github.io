@@ -22,6 +22,8 @@ navbar:
         href:  model1.html
       - text: "Model 2"
         href:  model2.html
+   - text: 'Interactive Map'
+     href: interactive_map.html
    - text: 'Project Report'
      href: http://github.com/finijas01/
 output:

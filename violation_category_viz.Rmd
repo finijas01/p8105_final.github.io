@@ -10,6 +10,15 @@ editor_options:
   chunk_output_type: inline
 ---
 
+<style type="text/css">
+
+h1.title {
+  font-size: 38px;
+  color: Black;
+  text-align: center;
+}
+</style>
+
 
 ```{r}
 knitr::opts_chunk$set(
