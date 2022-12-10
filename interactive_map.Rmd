@@ -21,6 +21,8 @@ library(leaflet)
 library(tigris)
 ```
 
+## Interactive Map
+
 ```{r}
 # Read the data set and select variables we need for an interactive map.
 # Obtain the average violation rates of childcare centers in each zipcode area.
@@ -66,3 +68,14 @@ map_interactive = shiny_map_df %>%
 
 map_interactive
 ```
+
+## Interpretation
+
+According to the interactive above, the color in northern NYC and eastern NYC is darker compared with other areas. Therefore, it means childcare centers in these zip code areas have higher violation rate. 
+
+
+## Reference dataset
+
+In order to show the childcare centers' violation rates in different zip code area in this interactive map, [NYC zip codes dataset](https://data.cityofnewyork.us/Business/Zip-Code-Boundaries/i8iw-xf4u) was used to help identify areas in NYC. This dataset is also from [NYC OpenData](https://opendata.cityofnewyork.us/) website.
+
+

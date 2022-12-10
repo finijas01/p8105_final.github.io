@@ -1,9 +1,17 @@
 ---
-title: "logistic regression"
-author: "Han Bao"
-date: "12-9-2022"
-output: github_document
+title: "Logistic Regression"
+output: 
+  html_document:
+    code_folding: hide
+    toc: true
+    toc_float: true
+    theme: flatly
 ---
+```{r}
+knitr::opts_chunk$set(
+  warning = FALSE,
+  message = FALSE)
+```
 
 ```{r, warning=FALSE, message=FALSE}
 library(tidyverse)
@@ -19,6 +27,7 @@ child_data = read_csv("./data/DOHMH_Childcare_Center_Inspections.csv") %>%
   janitor::clean_names()%>%
   distinct()
 ```
+
 ```{r, warning=FALSE, message=FALSE}
 child_data = child_data %>% 
   select(center_name, borough, zip_code, status, age_range, maximum_capacity,program_type, facility_type, 
@@ -50,10 +59,11 @@ child_data <- child_data %>%
 head(child_data, 10)
 ```
 
-###Fit the logistic regression model
+## Fit the logistic regression model
 
-#fit a logistic regression with violation vs no violation as the outcome and the rest as predictors.And Obtain the estimate and CI of the adjusted odds ratio for having violation.
+* fit a logistic regression with violation vs no violation as the outcome and the rest as predictors.And Obtain the estimate and CI of the adjusted odds ratio for having violation.
 
+### Build Model
 
 ```{r}
 model_log <- glm(violation ~ borough + status  + program_type + educational_worker_ratio,data = child_data,family = binomial(link=logit))
@@ -72,12 +82,25 @@ predicted.classes <- ifelse(probabilities > 0.5, "pos", "neg")
 head(predicted.classes)
 #probabilities
 ```
+
+### Results and summary of model
+
 ```{r}
 summary(model_log)
 ```
 
-##We can see from the summary that the licence status and educational worker ratio of the child care centers are significant predictors of the violation rate with p-value< 0.05 while the facility type doesn't significantly influence the violation rate with p-value>0.05.
-###visualization
+Conclusion:
+
+We can see from the summary that the licence status and educational worker ratio of the child care centers are
+
+significant predictors of the violation rate with p-value< 0.05 while the facility type doesn't significantly
+
+influence the violation rate with p-value>0.05.
+
+## Visualization
+
+* Estimated OR with CI
+
 ```{r, warning=FALSE, message=FALSE}
 #  Extract the adjusted odds ratio (and CI) for having violation comparing licence type of "active" against "Expired-in renewal" from all the boroughs.
 all_logistic_E = child_data %>% 
@@ -135,9 +158,14 @@ all_logistic_P %>%
 ```
 
 
-##From these two plots we can see that in Brooklyn, Bronx and Manhattan, the 95% confidence interval of odds ratio doesn't include 1 and this tells us that in these three regions, cases with licence status of active generally have less violation than cases with status of expired or in-renewal. Similarly, in Brooklyn, Bronx, Queens and Manhattan, the 95% confidence interval of odds ratio doesn't include 1 and this tells us that in these four regions, cases with licence status of active generally have less violation than cases with status of permitted.
-###Model diagnostics
-#1. Remove categorical variables from the original data frame and bind the logit values to the data
+* Conclusion:
+
+From these two plots we can see that in Brooklyn, Bronx and Manhattan, the 95% confidence interval of odds ratio doesn't include 1 and this tells us that in these three regions, cases with licence status of active generally have less violation than cases with status of expired or in-renewal. Similarly, in Brooklyn, Bronx, Queens and Manhattan, the 95% confidence interval of odds ratio doesn't include 1 and this tells us that in these four regions, cases with licence status of active generally have less violation than cases with status of permitted.
+
+## Model diagnostics
+
+* Remove categorical variables from the original data frame and bind the logit values to the data
+
 ```{r}
 #select only numeric predictors
 child_data <- child_data %>%
@@ -147,7 +175,9 @@ child_data <- child_data %>%
   mutate(logit = log(probabilities/(1-probabilities))) %>%
   gather(key = "predictors", value = "predictor.value", -logit)
 ```
-#2. Create the scatter plots:
+
+* Create the scatter plots:
+
 ```{r}
 ggplot(child_data, aes(logit, predictor.value))+
   geom_point(size = 0.5, alpha = 0.5) +
@@ -156,7 +186,8 @@ ggplot(child_data, aes(logit, predictor.value))+
   facet_wrap(~predictors, scales = "free_y")
 ```
 
-##From this plot we can see that variable educational_worker_ratio is quite linearly associated with the violation rate in logit scale.
+* From this plot we can see that variable educational_worker_ratio is quite linearly associated with the violation rate in logit scale.
+
 ```{r}
 # Extract model results
 model_log.data <- augment(model_log) %>% 
@@ -167,10 +198,12 @@ ggplot(model_log.data, aes(index, .std.resid)) +
 ```
 
 
-###Diagnostic Conclusion
+* Diagnostic Conclusion
+
 From the plot we can see that the standard deviation of the data are all in acceptable region which means there's no significant outliers in the dataset.
 
-###Model interpretation
+## Model interpretation
+
 In this model, the outcome is log of odds ratio of violation rate. Our key predictor is the numeric variable of "educational_worker_ratio", which is the program-specific total number of educational worker in each center,  divided by the maximum capacity, based on the square footage of class and play rooms, the number of toilets and sinks, and overall estimates from the NYC Department of Buildings. With the log of odds ratio for the association between violation and educational_worker_ratio = -0.34, holding other variables fixed, the odds of having the violation will decrease by 29%, for one unit increase in educational worker ratio.
 
 We also included several categorical variables into our model. Based on the output, the interpretations of coefficients estimates are as follows:
