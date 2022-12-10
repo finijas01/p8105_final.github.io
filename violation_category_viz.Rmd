@@ -82,6 +82,7 @@ frequency_program_type = childcare_inspection_df %>%
   theme(axis.text.x = element_text(angle = 0, hjust = 0.5),plot.title = element_text(hjust = 0.5))
 frequency_program_type
 ```
+
 ## Number of violations by violation category
 
 ```{r}

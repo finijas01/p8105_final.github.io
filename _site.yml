@@ -10,8 +10,8 @@ navbar:
      menu:
       - text: "Violation Rate Distribution"
         href:  rate_borough_viz.html
-      - text: "Model 2"
-        href:  model2.html
+      - text: "Violation Frequency"
+        href:  violation_category_viz.html
    - text: 'Statistical analysis'
      href: http://github.com/finijas01/
    - text: 'Shiny Dashboard'

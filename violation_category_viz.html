@@ -342,7 +342,7 @@ div.tocify {
       <a href="rate_borough_viz.html">Violation Rate Distribution</a>
     </li>
     <li>
-      <a href="model2.html">Model 2</a>
+      <a href="violation_category_viz.html">Violation Frequency</a>
     </li>
   </ul>
 </li>
@@ -461,8 +461,11 @@ center_specific_df = childcare_inspection_df %&gt;%
     fill = &quot;program_type&quot;) +
   theme(axis.text.x = element_text(angle = 0, hjust = 0.5),plot.title = element_text(hjust = 0.5))
 frequency_program_type</code></pre>
-<p><img src="violation_category_viz_files/figure-html/unnamed-chunk-3-1.png" width="672" />
-## Number of violations by violation category</p>
+<p><img src="violation_category_viz_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+</div>
+<div id="number-of-violations-by-violation-category"
+class="section level2">
+<h2>Number of violations by violation category</h2>
 <pre class="r"><code>frequency_violation_category = childcare_inspection_df %&gt;% 
   drop_na(violation_category) %&gt;% 
   count(violation_category) %&gt;% 
