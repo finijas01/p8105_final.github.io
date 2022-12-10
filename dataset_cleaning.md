@@ -66,7 +66,6 @@ childcare_inspection_df = childcare_inspection_df %>%
     age_range = as.factor(age_range)
   ) %>% 
   filter(program_type != "school age camp")
-  write_csv(childcare_inspection_df,file = "childcare_inspection.csv",na = "NA", append = FALSE)
 ```
 
 We calculated a new violation rate for each distinct program using
@@ -81,5 +80,4 @@ center_specific_df = childcare_inspection_df %>%
     n_violation = sum(!is.na(violation_category)), 
     rate = n_violation/(n_violation + n_na)) %>% 
   arrange(center_name, program_type)
-  write_csv(center_specific_df,file = "center_specific.csv",na = "NA", append = FALSE)
 ```
