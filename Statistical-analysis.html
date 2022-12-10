@@ -11,9 +11,13 @@
 
 
 
+<<<<<<< HEAD
 <title>Logistic Regression</title>
+=======
+<title>Statistical analysis</title>
+>>>>>>> 790357719a7fc208d24fa82eb0f587820ba2b2c2
 
-<script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.18/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
@@ -184,8 +188,8 @@ $(document).ready(function () {
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -193,16 +197,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -398,18 +395,37 @@ div.tocify {
 
 
 
+<<<<<<< HEAD
 <h1 class="title toc-ignore">Logistic Regression</h1>
+=======
+<h1 class="title toc-ignore">Statistical analysis</h1>
+>>>>>>> 790357719a7fc208d24fa82eb0f587820ba2b2c2
 
 </div>
 
 
 <pre class="r"><code>library(tidyverse)</code></pre>
+<<<<<<< HEAD
 <pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
 ## ✔ ggplot2 3.3.6      ✔ purrr   0.3.5 
 ## ✔ tibble  3.1.8      ✔ dplyr   1.0.10
 ## ✔ tidyr   1.2.0      ✔ stringr 1.4.1 
 ## ✔ readr   2.1.2      ✔ forcats 0.5.2 
 ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+=======
+<pre><code>## Warning: package &#39;tidyverse&#39; was built under R version 4.2.2</code></pre>
+<pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
+## ✔ ggplot2 3.4.0      ✔ purrr   0.3.5 
+## ✔ tibble  3.1.8      ✔ dplyr   1.0.10
+## ✔ tidyr   1.2.1      ✔ stringr 1.5.0 
+## ✔ readr   2.1.3      ✔ forcats 0.5.2</code></pre>
+<pre><code>## Warning: package &#39;ggplot2&#39; was built under R version 4.2.2</code></pre>
+<pre><code>## Warning: package &#39;tidyr&#39; was built under R version 4.2.2</code></pre>
+<pre><code>## Warning: package &#39;readr&#39; was built under R version 4.2.2</code></pre>
+<pre><code>## Warning: package &#39;purrr&#39; was built under R version 4.2.2</code></pre>
+<pre><code>## Warning: package &#39;stringr&#39; was built under R version 4.2.2</code></pre>
+<pre><code>## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+>>>>>>> 790357719a7fc208d24fa82eb0f587820ba2b2c2
 ## ✖ dplyr::filter() masks stats::filter()
 ## ✖ dplyr::lag()    masks stats::lag()</code></pre>
 <pre class="r"><code>library(dplyr)
@@ -422,16 +438,27 @@ library(rvest)</code></pre>
 ##     guess_encoding</code></pre>
 <pre class="r"><code>library(purrr)
 library(ggplot2)
+<<<<<<< HEAD
 library(modelr)
 library(mgcv)</code></pre>
 <pre><code>## Loading required package: nlme
 ## 
+=======
+library(modelr)</code></pre>
+<pre><code>## Warning: package &#39;modelr&#39; was built under R version 4.2.2</code></pre>
+<pre class="r"><code>library(mgcv)</code></pre>
+<pre><code>## Warning: package &#39;mgcv&#39; was built under R version 4.2.2</code></pre>
+<pre><code>## Loading required package: nlme</code></pre>
+<pre><code>## Warning: package &#39;nlme&#39; was built under R version 4.2.2</code></pre>
+<pre><code>## 
+>>>>>>> 790357719a7fc208d24fa82eb0f587820ba2b2c2
 ## Attaching package: &#39;nlme&#39;
 ## 
 ## The following object is masked from &#39;package:dplyr&#39;:
 ## 
 ##     collapse
 ## 
+<<<<<<< HEAD
 ## This is mgcv 1.8-40. For overview type &#39;help(&quot;mgcv-package&quot;)&#39;.</code></pre>
 <pre class="r"><code>library(patchwork)
 library(viridis)</code></pre>
@@ -443,6 +470,17 @@ set.seed(1)</code></pre>
 <li><p>Remove repeated data</p></li>
 </ol>
 <pre class="r"><code>childcare_inspection_df = read_csv(&quot;./data/DOHMH_Childcare_Center_Inspections.csv&quot;) %&gt;% 
+=======
+## This is mgcv 1.8-41. For overview type &#39;help(&quot;mgcv-package&quot;)&#39;.</code></pre>
+<pre class="r"><code>library(patchwork)
+library(viridis)</code></pre>
+<pre><code>## Loading required package: viridisLite</code></pre>
+<pre class="r"><code>library(fastDummies)</code></pre>
+<pre><code>## Warning: package &#39;fastDummies&#39; was built under R version 4.2.2</code></pre>
+<pre class="r"><code>set.seed(1)</code></pre>
+<pre class="r"><code># Initial data cleaning
+childcare_inspection_df = read_csv(&quot;./data/DOHMH_Childcare_Center_Inspections.csv&quot;) %&gt;% 
+>>>>>>> 790357719a7fc208d24fa82eb0f587820ba2b2c2
 janitor::clean_names() %&gt;% 
 distinct()</code></pre>
 <pre><code>## Rows: 26280 Columns: 34
@@ -450,6 +488,7 @@ distinct()</code></pre>
 ## Delimiter: &quot;,&quot;
 ## chr (22): Center Name, Legal Name, Building, Street, Borough, Phone, Permit ...
 ## dbl (11): ZipCode, Permit Number, Building Identification Number, Violation ...
+## num  (1): Maximum Capacity
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
@@ -470,10 +509,9 @@ distinct()</code></pre>
     facility_type = as.factor(facility_type),
     child_care_type = as.factor(child_care_type),
     age_range = as.factor(age_range)
-  ) </code></pre>
-<p>We calculated a new violation rate for each distinct program using
-violation category column.</p>
-<pre class="r"><code>center_specific_df = childcare_inspection_df %&gt;% 
+  ) 
+
+center_specific_df = childcare_inspection_df %&gt;% 
   relocate(center_name, program_type) %&gt;% 
   group_by(center_name, program_type) %&gt;% 
   mutate(
@@ -481,11 +519,15 @@ violation category column.</p>
     n_violation = sum(!is.na(violation_category)), 
     rate = n_violation/(n_violation + n_na)) %&gt;% 
   arrange(center_name, program_type)</code></pre>
+<<<<<<< HEAD
 <div id="statistical-analysis" class="section level3">
 <h3>Statistical analysis</h3>
+=======
+>>>>>>> 790357719a7fc208d24fa82eb0f587820ba2b2c2
 <div id="anova-test---violation-cases-number-and-boroughs"
 class="section level4">
 <h4>1. Anova test - Violation Cases Number and Boroughs</h4>
+<p><em>Introduction</em></p>
 <p>We are curious about whether center location is associated with the
 frequency of their violation. For example, during the past 3 years,
 would the expected violation case number in a random center in Bronx
@@ -566,14 +608,23 @@ summary(fit_borough)</code></pre>
 </tr>
 </tbody>
 </table>
+<<<<<<< HEAD
 <p><em>Conclusion:</em> The p-value of the above Anova test is
 3.106e-10. Thus, at 0.05 significance level, we reject the null
 hypothesis and conclude that during the past 3 years, the average number
 of violations per center varies across boroughs.</p>
+=======
+<p><em>Conclusion:</em></p>
+<p>The p-value of the above Anova test is 3.106e-10. Thus, at 0.05
+significance level, we reject the null hypothesis and conclude that
+during the past 3 years, the average number of violations per center
+varies across boroughs.</p>
+>>>>>>> 790357719a7fc208d24fa82eb0f587820ba2b2c2
 </div>
 <div id="chi-square-test---3-violation-types-and-boroughs"
 class="section level4">
 <h4>2. Chi-square Test - 3 Violation Types and Boroughs</h4>
+<p><em>Introduction</em></p>
 <p>In this dataset, there are three violation types exist: critical
 violation, general violation and public health hazard violation. We’re
 interested if the proportion of each type of violation would vary among
@@ -658,6 +709,7 @@ violation category is significantly different by borough.</p>
 <div id="proportion-test---total-violation-proportion-within-center"
 class="section level4">
 <h4>3. Proportion Test - Total Violation Proportion within Center</h4>
+<p><em>Introduction</em></p>
 <p>With the belief that violation record is an important parameter to
 evaluate the performance of a child healthcare center, we conducted a
 proportion test to estimate the total violation proportion and its 95%
@@ -675,8 +727,9 @@ mutate(
       violation_category == &quot;CRITICAL&quot;   ~ &quot;violated&quot;,
       violation_category == &quot;PUBLIC HEALTH HAZARD&quot;   ~ &quot;violated&quot;)
   ) %&gt;% 
- select(center_name, program_type, borough, verdiction)</code></pre>
-<pre class="r"><code># Summary of the total number of inspection and the total number of violation within center
+ select(center_name, program_type, borough, verdiction)
+
+# Summary of the total number of inspection and the total number of violation within center
 verdiction_center = 
   vio_sum %&gt;% 
   mutate(verdiction = as.character(verdiction)) %&gt;%
@@ -686,6 +739,10 @@ verdiction_center =
     inspect_vio = sum(!is.na(verdiction)))</code></pre>
 <pre><code>## `summarise()` has grouped output by &#39;center_name&#39;. You can override using the
 ## `.groups` argument.</code></pre>
+<<<<<<< HEAD
+=======
+<p><em>Plot for Staten island</em></p>
+>>>>>>> 790357719a7fc208d24fa82eb0f587820ba2b2c2
 <pre class="r"><code># prop.test for all centers in staten island
 center_prop_staten = 
   verdiction_center %&gt;% 
@@ -858,7 +915,12 @@ center_prop_staten %&gt;%
   labs( x = &quot;Center&quot;,
     y = &quot;Estimated proportion of violation&quot;,
     title = &quot;Centers with high violation proportion in Staten Island&quot;)</code></pre>
+<<<<<<< HEAD
 <p><img src="Statistical-analysis_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+=======
+<p><img src="Statistical-analysis_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p><em>Plot for Bronx</em></p>
+>>>>>>> 790357719a7fc208d24fa82eb0f587820ba2b2c2
 <pre class="r"><code># prop.test for all centers in Bronx
 center_prop_bronx = 
   verdiction_center %&gt;% 
@@ -1043,7 +1105,12 @@ center_prop_bronx %&gt;%
   labs( x = &quot;Center&quot;,
     y = &quot;Estimated proportion of violation&quot;,
     title = &quot;Centers with high violation proportion in Bronx&quot;)</code></pre>
+<<<<<<< HEAD
 <p><img src="Statistical-analysis_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+=======
+<p><img src="Statistical-analysis_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p><em>Plot for Manhattan</em></p>
+>>>>>>> 790357719a7fc208d24fa82eb0f587820ba2b2c2
 <pre class="r"><code># prop.test for all centers in Manhattan
 center_prop_manhattan = 
   verdiction_center %&gt;% 
@@ -1652,7 +1719,12 @@ center_prop_manhattan %&gt;%
   labs( x = &quot;Center&quot;,
     y = &quot;Estimated proportion of violation&quot;,
     title = &quot;Centers with high violation proportion in Manhattan&quot;)</code></pre>
+<<<<<<< HEAD
 <p><img src="Statistical-analysis_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+=======
+<p><img src="Statistical-analysis_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p><em>Plot for Brooklyn</em></p>
+>>>>>>> 790357719a7fc208d24fa82eb0f587820ba2b2c2
 <pre class="r"><code># prop.test for all centers in Brooklyn
 center_prop_brooklyn = 
   verdiction_center %&gt;% 
@@ -2655,7 +2727,12 @@ center_prop_brooklyn %&gt;%
   labs( x = &quot;Center&quot;,
     y = &quot;Estimated proportion of violation&quot;,
     title = &quot;Centers with high violation proportion in Brooklyn&quot;)</code></pre>
+<<<<<<< HEAD
 <p><img src="Statistical-analysis_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+=======
+<p><img src="Statistical-analysis_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p><em>Plot for Queens</em></p>
+>>>>>>> 790357719a7fc208d24fa82eb0f587820ba2b2c2
 <pre class="r"><code># prop.test for all centers in Queens
 center_prop_queens = 
   verdiction_center %&gt;% 
@@ -3164,13 +3241,20 @@ center_prop_manhattan %&gt;%
   labs( x = &quot;Center&quot;,
     y = &quot;Estimated proportion of violation&quot;,
     title = &quot;Centers with high violation proportion in Queens&quot;)</code></pre>
+<<<<<<< HEAD
 <p><img src="Statistical-analysis_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+=======
+<p><img src="Statistical-analysis_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+>>>>>>> 790357719a7fc208d24fa82eb0f587820ba2b2c2
 <p><em>Conclusion:</em></p>
 <p>From the plot, we can see the names and estimates of the centers with
 high violation proportion in each borough. These plots can serve as a
 good reference for NYC residents when selecting the childcare centers
 for their kids.</p>
 </div>
+
+
+
 </div>
 
 
