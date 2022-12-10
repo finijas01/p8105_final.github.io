@@ -74,9 +74,12 @@ center_specific_df = childcare_inspection_df %>%
   arrange(center_name, program_type)
 ```
 
+
+
 ### Statistical analysis
 
-#### 1. Anova test
+
+#### 1. Anova test - Violation Cases Number and Boroughs
 
 We are curious about whether center location is associated with the frequency of their violation. For example, during the past 3 years, would the expected violation case number in a random center in Bronx varies from the expected violation case number in a random center in Manhattan? To explore the answer, We performed ANOVA test across boroughs.
 
@@ -93,12 +96,13 @@ center_distinct_df_2 = center_specific_df %>%
   select(center_name, program_type, borough, status, maximum_capacity, total_educational_workers, educational_worker_ratio, n_violation, rate) %>%
   distinct()
 
+# total violation number of each center
 vio_boro = center_distinct_df_2 %>%
   group_by(borough, center_name) %>%
   summarize(n_violate = sum(n_violation)) %>%
   arrange(center_name)
 
-
+# anova
 fit_borough = lm(n_violate ~ borough, data = vio_boro)
 summary(fit_borough)
 anova(fit_borough) %>% knitr::kable(caption = "One way anova of violation frequency and borough")
@@ -145,3 +149,193 @@ chisq.test(three_violation)
 
 *Conclusion:*
 At 0.05 significance level, χ2>χcritical, with p-value < 2.2e-16. Thus, we reject the null hypothesis and conclude that there is sufficient evidence that the proportion of violation category is significantly different by borough.
+
+
+
+#### 3. Proportion Test - Total Violation Proportion within Center
+
+With the belief that violation record is an important parameter to evaluate the performance of a child healthcare center, we conducted a proportion test to estimate the total violation proportion and its 95% confidence interval for each center, regardless of its program type. We defined the estimated total violation proportion > 0.8 as high proportion. Next, we pinpointed all the centers with high violation proportion in each borough. 
+
+```{r classify}
+# Divide the inspection results as violated vs. not violated
+vio_sum = 
+center_specific_df %>%
+mutate(
+    verdiction = case_when(
+      violation_category == "NA" ~ "not violated",
+      violation_category == "GENERAL"  ~ "violated",
+      violation_category == "CRITICAL"   ~ "violated",
+      violation_category == "PUBLIC HEALTH HAZARD"   ~ "violated")
+  ) %>% 
+ select(center_name, program_type, borough, verdiction)
+```
+
+```{r summerize}
+# Summary of the total number of inspection and the total number of violation within center
+verdiction_center = 
+  vio_sum %>% 
+  mutate(verdiction = as.character(verdiction)) %>%
+  group_by(center_name,borough) %>% 
+  summarize(
+    inspect_total = n(),
+    inspect_vio = sum(!is.na(verdiction)))
+```
+
+```{r}
+# prop.test for all centers in staten island
+center_prop_staten = 
+  verdiction_center %>% 
+  filter(borough == "STATEN ISLAND") %>%
+  mutate(
+    prop_result = map2(.x = inspect_vio, .y = inspect_total, ~prop.test(x = .x, n = .y)),
+    tidy_result = map(.x = prop_result, ~broom::tidy(.x))
+  ) %>% 
+  select(-prop_result) %>% 
+  unnest(tidy_result) %>% 
+  select(center_name, estimate, conf.low, conf.high)
+```
+
+```{r}
+# a plot that shows the estimates and CIs for each center in staten island with the proportion of violation greater than 0.8
+center_prop_staten %>% 
+  filter(estimate > 0.8) %>%
+  mutate(center_name = factor(center_name)) %>% 
+  mutate(center_name = forcats::fct_reorder(center_name, estimate)) %>% 
+  
+  ggplot(aes(x = center_name, y = estimate)) +
+  geom_point(color = "red") +
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high)) +
+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.6))) +
+  labs( x = "Center",
+    y = "Estimated proportion of violation",
+    title = "Centers with high violation proportion in Staten Island")
+```
+
+```{r}
+# prop.test for all centers in Bronx
+center_prop_bronx = 
+  verdiction_center %>% 
+  filter(borough == "BRONX") %>%
+  mutate(
+    prop_result = map2(.x = inspect_vio, .y = inspect_total, ~prop.test(x = .x, n = .y)),
+    tidy_result = map(.x = prop_result, ~broom::tidy(.x))
+  ) %>% 
+  select(-prop_result) %>% 
+  unnest(tidy_result) %>% 
+  select(center_name, estimate, conf.low, conf.high)
+```
+
+```{r}
+# a plot that shows the estimates and CIs for each center in Bronx with violation proportion greater than 0.8
+center_prop_bronx %>% 
+  filter(estimate > 0.8) %>%
+  mutate(center_name = factor(center_name)) %>% 
+  mutate(center_name = forcats::fct_reorder(center_name, estimate)) %>% 
+  
+  ggplot(aes(x = center_name, y = estimate)) +
+  geom_point(color = "red") +
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high)) +
+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.6))) +
+  labs( x = "Center",
+    y = "Estimated proportion of violation",
+    title = "Centers with high violation proportion in Bronx")
+```
+
+```{r}
+# prop.test for all centers in Manhattan
+center_prop_manhattan = 
+  verdiction_center %>% 
+  filter(borough == "MANHATTAN") %>%
+  mutate(
+    prop_result = map2(.x = inspect_vio, .y = inspect_total, ~prop.test(x = .x, n = .y)),
+    tidy_result = map(.x = prop_result, ~broom::tidy(.x))
+  ) %>% 
+  select(-prop_result) %>% 
+  unnest(tidy_result) %>% 
+  select(center_name, estimate, conf.low, conf.high)
+```
+
+```{r}
+# a plot that shows the estimates and CIs for each center in Manhattan with violation proportion greater than 0.8
+center_prop_manhattan %>% 
+  filter(estimate > 0.8) %>%
+  mutate(center_name = factor(center_name)) %>% 
+  mutate(center_name = forcats::fct_reorder(center_name, estimate)) %>% 
+  
+  ggplot(aes(x = center_name, y = estimate)) +
+  geom_point(color = "red") +
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high)) +
+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.6))) +
+  labs( x = "Center",
+    y = "Estimated proportion of violation",
+    title = "Centers with high violation proportion in Manhattan")
+```
+
+```{r}
+# prop.test for all centers in Brooklyn
+center_prop_brooklyn = 
+  verdiction_center %>% 
+  filter(borough == "BROOKLYN") %>%
+  mutate(
+    prop_result = map2(.x = inspect_vio, .y = inspect_total, ~prop.test(x = .x, n = .y)),
+    tidy_result = map(.x = prop_result, ~broom::tidy(.x))
+  ) %>% 
+  select(-prop_result) %>% 
+  unnest(tidy_result) %>% 
+  select(center_name, estimate, conf.low, conf.high)
+```
+
+```{r}
+# a plot that shows the estimates and CIs for each center in Brooklyn with violation proportion greater than 0.8
+center_prop_brooklyn %>% 
+  filter(estimate > 0.8) %>%
+  mutate(center_name = factor(center_name)) %>% 
+  mutate(center_name = forcats::fct_reorder(center_name, estimate)) %>% 
+  
+  ggplot(aes(x = center_name, y = estimate)) +
+  geom_point(color = "red") +
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high)) +
+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.6))) +
+  labs( x = "Center",
+    y = "Estimated proportion of violation",
+    title = "Centers with high violation proportion in Brooklyn")
+```
+
+```{r}
+# prop.test for all centers in Queens
+center_prop_queens = 
+  verdiction_center %>% 
+  filter(borough == "QUEENS") %>%
+  mutate(
+    prop_result = map2(.x = inspect_vio, .y = inspect_total, ~prop.test(x = .x, n = .y)),
+    tidy_result = map(.x = prop_result, ~broom::tidy(.x))
+  ) %>% 
+  select(-prop_result) %>% 
+  unnest(tidy_result) %>% 
+  select(center_name, estimate, conf.low, conf.high)
+```
+
+```{r}
+# a plot that shows the estimates and CIs for each center in Queens with violation proportion greater than 0.8
+center_prop_manhattan %>% 
+  filter(estimate > 0.8) %>%
+  mutate(center_name = factor(center_name)) %>% 
+  mutate(center_name = forcats::fct_reorder(center_name, estimate)) %>% 
+  
+  ggplot(aes(x = center_name, y = estimate)) +
+  geom_point(color = "red") +
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high)) +
+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.6))) +
+  labs( x = "Center",
+    y = "Estimated proportion of violation",
+    title = "Centers with high violation proportion in Queens")
+```
+
+*Conclusion:*
+
+From the plot, we can see the names and estimates of the centers with high violation proportion in each borough. These plots can serve as a good reference for NYC residents when selecting the childcare centers for their kids. 
