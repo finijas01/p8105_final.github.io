@@ -8,11 +8,6 @@ output:
     theme: flatly
 ---
 
-<<<<<<< HEAD
-
-
-=======
->>>>>>> add910eabe34508308e1e4b1230e56a11162620f
 ```{r warning= FALSE, message=FALSE}
 
 library(tidyverse)
