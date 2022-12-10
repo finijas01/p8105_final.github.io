@@ -8,7 +8,14 @@ output:
     theme: flatly
 ---
 
+<style type="text/css">
 
+h1.title {
+  font-size: 38px;
+  color: Black;
+  text-align: center;
+}
+</style>
 
 ## Model selection
 
@@ -67,7 +74,7 @@ center_specific_df = childcare_inspection_df %>%
   arrange(center_name, program_type)
 ```
 
-#### Linear model 1
+### Linear model 1
 
 First, we fit a full model using program type, borough, status, educational worker ratio of center-specific distinct records.
 
@@ -87,7 +94,7 @@ full_lm %>%
   knitr::kable(digit = 3)
 ```
 
-#### Linear model 2
+### Linear model 2
 
 We also proposed an alternative model by using maximum_capacity, total educational workers and their interaction term as the predictors, instead of the educational worker ratio. 
 
@@ -107,7 +114,7 @@ After comparing these two models, we decided to keep full_lm model, due to its b
 
 ## Model diagnostics
 
-#### Residual assumptions
+### Residual assumptions
 
 We checked the assumptions of the residuals by using 4 plots as follows:
 
@@ -125,7 +132,7 @@ outside of the dashed line of Cook’s distance 0.5, suggesting no influential o
 plot(full_lm)
 ```
 
-#### Multicollinearity 
+### Multicollinearity 
 
 Moreover, the full_lm model shows a low multicollinearity since the VIF value for each variable are all below 2.
 
@@ -136,7 +143,7 @@ check_collinearity(full_lm) # low correlation
 
 ## Model remedy
 
-#### Variable normality check
+### Variable normality check
 
 We checked the normality of two numerical variables of educational worker ratio and rate. Boxplot suggests the first variable has a right skewed distribution.
 
@@ -148,9 +155,8 @@ boxplot(center_distinct_df$educational_worker_ratio, main = "Edu-worker Ratio")
 boxplot(center_distinct_df$rate, main = "Violation Rate")
 ```
 
-#### Transformation
+### Transformation
 
-<<<<<<< HEAD
 Therefore, to address the slight model assumption violation issue, we firstly tried transformation to make 
 the data more ‘normal’. 
 
@@ -162,7 +168,7 @@ full_lm_sqrt = center_distinct_df %>%
   lm(rate ~ program_type + borough + status + sqrt(educational_worker_ratio), data = .)
 ```
 
-#### Outliers removal
+### Outliers removal
 
 In addition, although there is no influential points, case 12349 and 12318 affect the regression assumption as shown repeatedly.So we tried to fit a new model named full_lm_out by removing these two cases. This model works better then full_lm due to its increased adjusted R-square. 
 
@@ -200,13 +206,13 @@ print(model_caret)
 
 ## Model Conclusion
 
-#### Final linear model 
+### Final linear model 
 
 We chose full_lm_out as our final linear model:
 
 rate = 0.868 - 0.027(program_type_infant toddler) - 0.245(borough_BROOKLYN) -0.186(borough_MANHATTAN) - 0.103(borough_QUEENS) - 0.323(borough_STATEN ISLAND) - 0.193(status_Expired In Renewal) - 0.242(status_Permitted) - 0.084(educational_worker_ratio)
 
-#### Interpretation
+### Interpretation
 
 In this model, the outcome is "rate", indicating the violation rate for each center based on different program type. Our key predictor is the numeric variable of "educational_worker_ratio", which is the program-specific total number of educational worker in each center,  divided by the maximum capacity, based on the square footage of class and play rooms, the number of toilets and sinks, and overall estimates from the NYC Department of Buildings. As shown in the plot below, our model suggests the value of the estimated mean violation rate decreases by 0.084 for each unit increase in educational worker ratio, while holding all other variables fixed.  
 
