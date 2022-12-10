@@ -399,8 +399,19 @@ in the same format : lower case</p></li>
     child_care_type = as.factor(child_care_type),
     age_range = as.factor(age_range)
   ) </code></pre>
-<p>We calculated a new violation rate for each distinct program using
-violation category column.</p>
+<div id="linear-regression-model" class="section level3">
+<h3>Linear regression model</h3>
+<p><em>Model selection:</em></p>
+<p>To explore the possible predictors contributing to the
+center-specific violation rate under each program type, we built a
+linear regression model. In this model, we focused on the violation rate
+and properties of each individual center.</p>
+<p>To start with, we created a new variable named “rate”, which
+represents the violation rate for each center, by using violation
+category column. Here, rate = number of total violation for each center
+and program / number of total inspection for each center and program,
+during the past 3 year. This variable was used as the outcome of the
+linear regression.</p>
 <pre class="r"><code>center_specific_df = childcare_inspection_df %&gt;% 
   relocate(center_name, program_type) %&gt;% 
   group_by(center_name, program_type) %&gt;% 
@@ -409,47 +420,22 @@ violation category column.</p>
     n_violation = sum(!is.na(violation_category)), 
     rate = n_violation/(n_violation + n_na)) %&gt;% 
   arrange(center_name, program_type)</code></pre>
-<p>Select all possible independent variables to fit a full model based
-on center-specific distinct records:</p>
-<pre class="r"><code># select distinct records of each center
-
+<p>Next, we selected several variables closely related to the properties
+of each center, as the potential predictors. After a thorough literature
+review, we chose variables based on a hypothesized structure for the
+factors underlying violation rate.</p>
+<p>Linear model 1:</p>
+<p>First, we fit a full model using program type, borough, status,
+educational worker ratio of center-specific distinct records.</p>
+<pre class="r"><code># select distinct records and related variables of each center
 center_distinct_df = center_specific_df %&gt;%
-  select(center_name, program_type, borough, status, maximum_capacity, total_educational_workers, educational_worker_ratio, rate) %&gt;%
-  distinct()
+  select(center_name, program_type, borough, status, maximum_capacity, total_educational_workers, educational_worker_ratio, rate)
 
 # fit the full model
 full_lm = center_distinct_df %&gt;%
  lm(rate ~ program_type + borough + status + educational_worker_ratio, data = .) 
-summary(full_lm)</code></pre>
-<pre><code>## 
-## Call:
-## lm(formula = rate ~ program_type + borough + status + educational_worker_ratio, 
-##     data = .)
-## 
-## Residuals:
-##      Min       1Q   Median       3Q      Max 
-## -0.60205 -0.23726 -0.00569  0.19621  0.71194 
-## 
-## Coefficients:
-##                             Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)                  0.66051    0.03950  16.721  &lt; 2e-16 ***
-## program_typeinfant toddler   0.03605    0.03005   1.200  0.23038    
-## program_typepreschool        0.06220    0.02384   2.610  0.00913 ** 
-## program_typeschool age camp  0.02658    0.18859   0.141  0.88793    
-## boroughBROOKLYN             -0.27805    0.01989 -13.982  &lt; 2e-16 ***
-## boroughMANHATTAN            -0.20409    0.02092  -9.755  &lt; 2e-16 ***
-## boroughQUEENS               -0.15109    0.02139  -7.062 2.21e-12 ***
-## boroughSTATEN ISLAND        -0.28740    0.03052  -9.416  &lt; 2e-16 ***
-## statusExpired-In Renewal    -0.08504    0.03140  -2.709  0.00681 ** 
-## statusPermitted             -0.14425    0.02864  -5.037 5.13e-07 ***
-## educational_worker_ratio    -0.08238    0.04517  -1.824  0.06836 .  
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## Residual standard error: 0.2654 on 2139 degrees of freedom
-## Multiple R-squared:  0.1141, Adjusted R-squared:  0.1099 
-## F-statistic: 27.54 on 10 and 2139 DF,  p-value: &lt; 2.2e-16</code></pre>
-<pre class="r"><code>full_lm %&gt;% 
+
+full_lm %&gt;% 
   broom::tidy() %&gt;%
   knitr::kable(digit = 3)</code></pre>
 <table>
@@ -465,136 +451,92 @@ summary(full_lm)</code></pre>
 <tbody>
 <tr class="odd">
 <td align="left">(Intercept)</td>
-<td align="right">0.661</td>
-<td align="right">0.040</td>
-<td align="right">16.721</td>
+<td align="right">0.864</td>
+<td align="right">0.015</td>
+<td align="right">57.360</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="even">
 <td align="left">program_typeinfant toddler</td>
-<td align="right">0.036</td>
-<td align="right">0.030</td>
-<td align="right">1.200</td>
-<td align="right">0.230</td>
+<td align="right">-0.028</td>
+<td align="right">0.011</td>
+<td align="right">-2.422</td>
+<td align="right">0.015</td>
 </tr>
 <tr class="odd">
 <td align="left">program_typepreschool</td>
-<td align="right">0.062</td>
-<td align="right">0.024</td>
-<td align="right">2.610</td>
+<td align="right">-0.004</td>
 <td align="right">0.009</td>
+<td align="right">-0.442</td>
+<td align="right">0.658</td>
 </tr>
 <tr class="even">
 <td align="left">program_typeschool age camp</td>
-<td align="right">0.027</td>
-<td align="right">0.189</td>
+<td align="right">0.116</td>
 <td align="right">0.141</td>
-<td align="right">0.888</td>
+<td align="right">0.823</td>
+<td align="right">0.410</td>
 </tr>
 <tr class="odd">
 <td align="left">boroughBROOKLYN</td>
-<td align="right">-0.278</td>
-<td align="right">0.020</td>
-<td align="right">-13.982</td>
+<td align="right">-0.244</td>
+<td align="right">0.006</td>
+<td align="right">-42.772</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="even">
 <td align="left">boroughMANHATTAN</td>
-<td align="right">-0.204</td>
-<td align="right">0.021</td>
-<td align="right">-9.755</td>
+<td align="right">-0.186</td>
+<td align="right">0.006</td>
+<td align="right">-30.276</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="odd">
 <td align="left">boroughQUEENS</td>
-<td align="right">-0.151</td>
-<td align="right">0.021</td>
-<td align="right">-7.062</td>
+<td align="right">-0.104</td>
+<td align="right">0.006</td>
+<td align="right">-17.263</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="even">
 <td align="left">boroughSTATEN ISLAND</td>
-<td align="right">-0.287</td>
-<td align="right">0.031</td>
-<td align="right">-9.416</td>
+<td align="right">-0.323</td>
+<td align="right">0.010</td>
+<td align="right">-32.242</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="odd">
 <td align="left">statusExpired-In Renewal</td>
-<td align="right">-0.085</td>
-<td align="right">0.031</td>
-<td align="right">-2.709</td>
-<td align="right">0.007</td>
+<td align="right">-0.190</td>
+<td align="right">0.012</td>
+<td align="right">-15.799</td>
+<td align="right">0.000</td>
 </tr>
 <tr class="even">
 <td align="left">statusPermitted</td>
-<td align="right">-0.144</td>
-<td align="right">0.029</td>
-<td align="right">-5.037</td>
+<td align="right">-0.239</td>
+<td align="right">0.011</td>
+<td align="right">-21.115</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="odd">
 <td align="left">educational_worker_ratio</td>
-<td align="right">-0.082</td>
-<td align="right">0.045</td>
-<td align="right">-1.824</td>
-<td align="right">0.068</td>
+<td align="right">-0.083</td>
+<td align="right">0.015</td>
+<td align="right">-5.346</td>
+<td align="right">0.000</td>
 </tr>
 </tbody>
 </table>
-<pre class="r"><code># model diagnostics: Residuals vs Fitted plot, QQ plot, Scale_location, Residuals vs Leverage
-plot(full_lm)</code></pre>
-<p><img src="linear_files/figure-html/unnamed-chunk-5-1.png" width="672" /><img src="linear_files/figure-html/unnamed-chunk-5-2.png" width="672" /><img src="linear_files/figure-html/unnamed-chunk-5-3.png" width="672" /><img src="linear_files/figure-html/unnamed-chunk-5-4.png" width="672" /></p>
-<p>Fit an alternative model:</p>
+<p>Linear model 2:</p>
+<p>Second, we also proposed an alternative model by using
+maximum_capacity, total educational workers and their interaction term
+as the predictors, instead of the educational worker ratio.</p>
 <pre class="r"><code># fit an alternative model
 alt_lm = center_distinct_df %&gt;%
  lm(rate ~ program_type + borough + status + maximum_capacity * total_educational_workers, data = .) 
-summary(alt_lm)</code></pre>
-<pre><code>## 
-## Call:
-## lm(formula = rate ~ program_type + borough + status + maximum_capacity * 
-##     total_educational_workers, data = .)
-## 
-## Residuals:
-##      Min       1Q   Median       3Q      Max 
-## -0.60254 -0.24408 -0.00761  0.19708  0.72506 
-## 
-## Coefficients:
-##                                              Estimate Std. Error t value
-## (Intercept)                                 6.565e-01  4.220e-02  15.558
-## program_typeinfant toddler                  1.338e-02  3.034e-02   0.441
-## program_typepreschool                       4.920e-02  2.672e-02   1.841
-## program_typeschool age camp                 2.844e-02  1.891e-01   0.150
-## boroughBROOKLYN                            -2.806e-01  1.987e-02 -14.121
-## boroughMANHATTAN                           -2.053e-01  2.095e-02  -9.800
-## boroughQUEENS                              -1.530e-01  2.140e-02  -7.146
-## boroughSTATEN ISLAND                       -2.917e-01  3.047e-02  -9.574
-## statusExpired-In Renewal                   -8.288e-02  3.139e-02  -2.641
-## statusPermitted                            -1.415e-01  2.862e-02  -4.945
-## maximum_capacity                            1.823e-05  6.949e-05   0.262
-## total_educational_workers                  -5.254e-04  1.425e-03  -0.369
-## maximum_capacity:total_educational_workers  5.805e-06  7.101e-06   0.817
-##                                            Pr(&gt;|t|)    
-## (Intercept)                                 &lt; 2e-16 ***
-## program_typeinfant toddler                  0.65919    
-## program_typepreschool                       0.06569 .  
-## program_typeschool age camp                 0.88047    
-## boroughBROOKLYN                             &lt; 2e-16 ***
-## boroughMANHATTAN                            &lt; 2e-16 ***
-## boroughQUEENS                              1.22e-12 ***
-## boroughSTATEN ISLAND                        &lt; 2e-16 ***
-## statusExpired-In Renewal                    0.00833 ** 
-## statusPermitted                            8.21e-07 ***
-## maximum_capacity                            0.79313    
-## total_educational_workers                   0.71231    
-## maximum_capacity:total_educational_workers  0.41374    
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## Residual standard error: 0.2656 on 2137 degrees of freedom
-## Multiple R-squared:  0.1134, Adjusted R-squared:  0.1084 
-## F-statistic: 22.78 on 12 and 2137 DF,  p-value: &lt; 2.2e-16</code></pre>
-<pre class="r"><code>alt_lm %&gt;% 
+
+alt_lm %&gt;% 
   broom::tidy() %&gt;%
   knitr::kable(digit = 3)</code></pre>
 <table>
@@ -617,104 +559,101 @@ summary(alt_lm)</code></pre>
 <tbody>
 <tr class="odd">
 <td align="left">(Intercept)</td>
-<td align="right">0.657</td>
-<td align="right">0.042</td>
-<td align="right">15.558</td>
+<td align="right">0.842</td>
+<td align="right">0.017</td>
+<td align="right">50.964</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="even">
 <td align="left">program_typeinfant toddler</td>
-<td align="right">0.013</td>
-<td align="right">0.030</td>
-<td align="right">0.441</td>
-<td align="right">0.659</td>
+<td align="right">-0.041</td>
+<td align="right">0.012</td>
+<td align="right">-3.425</td>
+<td align="right">0.001</td>
 </tr>
 <tr class="odd">
 <td align="left">program_typepreschool</td>
-<td align="right">0.049</td>
-<td align="right">0.027</td>
-<td align="right">1.841</td>
-<td align="right">0.066</td>
+<td align="right">-0.006</td>
+<td align="right">0.011</td>
+<td align="right">-0.551</td>
+<td align="right">0.582</td>
 </tr>
 <tr class="even">
 <td align="left">program_typeschool age camp</td>
-<td align="right">0.028</td>
-<td align="right">0.189</td>
-<td align="right">0.150</td>
-<td align="right">0.880</td>
+<td align="right">0.129</td>
+<td align="right">0.141</td>
+<td align="right">0.917</td>
+<td align="right">0.359</td>
 </tr>
 <tr class="odd">
 <td align="left">boroughBROOKLYN</td>
-<td align="right">-0.281</td>
-<td align="right">0.020</td>
-<td align="right">-14.121</td>
+<td align="right">-0.247</td>
+<td align="right">0.006</td>
+<td align="right">-43.417</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="even">
 <td align="left">boroughMANHATTAN</td>
-<td align="right">-0.205</td>
-<td align="right">0.021</td>
-<td align="right">-9.800</td>
+<td align="right">-0.187</td>
+<td align="right">0.006</td>
+<td align="right">-30.358</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="odd">
 <td align="left">boroughQUEENS</td>
-<td align="right">-0.153</td>
-<td align="right">0.021</td>
-<td align="right">-7.146</td>
+<td align="right">-0.106</td>
+<td align="right">0.006</td>
+<td align="right">-17.658</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="even">
 <td align="left">boroughSTATEN ISLAND</td>
-<td align="right">-0.292</td>
-<td align="right">0.030</td>
-<td align="right">-9.574</td>
+<td align="right">-0.329</td>
+<td align="right">0.010</td>
+<td align="right">-32.928</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="odd">
 <td align="left">statusExpired-In Renewal</td>
-<td align="right">-0.083</td>
-<td align="right">0.031</td>
-<td align="right">-2.641</td>
-<td align="right">0.008</td>
+<td align="right">-0.182</td>
+<td align="right">0.012</td>
+<td align="right">-15.253</td>
+<td align="right">0.000</td>
 </tr>
 <tr class="even">
 <td align="left">statusPermitted</td>
-<td align="right">-0.142</td>
-<td align="right">0.029</td>
-<td align="right">-4.945</td>
+<td align="right">-0.231</td>
+<td align="right">0.011</td>
+<td align="right">-20.555</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="odd">
 <td align="left">maximum_capacity</td>
 <td align="right">0.000</td>
 <td align="right">0.000</td>
-<td align="right">0.262</td>
-<td align="right">0.793</td>
+<td align="right">2.567</td>
+<td align="right">0.010</td>
 </tr>
 <tr class="even">
 <td align="left">total_educational_workers</td>
-<td align="right">-0.001</td>
-<td align="right">0.001</td>
-<td align="right">-0.369</td>
-<td align="right">0.712</td>
+<td align="right">0.000</td>
+<td align="right">0.000</td>
+<td align="right">0.189</td>
+<td align="right">0.850</td>
 </tr>
 <tr class="odd">
 <td align="left">maximum_capacity:total_educational_workers</td>
 <td align="right">0.000</td>
 <td align="right">0.000</td>
-<td align="right">0.817</td>
-<td align="right">0.414</td>
+<td align="right">-0.647</td>
+<td align="right">0.518</td>
 </tr>
 </tbody>
 </table>
-<pre class="r"><code># model diagnostics: residuals vs fitted plot, QQ plot, Scale_location, Residuals vs Leverage
-plot(alt_lm)</code></pre>
-<p><img src="linear_files/figure-html/unnamed-chunk-6-1.png" width="672" /><img src="linear_files/figure-html/unnamed-chunk-6-2.png" width="672" /><img src="linear_files/figure-html/unnamed-chunk-6-3.png" width="672" /><img src="linear_files/figure-html/unnamed-chunk-6-4.png" width="672" /></p>
-<p>Decision: Keep full_lm model.</p>
-<div id="assessing-multicollinearity" class="section level3">
-<h3>Assessing Multicollinearity</h3>
-<pre class="r"><code># vif
+<p>After comparing these two models, we decided to keep full_lm model,
+due to its better goodness of fit and lower correlation among
+variables.</p>
+<pre class="r"><code># assess multicollinearity by vif
 library(performance) </code></pre>
 <pre><code>## Warning: package &#39;performance&#39; was built under R version 4.2.2</code></pre>
 <pre><code>## 
@@ -722,25 +661,72 @@ library(performance) </code></pre>
 <pre><code>## The following objects are masked from &#39;package:modelr&#39;:
 ## 
 ##     mae, mse, rmse</code></pre>
-<pre class="r"><code>check_collinearity(full_lm)</code></pre>
+<pre class="r"><code>check_collinearity(full_lm) # low correlation</code></pre>
 <pre><code>## # Check for Multicollinearity
 ## 
 ## Low Correlation
 ## 
 ##                      Term  VIF   VIF 95% CI Increased SE Tolerance
-##              program_type 2.27 [2.13, 2.42]         1.51      0.44
-##                   borough 1.11 [1.07, 1.18]         1.06      0.90
-##                    status 1.69 [1.60, 1.80]         1.30      0.59
-##  educational_worker_ratio 1.53 [1.45, 1.63]         1.24      0.65
+##              program_type 1.78 [1.74, 1.82]         1.33      0.56
+##                   borough 1.12 [1.10, 1.14]         1.06      0.89
+##                    status 1.38 [1.35, 1.40]         1.17      0.73
+##  educational_worker_ratio 1.46 [1.43, 1.49]         1.21      0.69
 ##  Tolerance 95% CI
-##      [0.41, 0.47]
-##      [0.85, 0.93]
-##      [0.56, 0.63]
-##      [0.61, 0.69]</code></pre>
-<p>This full_lm model shows low collinearity.</p>
-</div>
-<div id="transformation" class="section level3">
-<h3>Transformation</h3>
+##      [0.55, 0.57]
+##      [0.88, 0.91]
+##      [0.71, 0.74]
+##      [0.67, 0.70]</code></pre>
+<pre class="r"><code>check_collinearity(alt_lm)  # moderate correlation</code></pre>
+<pre><code>## # Check for Multicollinearity
+## 
+## Low Correlation
+## 
+##              Term  VIF   VIF 95% CI Increased SE Tolerance Tolerance 95% CI
+##      program_type 1.95 [1.90, 1.99]         1.40      0.51     [0.50, 0.52]
+##           borough 1.12 [1.11, 1.14]         1.06      0.89     [0.87, 0.90]
+##            status 1.36 [1.34, 1.39]         1.17      0.73     [0.72, 0.75]
+##  maximum_capacity 1.70 [1.66, 1.73]         1.30      0.59     [0.58, 0.60]
+## 
+## Moderate Correlation
+## 
+##                                        Term  VIF   VIF 95% CI Increased SE
+##                   total_educational_workers 5.95 [5.78, 6.12]         2.44
+##  maximum_capacity:total_educational_workers 6.09 [5.92, 6.26]         2.47
+##  Tolerance Tolerance 95% CI
+##       0.17     [0.16, 0.17]
+##       0.16     [0.16, 0.17]</code></pre>
+<p><em>Model diagnostics:</em></p>
+<p>We checked the assumptions of the residuals by using 4 plots as
+follows. We found:</p>
+<ol style="list-style-type: decimal">
+<li><p>Linearity and homoscedasticity: from the Residuals vs Fitted
+plot, we can see residuals form a horizontal ‘band’ around zero and its
+value evenly dispersed around this reference line, suggesting the
+variance of our residuals should be constant across all fitted
+values.</p></li>
+<li><p>Normality: from the Normal QQ plot, we can see a straight line
+with small departures if we don’t consider cases 3134 and 12320,
+suggesting the residuals follows a normal distribution.</p></li>
+<li><p>Equal variance: again, from the Scale_Location plot, we can see a
+horizontal line with roughly equally spread points, suggesting the
+residuals are spread equally along the range of the predictors.</p></li>
+<li><p>Outliers: from the Residuals vs Leverage plot, we can see case
+3134 is outside of the dashed line of Cook’s distance 0.5, suggesting
+they might be influential observations. Moreover, from other plots we
+can also find cases 3134 and 12320 kept showing up as outliers.</p></li>
+</ol>
+<pre class="r"><code># model diagnostics: Residuals vs Fitted plot, QQ plot, Scale_location, Residuals vs Leverage
+plot(full_lm)</code></pre>
+<p><img src="linear_files/figure-html/unnamed-chunk-8-1.png" width="672" /><img src="linear_files/figure-html/unnamed-chunk-8-2.png" width="672" /><img src="linear_files/figure-html/unnamed-chunk-8-3.png" width="672" /><img src="linear_files/figure-html/unnamed-chunk-8-4.png" width="672" /></p>
+<p><em>Remedy:</em></p>
+<p>Therefore, to address the slight model violation issue, we firstly
+tried transformation to makes the data more ‘normal’. From the boxplot
+of two numerical variables rate and educational worker ratio we can see
+the latter is right skewed.</p>
+<p>Since there are 0 value in these variables, log-transformation is not
+applicable. Then we did square root transformation to the variable
+educational_worker_ratio. However, this step didn’t significantly
+improved the model.So we decided to go without transformation.</p>
 <pre class="r"><code># Boxblot to check the initial distribution of outcome and key predictor
 center_distinct_df  %&gt;%
 par(mfrow = c(1,2))</code></pre>
@@ -748,82 +734,19 @@ par(mfrow = c(1,2))</code></pre>
 ## parameter</code></pre>
 <pre class="r"><code>boxplot(center_distinct_df$educational_worker_ratio, main = &quot;Edu-worker Ratio&quot;)
 boxplot(center_distinct_df$rate, main = &quot;Violation Rate&quot;)</code></pre>
-<p><img src="linear_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p><img src="linear_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 <pre class="r"><code># Square root transformation
 full_lm_sqrt = center_distinct_df %&gt;%
-  lm(sqrt(rate) ~ program_type + borough + status + educational_worker_ratio, data = .)
-summary(full_lm_sqrt)</code></pre>
-<pre><code>## 
-## Call:
-## lm(formula = sqrt(rate) ~ program_type + borough + status + educational_worker_ratio, 
-##     data = .)
-## 
-## Residuals:
-##      Min       1Q   Median       3Q      Max 
-## -0.74243 -0.18213  0.07062  0.22368  0.61280 
-## 
-## Coefficients:
-##                              Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)                  0.688844   0.045128  15.264  &lt; 2e-16 ***
-## program_typeinfant toddler   0.104993   0.034333   3.058  0.00226 ** 
-## program_typepreschool        0.138744   0.027231   5.095 3.79e-07 ***
-## program_typeschool age camp -0.070818   0.215453  -0.329  0.74242    
-## boroughBROOKLYN             -0.294240   0.022719 -12.951  &lt; 2e-16 ***
-## boroughMANHATTAN            -0.222850   0.023902  -9.324  &lt; 2e-16 ***
-## boroughQUEENS               -0.154797   0.024441  -6.334 2.91e-10 ***
-## boroughSTATEN ISLAND        -0.295042   0.034869  -8.461  &lt; 2e-16 ***
-## statusExpired-In Renewal    -0.006601   0.035870  -0.184  0.85402    
-## statusPermitted             -0.084241   0.032718  -2.575  0.01010 *  
-## educational_worker_ratio    -0.064460   0.051608  -1.249  0.21179    
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## Residual standard error: 0.3032 on 2139 degrees of freedom
-## Multiple R-squared:  0.09868,    Adjusted R-squared:  0.09447 
-## F-statistic: 23.42 on 10 and 2139 DF,  p-value: &lt; 2.2e-16</code></pre>
-<p>Decision: Since there are 0 value in the outcome variable,
-log-transformation is not applicable. Moreover, sqrt transformation
-didn’t improve model goodness of fit. Thus, we will keep the initial
-model and decide no transformation needed.</p>
-</div>
-<div id="remove-influential-points" class="section level3">
-<h3>remove influential points</h3>
+  lm(rate ~ program_type + borough + status + sqrt(educational_worker_ratio), data = .)</code></pre>
+<p>In addition, we removed influential point 3134 and fit a new model
+named full_lm_out. This model works better then full_lm.</p>
 <pre class="r"><code># exclude two influential records
-
-out_df = center_distinct_df[-c(381,551),]
-
+out_df = center_distinct_df[-c(3134),]
 
 # fit model without influential points
 full_lm_out = lm(rate ~ program_type + borough + status + educational_worker_ratio, data = out_df)
-summary(full_lm_out)</code></pre>
-<pre><code>## 
-## Call:
-## lm(formula = rate ~ program_type + borough + status + educational_worker_ratio, 
-##     data = out_df)
-## 
-## Residuals:
-##      Min       1Q   Median       3Q      Max 
-## -0.57969 -0.23803 -0.00579  0.19624  0.71172 
-## 
-## Coefficients:
-##                            Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)                 0.66339    0.03943  16.826  &lt; 2e-16 ***
-## program_typeinfant toddler  0.03600    0.02999   1.200  0.23009    
-## program_typepreschool       0.06207    0.02378   2.610  0.00913 ** 
-## boroughBROOKLYN            -0.28068    0.01986 -14.133  &lt; 2e-16 ***
-## boroughMANHATTAN           -0.20785    0.02091  -9.941  &lt; 2e-16 ***
-## boroughQUEENS              -0.15365    0.02136  -7.193 8.74e-13 ***
-## boroughSTATEN ISLAND       -0.29008    0.03047  -9.521  &lt; 2e-16 ***
-## statusExpired-In Renewal   -0.08503    0.03133  -2.714  0.00670 ** 
-## statusPermitted            -0.14459    0.02858  -5.060 4.55e-07 ***
-## educational_worker_ratio   -0.08186    0.04508  -1.816  0.06948 .  
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## Residual standard error: 0.2648 on 2138 degrees of freedom
-## Multiple R-squared:  0.1156, Adjusted R-squared:  0.1119 
-## F-statistic: 31.04 on 9 and 2138 DF,  p-value: &lt; 2.2e-16</code></pre>
-<pre class="r"><code>full_lm_out %&gt;% 
+
+full_lm_out %&gt;% 
   broom::tidy() %&gt;%
   knitr::kable(digit = 3)</code></pre>
 <table>
@@ -839,80 +762,91 @@ summary(full_lm_out)</code></pre>
 <tbody>
 <tr class="odd">
 <td align="left">(Intercept)</td>
-<td align="right">0.663</td>
-<td align="right">0.039</td>
-<td align="right">16.826</td>
+<td align="right">0.865</td>
+<td align="right">0.015</td>
+<td align="right">57.407</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="even">
 <td align="left">program_typeinfant toddler</td>
-<td align="right">0.036</td>
-<td align="right">0.030</td>
-<td align="right">1.200</td>
-<td align="right">0.230</td>
+<td align="right">-0.028</td>
+<td align="right">0.011</td>
+<td align="right">-2.425</td>
+<td align="right">0.015</td>
 </tr>
 <tr class="odd">
 <td align="left">program_typepreschool</td>
-<td align="right">0.062</td>
-<td align="right">0.024</td>
-<td align="right">2.610</td>
+<td align="right">-0.004</td>
 <td align="right">0.009</td>
+<td align="right">-0.446</td>
+<td align="right">0.656</td>
 </tr>
 <tr class="even">
+<td align="left">program_typeschool age camp</td>
+<td align="right">0.511</td>
+<td align="right">0.172</td>
+<td align="right">2.970</td>
+<td align="right">0.003</td>
+</tr>
+<tr class="odd">
 <td align="left">boroughBROOKLYN</td>
-<td align="right">-0.281</td>
-<td align="right">0.020</td>
-<td align="right">-14.133</td>
+<td align="right">-0.245</td>
+<td align="right">0.006</td>
+<td align="right">-42.838</td>
 <td align="right">0.000</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">boroughMANHATTAN</td>
-<td align="right">-0.208</td>
-<td align="right">0.021</td>
-<td align="right">-9.941</td>
+<td align="right">-0.186</td>
+<td align="right">0.006</td>
+<td align="right">-30.365</td>
 <td align="right">0.000</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">boroughQUEENS</td>
-<td align="right">-0.154</td>
-<td align="right">0.021</td>
-<td align="right">-7.193</td>
+<td align="right">-0.104</td>
+<td align="right">0.006</td>
+<td align="right">-17.315</td>
 <td align="right">0.000</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">boroughSTATEN ISLAND</td>
-<td align="right">-0.290</td>
-<td align="right">0.030</td>
-<td align="right">-9.521</td>
+<td align="right">-0.323</td>
+<td align="right">0.010</td>
+<td align="right">-32.285</td>
 <td align="right">0.000</td>
-</tr>
-<tr class="even">
-<td align="left">statusExpired-In Renewal</td>
-<td align="right">-0.085</td>
-<td align="right">0.031</td>
-<td align="right">-2.714</td>
-<td align="right">0.007</td>
 </tr>
 <tr class="odd">
-<td align="left">statusPermitted</td>
-<td align="right">-0.145</td>
-<td align="right">0.029</td>
-<td align="right">-5.060</td>
+<td align="left">statusExpired-In Renewal</td>
+<td align="right">-0.190</td>
+<td align="right">0.012</td>
+<td align="right">-15.804</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="even">
+<td align="left">statusPermitted</td>
+<td align="right">-0.239</td>
+<td align="right">0.011</td>
+<td align="right">-21.128</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="odd">
 <td align="left">educational_worker_ratio</td>
-<td align="right">-0.082</td>
-<td align="right">0.045</td>
-<td align="right">-1.816</td>
-<td align="right">0.069</td>
+<td align="right">-0.083</td>
+<td align="right">0.015</td>
+<td align="right">-5.342</td>
+<td align="right">0.000</td>
 </tr>
 </tbody>
 </table>
-<p>Decision: Influential points should be removed.</p>
-</div>
-<div id="model-validation" class="section level3">
-<h3>model validation</h3>
+<pre class="r"><code># model diagnostics: Residuals vs Fitted plot, QQ plot, Scale_location, Residuals vs Leverage
+plot(full_lm_out)</code></pre>
+<p><img src="linear_files/figure-html/unnamed-chunk-10-1.png" width="672" /><img src="linear_files/figure-html/unnamed-chunk-10-2.png" width="672" /><img src="linear_files/figure-html/unnamed-chunk-10-3.png" width="672" /><img src="linear_files/figure-html/unnamed-chunk-10-4.png" width="672" /></p>
+<p><em>Model validation:</em></p>
+<p>We used 5-fold cross validation to test the model performance. Based
+on a rule of thumb, RMSE values between 0.2 and 0.5 shows that the model
+can relatively predict the data accurately. Thus our model boasts good
+RMSE value, suggesting relatively good predictive ability.</p>
 <pre class="r"><code>library(caret)</code></pre>
 <pre><code>## Warning: package &#39;caret&#39; was built under R version 4.2.2</code></pre>
 <pre><code>## Loading required package: lattice</code></pre>
@@ -928,54 +862,72 @@ model_caret = train(rate ~ program_type + borough + status + educational_worker_
                    data = out_df,
                    trControl = train,
                    method = &#39;lm&#39;,
-                   na.action = na.pass)</code></pre>
-<pre><code>## Warning in predict.lm(modelFit, newdata): prediction from a rank-deficient fit
-## may be misleading</code></pre>
-<pre><code>## Warning in predict.lm(modelFit, newdata): prediction from a rank-deficient fit
-## may be misleading
+                   na.action = na.pass)
 
-## Warning in predict.lm(modelFit, newdata): prediction from a rank-deficient fit
-## may be misleading
-
-## Warning in predict.lm(modelFit, newdata): prediction from a rank-deficient fit
-## may be misleading
-
-## Warning in predict.lm(modelFit, newdata): prediction from a rank-deficient fit
-## may be misleading</code></pre>
-<pre class="r"><code>model_caret$finalModel</code></pre>
+model_caret$finalModel</code></pre>
 <pre><code>## 
 ## Call:
 ## lm(formula = .outcome ~ ., data = dat)
 ## 
 ## Coefficients:
 ##                   (Intercept)   `program_typeinfant toddler`  
-##                       0.66339                        0.03600  
+##                       0.86475                       -0.02760  
 ##         program_typepreschool  `program_typeschool age camp`  
-##                       0.06207                             NA  
+##                      -0.00422                        0.51132  
 ##               boroughBROOKLYN               boroughMANHATTAN  
-##                      -0.28068                       -0.20785  
+##                      -0.24476                       -0.18643  
 ##                 boroughQUEENS         `boroughSTATEN ISLAND`  
-##                      -0.15365                       -0.29008  
+##                      -0.10384                       -0.32338  
 ##    `statusExpired-In Renewal`                statusPermitted  
-##                      -0.08503                       -0.14459  
+##                      -0.18964                       -0.23890  
 ##      educational_worker_ratio  
-##                      -0.08186</code></pre>
+##                      -0.08251</code></pre>
 <pre class="r"><code>print(model_caret)</code></pre>
 <pre><code>## Linear Regression 
 ## 
-## 2148 samples
-##    4 predictor
+## 16453 samples
+##     4 predictor
 ## 
 ## No pre-processing
 ## Resampling: Cross-Validated (5 fold) 
-## Summary of sample sizes: 1718, 1720, 1718, 1718, 1718 
+## Summary of sample sizes: 13162, 13162, 13163, 13163, 13162 
 ## Resampling results:
 ## 
 ##   RMSE       Rsquared   MAE      
-##   0.2653523  0.1110992  0.2202588
+##   0.2432558  0.1562943  0.1983301
 ## 
 ## Tuning parameter &#39;intercept&#39; was held constant at a value of TRUE</code></pre>
-<p>Final linear model: full_lm_out</p>
+<p><em>Conclusion:</em></p>
+<p>We chose full_lm_out as our final linear model:</p>
+<p>rate = 0.865 + 0.511(program_type_school age camp) -
+0.245(borough_BROOKLYN) -0.186(borough_MANHATTAN) -
+0.104(borough_QUEENS) - 0.323(borough_STATEN ISLAND) -
+0.19(status_Expired In Renewal) - 0.239(status_Permitted) -
+0.083(educational_worker_ratio)</p>
+<p>Interpretation:</p>
+<p>In this model, the outcome is “rate”, indicating the violation rate
+for each center based on different program type. Our key predictor is
+the numeric variable of “educational_worker_ratio”, which is the
+program-specific total number of educational worker in each center,
+divided by the maximum capacity, based on the square footage of class
+and play rooms, the number of toilets and sinks, and overall estimates
+from the NYC Department of Buildings. Our model suggests the estimated
+mean violation rate decreases by 8.3% for each unit increase in
+educational worker ratio, while holding all other variables fixed.</p>
+<p>We also included several categorical variables into our model. Based
+on the output, the interpretations of coefficients estimates are as
+follows:</p>
+<p>The estimated mean violation rates for centers located in Brooklyn,
+Manhattan, Queens and Staten island are 24,5%, 18.6%, 10.4% and 32.3%
+less than centers located in Bronx, respectively, while holding other
+variables constant.</p>
+<p>The estimated mean violation rate for centers with licence status as
+expired in renewal and as permitted is 19% and 23.9% less than centers
+with licence status as active, while holding other variables
+constant.</p>
+<p>The estimated mean violation rate for centers implement school age
+camp program is 51.1% more than centers implement all age camp program,
+while holding other variables constant.</p>
 </div>
 
 

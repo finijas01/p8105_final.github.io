@@ -60,7 +60,14 @@ childcare_inspection_df = childcare_inspection_df %>%
 ```
 
 
-We calculated a new violation rate for each distinct program using violation category column.
+### Linear regression model
+
+*Model selection:*
+
+To explore the possible predictors contributing to the center-specific violation rate under each program type, we built a linear regression model. In this model, we focused on the violation rate and properties of each individual center.
+
+To start with, we created a new variable named "rate", which represents the violation rate for each center, by using violation category column. Here, rate = number of total violation for each center and program / number of total inspection for each center and program, during the past 3 year. This variable was used as the outcome of the linear regression. 
+
 ```{r}
 center_specific_df = childcare_inspection_df %>% 
   relocate(center_name, program_type) %>% 
@@ -72,58 +79,74 @@ center_specific_df = childcare_inspection_df %>%
   arrange(center_name, program_type)
 ```
 
+Next, we selected several variables closely related to the properties of each center, as the potential predictors. After a thorough literature review, we chose variables based on a hypothesized structure for the factors underlying violation rate. 
 
-Select all possible independent variables to fit a full model based on center-specific distinct records:
+Linear model 1:
+
+First, we fit a full model using program type, borough, status, educational worker ratio of center-specific distinct records.
 
 ```{r}
-# select distinct records of each center
-
+# select distinct records and related variables of each center
 center_distinct_df = center_specific_df %>%
-  select(center_name, program_type, borough, status, maximum_capacity, total_educational_workers, educational_worker_ratio, rate) %>%
-  distinct()
+  select(center_name, program_type, borough, status, maximum_capacity, total_educational_workers, educational_worker_ratio, rate)
 
 # fit the full model
 full_lm = center_distinct_df %>%
  lm(rate ~ program_type + borough + status + educational_worker_ratio, data = .) 
-summary(full_lm)
 
 full_lm %>% 
   broom::tidy() %>%
   knitr::kable(digit = 3)
-
-# model diagnostics: Residuals vs Fitted plot, QQ plot, Scale_location, Residuals vs Leverage
-plot(full_lm)
 ```
 
-Fit an alternative model:
+Linear model 2:
+
+Second, we also proposed an alternative model by using maximum_capacity, total educational workers and their interaction term as the predictors, instead of the educational worker ratio. 
 
 ```{r}
 # fit an alternative model
 alt_lm = center_distinct_df %>%
  lm(rate ~ program_type + borough + status + maximum_capacity * total_educational_workers, data = .) 
-summary(alt_lm)
 
 alt_lm %>% 
   broom::tidy() %>%
   knitr::kable(digit = 3)
-
-# model diagnostics: residuals vs fitted plot, QQ plot, Scale_location, Residuals vs Leverage
-plot(alt_lm)
 ```
 
-Decision: Keep full_lm model.
-
-### Assessing Multicollinearity
+After comparing these two models, we decided to keep full_lm model, due to its better goodness of fit and lower correlation among variables.  
 
 ```{r}
-# vif
+# assess multicollinearity by vif
 library(performance) 
-check_collinearity(full_lm)
+check_collinearity(full_lm) # low correlation
+check_collinearity(alt_lm)  # moderate correlation
 ```
 
-This full_lm model shows low collinearity.
+*Model diagnostics:*
 
-### Transformation
+We checked the assumptions of the residuals by using 4 plots as follows. We found:
+
+1. Linearity and homoscedasticity: from the Residuals vs Fitted plot, we can see residuals form a horizontal 'band' around zero and its value evenly dispersed around this reference line, suggesting the variance of our residuals should be constant across all fitted values.
+
+2. Normality: from the Normal QQ plot, we can see a straight line with small departures if we don't consider cases 3134 and 12320, suggesting the residuals follows a normal distribution.
+
+3. Equal variance: again, from the Scale_Location plot, we can see a horizontal line with roughly equally spread points, suggesting the residuals are spread equally along the range of the predictors.
+
+4. Outliers: from the Residuals vs Leverage plot, we can see case 3134 is
+outside of the dashed line of Cook’s distance 0.5, suggesting they might be influential observations. Moreover, from other plots we can also find cases 3134 and 12320 kept showing up as outliers. 
+
+```{r}
+# model diagnostics: Residuals vs Fitted plot, QQ plot, Scale_location, Residuals vs Leverage
+plot(full_lm)
+```
+
+
+*Remedy:*
+
+Therefore, to address the slight model violation issue, we firstly tried transformation to makes 
+the data more ‘normal’. From the boxplot of two numerical variables rate and educational worker ratio we can see the latter is right skewed. 
+
+Since there are 0 value in these variables, log-transformation is not applicable. Then we did square root transformation to the variable educational_worker_ratio. However, this step didn't significantly improved the model.So we decided to go without transformation.
 
 ```{r}
 # Boxblot to check the initial distribution of outcome and key predictor
@@ -133,34 +156,32 @@ boxplot(center_distinct_df$educational_worker_ratio, main = "Edu-worker Ratio")
 boxplot(center_distinct_df$rate, main = "Violation Rate")
 ```
 
-```{r}
+```{r transformation}
 # Square root transformation
 full_lm_sqrt = center_distinct_df %>%
-  lm(sqrt(rate) ~ program_type + borough + status + educational_worker_ratio, data = .)
-summary(full_lm_sqrt)
+  lm(rate ~ program_type + borough + status + sqrt(educational_worker_ratio), data = .)
 ```
-Decision: Since there are 0 value in the outcome variable, log-transformation is not applicable. Moreover, sqrt transformation didn't improve model goodness of fit. Thus, we will keep the initial model and decide no transformation needed. 
 
-
-### remove influential points
+In addition, we removed influential point 3134 and fit a new model named full_lm_out. This model works better then full_lm. 
 
 ```{r}
 # exclude two influential records
-
-out_df = center_distinct_df[-c(381,551),]
-
+out_df = center_distinct_df[-c(3134),]
 
 # fit model without influential points
 full_lm_out = lm(rate ~ program_type + borough + status + educational_worker_ratio, data = out_df)
-summary(full_lm_out)
 
 full_lm_out %>% 
   broom::tidy() %>%
   knitr::kable(digit = 3)
-```
-Decision: Influential points should be removed. 
 
-### model validation
+# model diagnostics: Residuals vs Fitted plot, QQ plot, Scale_location, Residuals vs Leverage
+plot(full_lm_out)
+```
+
+*Model validation:*
+
+We used 5-fold cross validation to test the model performance. Based on a rule of thumb, RMSE values between 0.2 and 0.5 shows that the model can relatively predict the data accurately. Thus our model boasts good RMSE value, suggesting relatively good predictive ability.
 
 ```{r}
 library(caret)
@@ -177,7 +198,29 @@ model_caret$finalModel
 print(model_caret)
 ```
 
-Final linear model: full_lm_out
+*Conclusion:*
+
+We chose full_lm_out as our final linear model:
+
+rate = 0.865 + 0.511(program_type_school age camp) - 0.245(borough_BROOKLYN) -0.186(borough_MANHATTAN) - 0.104(borough_QUEENS) - 0.323(borough_STATEN ISLAND) - 0.19(status_Expired In Renewal) - 0.239(status_Permitted) - 0.083(educational_worker_ratio)
+
+Interpretation:
+
+In this model, the outcome is "rate", indicating the violation rate for each center based on different program type. Our key predictor is the numeric variable of "educational_worker_ratio", which is the program-specific total number of educational worker in each center,  divided by the maximum capacity, based on the square footage of class and play rooms, the number of toilets and sinks, and overall estimates from the NYC Department of Buildings. Our model suggests the estimated mean violation rate decreases by 8.3% for each unit increase in educational worker ratio, while holding all other variables fixed.  
+
+We also included several categorical variables into our model. Based on the output, the interpretations of coefficients estimates are as follows:
+
+The estimated mean violation rates for centers located in Brooklyn,  Manhattan, Queens and Staten island are 24,5%, 18.6%, 10.4% and 32.3% less than centers located in Bronx, respectively, while holding other variables constant.
+
+The estimated mean violation rate for centers with licence status as expired in renewal and as permitted is 19% and 23.9% less than  centers with licence status as active, while holding other variables constant.
+
+The estimated mean violation rate for centers implement school age camp program is 51.1% more than centers implement all age camp program, while holding other variables constant.
+
+
+
+
+
+
 
 
 
