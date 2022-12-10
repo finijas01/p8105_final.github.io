@@ -8,6 +8,15 @@ output:
     theme: flatly
 ---
 
+
+
+### *Model selection*
+
+To explore the possible predictors contributing to the center-specific violation rate under each program type, we built a linear regression model. In this model, we focused on the violation rate and properties of each individual center.
+
+To start with, we created a new variable named "rate", which represents the violation rate for each center, by using violation category column. Here, rate = number of total violation for each center and program / number of total inspection for each center and program, during the past 3 year. This variable was used as the outcome of the linear regression. 
+Next, we selected several variables closely related to the properties of each center, as the potential predictors. After a thorough literature review, we chose variables based on a hypothesized structure for the factors underlying violation rate. 
+
 ```{r warning= FALSE, message=FALSE}
 library(tidyverse)
 library(dplyr)
@@ -20,22 +29,11 @@ library(patchwork)
 library(viridis)
 library(fastDummies)
 set.seed(1)
-```
 
-
-###Model selection:
-
-To explore the possible predictors contributing to the center-specific violation rate under each program type, we built a linear regression model. In this model, we focused on the violation rate and properties of each individual center.
-
-To start with, we created a new variable named "rate", which represents the violation rate for each center, by using violation category column. Here, rate = number of total violation for each center and program / number of total inspection for each center and program, during the past 3 year. This variable was used as the outcome of the linear regression. 
-
-```{r warning= FALSE, message=FALSE}
 childcare_inspection_df = read_csv("./data/DOHMH_Childcare_Center_Inspections.csv") %>% 
 janitor::clean_names() %>% 
 distinct()
-```
 
-```{r warning= FALSE, message=FALSE}
 childcare_inspection_df = childcare_inspection_df %>% 
   select(center_name, borough, zip_code, status, age_range, maximum_capacity,program_type, facility_type, 
          child_care_type, violation_category,
@@ -55,10 +53,7 @@ childcare_inspection_df = childcare_inspection_df %>%
     age_range = as.factor(age_range)
   ) %>% 
   filter(program_type != "school age camp")
-  
-```
 
-```{r warning= FALSE, message=FALSE}
 # calculate a new violation rate for each distinct program using violation category column.
 center_specific_df = childcare_inspection_df %>% 
   relocate(center_name, program_type) %>% 
@@ -70,10 +65,7 @@ center_specific_df = childcare_inspection_df %>%
   arrange(center_name, program_type)
 ```
 
-
-Next, we selected several variables closely related to the properties of each center, as the potential predictors. After a thorough literature review, we chose variables based on a hypothesized structure for the factors underlying violation rate. 
-
-Linear model 1:
+#### Linear raw model 1
 
 First, we fit a full model using program type, borough, status, educational worker ratio of center-specific distinct records.
 
@@ -91,9 +83,9 @@ full_lm %>%
   knitr::kable(digit = 3)
 ```
 
-Linear model 2:
+#### Linear raw model 2
 
-Second, we also proposed an alternative model by using maximum_capacity, total educational workers and their interaction term as the predictors, instead of the educational worker ratio. 
+We also proposed an alternative model by using maximum_capacity, total educational workers and their interaction term as the predictors, instead of the educational worker ratio. 
 
 ```{r warning= FALSE, message=FALSE}
 # fit an alternative model
@@ -105,18 +97,14 @@ alt_lm %>%
   knitr::kable(digit = 3)
 ```
 
-After comparing these two models, we decided to keep full_lm model, due to its better goodness of fit and lower correlation among variables.  
+After comparing these two models, we decided to keep full_lm model, due to its better goodness of fit and lower correlation among variables.
 
-```{r warning= FALSE, message=FALSE}
-# assess multicollinearity by vif
-library(performance) 
-check_collinearity(full_lm) # low correlation
-check_collinearity(alt_lm)  # moderate correlation
-```
 
-*Model diagnostics:*
+### *Model diagnostics*
 
-We checked the assumptions of the residuals by using 4 plots as follows. We found:
+#### Residual assumptions
+
+We checked the assumptions of the residuals by using 4 plots as follows:
 
 1. Linearity and homoscedasticity: from the Residuals vs Fitted plot, we can see residuals form a horizontal 'band' around zero and its value evenly dispersed around this reference line, suggesting the variance of our residuals should be constant across all fitted values.
 
@@ -132,13 +120,20 @@ outside of the dashed line of Cook’s distance 0.5, suggesting no influential o
 plot(full_lm)
 ```
 
+#### Multicollinearity 
 
-*Remedy:*
+Moreover, the full_lm model shows a low multicollinearity since the VIF value for each variable are all below 2.
 
-Therefore, to address the slight model violation issue, we firstly tried transformation to makes 
-the data more ‘normal’. From the boxplot of two numerical variables rate and educational worker ratio we can see the latter is right skewed. 
+```{r warning= FALSE, message=FALSE}
+library(performance) 
+check_collinearity(full_lm) # low correlation
+```
 
-Since there are 0 value in these variables, log-transformation is not applicable. Then we did square root transformation to the variable educational_worker_ratio. However, this step didn't significantly improved the model.So we decided to go without transformation.
+### *Model remedy*
+
+#### Variable normality check
+
+We checked the normality of two numerical variables of educational worker ratio and rate. Boxplot suggests the first variable has a right skewed distribution.
 
 ```{r warning= FALSE, message=FALSE}
 # Boxblot to check the initial distribution of outcome and key predictor
@@ -148,11 +143,20 @@ boxplot(center_distinct_df$educational_worker_ratio, main = "Edu-worker Ratio")
 boxplot(center_distinct_df$rate, main = "Violation Rate")
 ```
 
+#### Transformation
+
+Therefore, to address the slight model assumption violation issue, we firstly tried transformation to make 
+the data more ‘normal’. 
+
+Since there are 0 value in these variables, log-transformation is not applicable. Then we did square root transformation to the variable educational_worker_ratio. However, this step didn't significantly improved the model.So we decided to go without transformation.
+
 ```{r warning= FALSE, message=FALSE}
 # Square root transformation
 full_lm_sqrt = center_distinct_df %>%
   lm(rate ~ program_type + borough + status + sqrt(educational_worker_ratio), data = .)
 ```
+
+#### Outliers removal
 
 In addition, although there is no influential points, case 12349 and 12318 affect the regression assumption as shown repeatedly.So we tried to fit a new model named full_lm_out by removing these two cases. This model works better then full_lm due to its increased adjusted R-square. 
 
@@ -166,12 +170,9 @@ full_lm_out = lm(rate ~ program_type + borough + status + educational_worker_rat
 full_lm_out %>% 
   broom::tidy() %>%
   knitr::kable(digit = 3)
-
-# model diagnostics: Residuals vs Fitted plot, QQ plot, Scale_location, Residuals vs Leverage
-plot(full_lm_out)
 ```
 
-*Model validation:*
+### *Model validation*
 
 We used 5-fold cross validation to test the model performance. Based on a rule of thumb, RMSE values between 0.2 and 0.5 shows that the model can relatively predict the data accurately. Thus our model boasts good RMSE value(RMSE = 0.24), suggesting relatively good predictive ability.
 
@@ -190,13 +191,15 @@ model_caret$finalModel
 print(model_caret)
 ```
 
-*Conclusion:*
+### *Model conclusion*
+
+#### Final linear model
 
 We chose full_lm_out as our final linear model:
 
 rate = 0.868 - 0.027(program_type_infant toddler) - 0.245(borough_BROOKLYN) -0.186(borough_MANHATTAN) - 0.103(borough_QUEENS) - 0.323(borough_STATEN ISLAND) - 0.193(status_Expired In Renewal) - 0.242(status_Permitted) - 0.084(educational_worker_ratio)
 
-Interpretation:
+#### Interpretation
 
 In this model, the outcome is "rate", indicating the violation rate for each center based on different program type. Our key predictor is the numeric variable of "educational_worker_ratio", which is the program-specific total number of educational worker in each center,  divided by the maximum capacity, based on the square footage of class and play rooms, the number of toilets and sinks, and overall estimates from the NYC Department of Buildings. As shown in the plot below, our model suggests the value of the estimated mean violation rate decreases by 0.084 for each unit increase in educational worker ratio, while holding all other variables fixed.  
 

@@ -11,9 +11,9 @@
 
 
 
-<title>Statistical-analysis</title>
+<title>Statistical analysis</title>
 
-<script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.18/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
@@ -29,9 +29,15 @@
        h6 {font-size: 12px;}
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -178,8 +184,8 @@ $(document).ready(function () {
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -187,16 +193,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -223,7 +222,73 @@ $(document).ready(function () {
 </style>
 
 <!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
 
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
 
 
 
@@ -233,6 +298,16 @@ $(document).ready(function () {
 
 
 <div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -306,50 +381,79 @@ $(document).ready(function () {
 
 <div id="header">
 
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
 
 
+
+<h1 class="title toc-ignore">Statistical analysis</h1>
 
 </div>
 
 
-<div id="statistical-analysis" class="section level1">
-<h1>Statistical analysis</h1>
-<p>Qing Zhou 2022-12-09</p>
-<pre class="r"><code>library(tidyverse)
-library(dplyr)
-library(rvest)
-library(purrr)
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## Warning: package &#39;tidyverse&#39; was built under R version 4.2.2</code></pre>
+<pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
+## ✔ ggplot2 3.4.0      ✔ purrr   0.3.5 
+## ✔ tibble  3.1.8      ✔ dplyr   1.0.10
+## ✔ tidyr   1.2.1      ✔ stringr 1.5.0 
+## ✔ readr   2.1.3      ✔ forcats 0.5.2</code></pre>
+<pre><code>## Warning: package &#39;ggplot2&#39; was built under R version 4.2.2</code></pre>
+<pre><code>## Warning: package &#39;tidyr&#39; was built under R version 4.2.2</code></pre>
+<pre><code>## Warning: package &#39;readr&#39; was built under R version 4.2.2</code></pre>
+<pre><code>## Warning: package &#39;purrr&#39; was built under R version 4.2.2</code></pre>
+<pre><code>## Warning: package &#39;stringr&#39; was built under R version 4.2.2</code></pre>
+<pre><code>## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>library(dplyr)
+library(rvest)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;rvest&#39;
+## 
+## The following object is masked from &#39;package:readr&#39;:
+## 
+##     guess_encoding</code></pre>
+<pre class="r"><code>library(purrr)
 library(ggplot2)
-library(modelr)
-library(mgcv)
-library(patchwork)
-library(viridis)
-library(fastDummies)
-set.seed(1)</code></pre>
-<ol style="list-style-type: decimal">
-<li><p>Import original dataset</p></li>
-<li><p>Remove repeated data</p></li>
-</ol>
-<pre class="r"><code>childcare_inspection_df = read_csv(&quot;./data/DOHMH_Childcare_Center_Inspections.csv&quot;) %&gt;% 
+library(modelr)</code></pre>
+<pre><code>## Warning: package &#39;modelr&#39; was built under R version 4.2.2</code></pre>
+<pre class="r"><code>library(mgcv)</code></pre>
+<pre><code>## Warning: package &#39;mgcv&#39; was built under R version 4.2.2</code></pre>
+<pre><code>## Loading required package: nlme</code></pre>
+<pre><code>## Warning: package &#39;nlme&#39; was built under R version 4.2.2</code></pre>
+<pre><code>## 
+## Attaching package: &#39;nlme&#39;
+## 
+## The following object is masked from &#39;package:dplyr&#39;:
+## 
+##     collapse
+## 
+## This is mgcv 1.8-41. For overview type &#39;help(&quot;mgcv-package&quot;)&#39;.</code></pre>
+<pre class="r"><code>library(patchwork)
+library(viridis)</code></pre>
+<pre><code>## Loading required package: viridisLite</code></pre>
+<pre class="r"><code>library(fastDummies)</code></pre>
+<pre><code>## Warning: package &#39;fastDummies&#39; was built under R version 4.2.2</code></pre>
+<pre class="r"><code>set.seed(1)</code></pre>
+<pre class="r"><code># Initial data cleaning
+childcare_inspection_df = read_csv(&quot;./data/DOHMH_Childcare_Center_Inspections.csv&quot;) %&gt;% 
 janitor::clean_names() %&gt;% 
 distinct()</code></pre>
 <pre><code>## Rows: 26280 Columns: 34
-## ── Column specification ─────────────────────────────────────────────
+## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: &quot;,&quot;
 ## chr (22): Center Name, Legal Name, Building, Street, Borough, Phone, Permit ...
 ## dbl (11): ZipCode, Permit Number, Building Identification Number, Violation ...
+## num  (1): Maximum Capacity
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-<p>Basic data cleaning</p>
-<ol style="list-style-type: decimal">
-<li><p>We select 22 key variables in this dataset to finish our
-analysis</p></li>
-<li><p>Drop NA</p></li>
-<li><p>Create a new variable “educational_worker_ratio”</p></li>
-<li><p>Make all data in “program_type” and “facility_type” columns show
-in the same format : lower case</p></li>
-</ol>
 <pre class="r"><code>childcare_inspection_df = childcare_inspection_df %&gt;% 
   select(center_name, borough, zip_code, status, age_range, maximum_capacity,program_type, facility_type, 
          child_care_type, violation_category,
@@ -367,10 +471,9 @@ in the same format : lower case</p></li>
     facility_type = as.factor(facility_type),
     child_care_type = as.factor(child_care_type),
     age_range = as.factor(age_range)
-  ) </code></pre>
-<p>We calculated a new violation rate for each distinct program using
-violation category column.</p>
-<pre class="r"><code>center_specific_df = childcare_inspection_df %&gt;% 
+  ) 
+
+center_specific_df = childcare_inspection_df %&gt;% 
   relocate(center_name, program_type) %&gt;% 
   group_by(center_name, program_type) %&gt;% 
   mutate(
@@ -378,11 +481,10 @@ violation category column.</p>
     n_violation = sum(!is.na(violation_category)), 
     rate = n_violation/(n_violation + n_na)) %&gt;% 
   arrange(center_name, program_type)</code></pre>
-<div id="statistical-analysis-1" class="section level3">
-<h3>Statistical analysis</h3>
 <div id="anova-test---violation-cases-number-and-boroughs"
 class="section level4">
 <h4>1. Anova test - Violation Cases Number and Boroughs</h4>
+<p><em>Introduction</em></p>
 <p>We are curious about whether center location is associated with the
 frequency of their violation. For example, during the past 3 years,
 would the expected violation case number in a random center in Bronx
@@ -405,8 +507,8 @@ vio_boro = center_distinct_df_2 %&gt;%
   group_by(borough, center_name) %&gt;%
   summarize(n_violate = sum(n_violation)) %&gt;%
   arrange(center_name)</code></pre>
-<pre><code>## `summarise()` has grouped output by &#39;borough&#39;. You can override
-## using the `.groups` argument.</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;borough&#39;. You can override using the
+## `.groups` argument.</code></pre>
 <pre class="r"><code># anova
 fit_borough = lm(n_violate ~ borough, data = vio_boro)
 summary(fit_borough)</code></pre>
@@ -433,6 +535,7 @@ summary(fit_borough)</code></pre>
 ## F-statistic: 12.75 on 4 and 1778 DF,  p-value: 3.106e-10</code></pre>
 <pre class="r"><code>anova(fit_borough) %&gt;% knitr::kable(caption = &quot;One way anova of violation frequency and borough&quot;)</code></pre>
 <table>
+<caption>One way anova of violation frequency and borough</caption>
 <thead>
 <tr class="header">
 <th align="left"></th>
@@ -462,15 +565,16 @@ summary(fit_borough)</code></pre>
 </tr>
 </tbody>
 </table>
-<p>One way anova of violation frequency and borough</p>
-<p><em>Conclusion:</em> The p-value of the above Anova test is
-3.106e-10. Thus, at 0.05 significance level, we reject the null
-hypothesis and conclude that during the past 3 years, the average number
-of violations per center varies across boroughs.</p>
+<p><em>Conclusion:</em></p>
+<p>The p-value of the above Anova test is 3.106e-10. Thus, at 0.05
+significance level, we reject the null hypothesis and conclude that
+during the past 3 years, the average number of violations per center
+varies across boroughs.</p>
 </div>
 <div id="chi-square-test---3-violation-types-and-boroughs"
 class="section level4">
 <h4>2. Chi-square Test - 3 Violation Types and Boroughs</h4>
+<p><em>Introduction</em></p>
 <p>In this dataset, there are three violation types exist: critical
 violation, general violation and public health hazard violation. We’re
 interested if the proportion of each type of violation would vary among
@@ -481,7 +585,7 @@ if this proportion is associated with its location.</p>
 <p>H0: the proportions of ciritical violation among borough levels are
 equal; AND the proportions of general violation among borough levels are
 equal; AND the proportions of public health hazard violation among
-borough levels are equal; vs. H1: not all proportions are equal.</p>
+borough levels are equal; vs. H1: not all proportions are equal.</p>
 <pre class="r"><code>three_violation = 
   childcare_inspection_df %&gt;%
   select(borough, violation_category) %&gt;% 
@@ -499,6 +603,7 @@ rownames(three_violation) &lt;- c(&quot;Bronx&quot;, &quot;Brooklyn&quot;, &quot
 three_violation %&gt;% 
   knitr::kable(caption = &quot;Results Table&quot;)</code></pre>
 <table>
+<caption>Results Table</caption>
 <thead>
 <tr class="header">
 <th align="left"></th>
@@ -540,7 +645,6 @@ three_violation %&gt;%
 </tr>
 </tbody>
 </table>
-<p>Results Table</p>
 <pre class="r"><code>chisq.test(three_violation)</code></pre>
 <pre><code>## 
 ##  Pearson&#39;s Chi-squared test
@@ -555,6 +659,7 @@ violation category is significantly different by borough.</p>
 <div id="proportion-test---total-violation-proportion-within-center"
 class="section level4">
 <h4>3. Proportion Test - Total Violation Proportion within Center</h4>
+<p><em>Introduction</em></p>
 <p>With the belief that violation record is an important parameter to
 evaluate the performance of a child healthcare center, we conducted a
 proportion test to estimate the total violation proportion and its 95%
@@ -572,8 +677,9 @@ mutate(
       violation_category == &quot;CRITICAL&quot;   ~ &quot;violated&quot;,
       violation_category == &quot;PUBLIC HEALTH HAZARD&quot;   ~ &quot;violated&quot;)
   ) %&gt;% 
- select(center_name, program_type, borough, verdiction)</code></pre>
-<pre class="r"><code># Summary of the total number of inspection and the total number of violation within center
+ select(center_name, program_type, borough, verdiction)
+
+# Summary of the total number of inspection and the total number of violation within center
 verdiction_center = 
   vio_sum %&gt;% 
   mutate(verdiction = as.character(verdiction)) %&gt;%
@@ -581,8 +687,9 @@ verdiction_center =
   summarize(
     inspect_total = n(),
     inspect_vio = sum(!is.na(verdiction)))</code></pre>
-<pre><code>## `summarise()` has grouped output by &#39;center_name&#39;. You can override
-## using the `.groups` argument.</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;center_name&#39;. You can override using the
+## `.groups` argument.</code></pre>
+<p><em>Plot for Staten island</em></p>
 <pre class="r"><code># prop.test for all centers in staten island
 center_prop_staten = 
   verdiction_center %&gt;% 
@@ -755,8 +862,8 @@ center_prop_staten %&gt;%
   labs( x = &quot;Center&quot;,
     y = &quot;Estimated proportion of violation&quot;,
     title = &quot;Centers with high violation proportion in Staten Island&quot;)</code></pre>
-<p><img
-src="Statistical-analysis_files/figure-gfm/unnamed-chunk-9-1.png" /><!-- --></p>
+<p><img src="Statistical-analysis_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p><em>Plot for Bronx</em></p>
 <pre class="r"><code># prop.test for all centers in Bronx
 center_prop_bronx = 
   verdiction_center %&gt;% 
@@ -941,8 +1048,8 @@ center_prop_bronx %&gt;%
   labs( x = &quot;Center&quot;,
     y = &quot;Estimated proportion of violation&quot;,
     title = &quot;Centers with high violation proportion in Bronx&quot;)</code></pre>
-<p><img
-src="Statistical-analysis_files/figure-gfm/unnamed-chunk-11-1.png" /><!-- --></p>
+<p><img src="Statistical-analysis_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p><em>Plot for Manhattan</em></p>
 <pre class="r"><code># prop.test for all centers in Manhattan
 center_prop_manhattan = 
   verdiction_center %&gt;% 
@@ -1551,8 +1658,8 @@ center_prop_manhattan %&gt;%
   labs( x = &quot;Center&quot;,
     y = &quot;Estimated proportion of violation&quot;,
     title = &quot;Centers with high violation proportion in Manhattan&quot;)</code></pre>
-<p><img
-src="Statistical-analysis_files/figure-gfm/unnamed-chunk-13-1.png" /><!-- --></p>
+<p><img src="Statistical-analysis_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p><em>Plot for Brooklyn</em></p>
 <pre class="r"><code># prop.test for all centers in Brooklyn
 center_prop_brooklyn = 
   verdiction_center %&gt;% 
@@ -2555,8 +2662,8 @@ center_prop_brooklyn %&gt;%
   labs( x = &quot;Center&quot;,
     y = &quot;Estimated proportion of violation&quot;,
     title = &quot;Centers with high violation proportion in Brooklyn&quot;)</code></pre>
-<p><img
-src="Statistical-analysis_files/figure-gfm/unnamed-chunk-15-1.png" /><!-- --></p>
+<p><img src="Statistical-analysis_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p><em>Plot for Queens</em></p>
 <pre class="r"><code># prop.test for all centers in Queens
 center_prop_queens = 
   verdiction_center %&gt;% 
@@ -3065,19 +3172,18 @@ center_prop_manhattan %&gt;%
   labs( x = &quot;Center&quot;,
     y = &quot;Estimated proportion of violation&quot;,
     title = &quot;Centers with high violation proportion in Queens&quot;)</code></pre>
-<p><img
-src="Statistical-analysis_files/figure-gfm/unnamed-chunk-17-1.png" /><!-- --></p>
+<p><img src="Statistical-analysis_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 <p><em>Conclusion:</em></p>
 <p>From the plot, we can see the names and estimates of the centers with
 high violation proportion in each borough. These plots can serve as a
 good reference for NYC residents when selecting the childcare centers
 for their kids.</p>
 </div>
+
+
+
 </div>
 </div>
-
-
-
 
 </div>
 
@@ -3109,7 +3215,41 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
 
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>

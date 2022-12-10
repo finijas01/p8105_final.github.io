@@ -396,6 +396,21 @@ div.tocify {
 </div>
 
 
+<div id="model-selection" class="section level3">
+<h3><em>Model selection</em></h3>
+<p>To explore the possible predictors contributing to the
+center-specific violation rate under each program type, we built a
+linear regression model. In this model, we focused on the violation rate
+and properties of each individual center.</p>
+<p>To start with, we created a new variable named “rate”, which
+represents the violation rate for each center, by using violation
+category column. Here, rate = number of total violation for each center
+and program / number of total inspection for each center and program,
+during the past 3 year. This variable was used as the outcome of the
+linear regression. Next, we selected several variables closely related
+to the properties of each center, as the potential predictors. After a
+thorough literature review, we chose variables based on a hypothesized
+structure for the factors underlying violation rate.</p>
 <pre class="r"><code>library(tidyverse)
 library(dplyr)
 library(rvest)
@@ -406,22 +421,13 @@ library(mgcv)
 library(patchwork)
 library(viridis)
 library(fastDummies)
-set.seed(1)</code></pre>
-<p>###Model selection:</p>
-<p>To explore the possible predictors contributing to the
-center-specific violation rate under each program type, we built a
-linear regression model. In this model, we focused on the violation rate
-and properties of each individual center.</p>
-<p>To start with, we created a new variable named “rate”, which
-represents the violation rate for each center, by using violation
-category column. Here, rate = number of total violation for each center
-and program / number of total inspection for each center and program,
-during the past 3 year. This variable was used as the outcome of the
-linear regression.</p>
-<pre class="r"><code>childcare_inspection_df = read_csv(&quot;./data/DOHMH_Childcare_Center_Inspections.csv&quot;) %&gt;% 
+set.seed(1)
+
+childcare_inspection_df = read_csv(&quot;./data/DOHMH_Childcare_Center_Inspections.csv&quot;) %&gt;% 
 janitor::clean_names() %&gt;% 
-distinct()</code></pre>
-<pre class="r"><code>childcare_inspection_df = childcare_inspection_df %&gt;% 
+distinct()
+
+childcare_inspection_df = childcare_inspection_df %&gt;% 
   select(center_name, borough, zip_code, status, age_range, maximum_capacity,program_type, facility_type, 
          child_care_type, violation_category,
          violation_status,violation_rate_percent:average_critical_violation_rate,regulation_summary,
@@ -439,8 +445,9 @@ distinct()</code></pre>
     child_care_type = as.factor(child_care_type),
     age_range = as.factor(age_range)
   ) %&gt;% 
-  filter(program_type != &quot;school age camp&quot;)</code></pre>
-<pre class="r"><code># calculate a new violation rate for each distinct program using violation category column.
+  filter(program_type != &quot;school age camp&quot;)
+
+# calculate a new violation rate for each distinct program using violation category column.
 center_specific_df = childcare_inspection_df %&gt;% 
   relocate(center_name, program_type) %&gt;% 
   group_by(center_name, program_type) %&gt;% 
@@ -449,11 +456,8 @@ center_specific_df = childcare_inspection_df %&gt;%
     n_violation = sum(!is.na(violation_category)), 
     rate = n_violation/(n_violation + n_na)) %&gt;% 
   arrange(center_name, program_type)</code></pre>
-<p>Next, we selected several variables closely related to the properties
-of each center, as the potential predictors. After a thorough literature
-review, we chose variables based on a hypothesized structure for the
-factors underlying violation rate.</p>
-<p>Linear model 1:</p>
+<div id="linear-raw-model-1" class="section level4">
+<h4>Linear raw model 1</h4>
 <p>First, we fit a full model using program type, borough, status,
 educational worker ratio of center-specific distinct records.</p>
 <pre class="r"><code># select distinct records and related variables of each center
@@ -550,10 +554,12 @@ full_lm %&gt;%
 </tr>
 </tbody>
 </table>
-<p>Linear model 2:</p>
-<p>Second, we also proposed an alternative model by using
-maximum_capacity, total educational workers and their interaction term
-as the predictors, instead of the educational worker ratio.</p>
+</div>
+<div id="linear-raw-model-2" class="section level4">
+<h4>Linear raw model 2</h4>
+<p>We also proposed an alternative model by using maximum_capacity,
+total educational workers and their interaction term as the predictors,
+instead of the educational worker ratio.</p>
 <pre class="r"><code># fit an alternative model
 alt_lm = center_distinct_df %&gt;%
  lm(rate ~ program_type + borough + status + maximum_capacity * total_educational_workers, data = .) 
@@ -668,45 +674,14 @@ alt_lm %&gt;%
 <p>After comparing these two models, we decided to keep full_lm model,
 due to its better goodness of fit and lower correlation among
 variables.</p>
-<pre class="r"><code># assess multicollinearity by vif
-library(performance) 
-check_collinearity(full_lm) # low correlation</code></pre>
-<pre><code>## # Check for Multicollinearity
-## 
-## Low Correlation
-## 
-##                      Term  VIF   VIF 95% CI Increased SE Tolerance
-##              program_type 1.78 [1.74, 1.82]         1.33      0.56
-##                   borough 1.12 [1.10, 1.14]         1.06      0.89
-##                    status 1.37 [1.35, 1.40]         1.17      0.73
-##  educational_worker_ratio 1.46 [1.43, 1.49]         1.21      0.69
-##  Tolerance 95% CI
-##      [0.55, 0.58]
-##      [0.88, 0.91]
-##      [0.71, 0.74]
-##      [0.67, 0.70]</code></pre>
-<pre class="r"><code>check_collinearity(alt_lm)  # moderate correlation</code></pre>
-<pre><code>## # Check for Multicollinearity
-## 
-## Low Correlation
-## 
-##              Term  VIF   VIF 95% CI Increased SE Tolerance Tolerance 95% CI
-##      program_type 1.95 [1.90, 1.99]         1.39      0.51     [0.50, 0.53]
-##           borough 1.12 [1.11, 1.14]         1.06      0.89     [0.87, 0.90]
-##            status 1.36 [1.34, 1.39]         1.17      0.73     [0.72, 0.75]
-##  maximum_capacity 1.70 [1.66, 1.73]         1.30      0.59     [0.58, 0.60]
-## 
-## Moderate Correlation
-## 
-##                                        Term  VIF   VIF 95% CI Increased SE
-##                   total_educational_workers 5.95 [5.78, 6.11]         2.44
-##  maximum_capacity:total_educational_workers 6.09 [5.92, 6.26]         2.47
-##  Tolerance Tolerance 95% CI
-##       0.17     [0.16, 0.17]
-##       0.16     [0.16, 0.17]</code></pre>
-<p><em>Model diagnostics:</em></p>
+</div>
+</div>
+<div id="model-diagnostics" class="section level3">
+<h3><em>Model diagnostics</em></h3>
+<div id="residual-assumptions" class="section level4">
+<h4>Residual assumptions</h4>
 <p>We checked the assumptions of the residuals by using 4 plots as
-follows. We found:</p>
+follows:</p>
 <ol style="list-style-type: decimal">
 <li><p>Linearity and homoscedasticity: from the Residuals vs Fitted
 plot, we can see residuals form a horizontal ‘band’ around zero and its
@@ -725,25 +700,58 @@ influential observations.</p></li>
 </ol>
 <pre class="r"><code># model diagnostics: Residuals vs Fitted plot, QQ plot, Scale_location, Residuals vs Leverage
 plot(full_lm)</code></pre>
-<p><img src="linear_files/figure-html/unnamed-chunk-8-1.png" width="672" /><img src="linear_files/figure-html/unnamed-chunk-8-2.png" width="672" /><img src="linear_files/figure-html/unnamed-chunk-8-3.png" width="672" /><img src="linear_files/figure-html/unnamed-chunk-8-4.png" width="672" /></p>
-<p><em>Remedy:</em></p>
-<p>Therefore, to address the slight model violation issue, we firstly
-tried transformation to makes the data more ‘normal’. From the boxplot
-of two numerical variables rate and educational worker ratio we can see
-the latter is right skewed.</p>
-<p>Since there are 0 value in these variables, log-transformation is not
-applicable. Then we did square root transformation to the variable
-educational_worker_ratio. However, this step didn’t significantly
-improved the model.So we decided to go without transformation.</p>
+<p><img src="linear_files/figure-html/unnamed-chunk-4-1.png" width="672" /><img src="linear_files/figure-html/unnamed-chunk-4-2.png" width="672" /><img src="linear_files/figure-html/unnamed-chunk-4-3.png" width="672" /><img src="linear_files/figure-html/unnamed-chunk-4-4.png" width="672" /></p>
+</div>
+<div id="multicollinearity" class="section level4">
+<h4>Multicollinearity</h4>
+<p>Moreover, the full_lm model shows a low multicollinearity since the
+VIF value for each variable are all below 2.</p>
+<pre class="r"><code>library(performance) 
+check_collinearity(full_lm) # low correlation</code></pre>
+<pre><code>## # Check for Multicollinearity
+## 
+## Low Correlation
+## 
+##                      Term  VIF   VIF 95% CI Increased SE Tolerance
+##              program_type 1.78 [1.74, 1.82]         1.33      0.56
+##                   borough 1.12 [1.10, 1.14]         1.06      0.89
+##                    status 1.37 [1.35, 1.40]         1.17      0.73
+##  educational_worker_ratio 1.46 [1.43, 1.49]         1.21      0.69
+##  Tolerance 95% CI
+##      [0.55, 0.58]
+##      [0.88, 0.91]
+##      [0.71, 0.74]
+##      [0.67, 0.70]</code></pre>
+</div>
+</div>
+<div id="model-remedy" class="section level3">
+<h3><em>Model remedy</em></h3>
+<div id="variable-normality-check" class="section level4">
+<h4>Variable normality check</h4>
+<p>We checked the normality of two numerical variables of educational
+worker ratio and rate. Boxplot suggests the first variable has a right
+skewed distribution.</p>
 <pre class="r"><code># Boxblot to check the initial distribution of outcome and key predictor
 center_distinct_df  %&gt;%
 par(mfrow = c(1,2))
 boxplot(center_distinct_df$educational_worker_ratio, main = &quot;Edu-worker Ratio&quot;)
 boxplot(center_distinct_df$rate, main = &quot;Violation Rate&quot;)</code></pre>
-<p><img src="linear_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p><img src="linear_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+</div>
+<div id="transformation" class="section level4">
+<h4>Transformation</h4>
+<p>Therefore, to address the slight model assumption violation issue, we
+firstly tried transformation to make the data more ‘normal’.</p>
+<p>Since there are 0 value in these variables, log-transformation is not
+applicable. Then we did square root transformation to the variable
+educational_worker_ratio. However, this step didn’t significantly
+improved the model.So we decided to go without transformation.</p>
 <pre class="r"><code># Square root transformation
 full_lm_sqrt = center_distinct_df %&gt;%
   lm(rate ~ program_type + borough + status + sqrt(educational_worker_ratio), data = .)</code></pre>
+</div>
+<div id="outliers-removal" class="section level4">
+<h4>Outliers removal</h4>
 <p>In addition, although there is no influential points, case 12349 and
 12318 affect the regression assumption as shown repeatedly.So we tried
 to fit a new model named full_lm_out by removing these two cases. This
@@ -841,10 +849,10 @@ full_lm_out %&gt;%
 </tr>
 </tbody>
 </table>
-<pre class="r"><code># model diagnostics: Residuals vs Fitted plot, QQ plot, Scale_location, Residuals vs Leverage
-plot(full_lm_out)</code></pre>
-<p><img src="linear_files/figure-html/unnamed-chunk-11-1.png" width="672" /><img src="linear_files/figure-html/unnamed-chunk-11-2.png" width="672" /><img src="linear_files/figure-html/unnamed-chunk-11-3.png" width="672" /><img src="linear_files/figure-html/unnamed-chunk-11-4.png" width="672" /></p>
-<p><em>Model validation:</em></p>
+</div>
+</div>
+<div id="model-validation" class="section level3">
+<h3><em>Model validation</em></h3>
 <p>We used 5-fold cross validation to test the model performance. Based
 on a rule of thumb, RMSE values between 0.2 and 0.5 shows that the model
 can relatively predict the data accurately. Thus our model boasts good
@@ -893,14 +901,20 @@ model_caret$finalModel</code></pre>
 ##   0.2431557  0.1565823  0.1982754
 ## 
 ## Tuning parameter &#39;intercept&#39; was held constant at a value of TRUE</code></pre>
-<p><em>Conclusion:</em></p>
+</div>
+<div id="model-conclusion" class="section level3">
+<h3><em>Model conclusion</em></h3>
+<div id="final-linear-model" class="section level4">
+<h4>Final linear model</h4>
 <p>We chose full_lm_out as our final linear model:</p>
 <p>rate = 0.868 - 0.027(program_type_infant toddler) -
 0.245(borough_BROOKLYN) -0.186(borough_MANHATTAN) -
 0.103(borough_QUEENS) - 0.323(borough_STATEN ISLAND) -
 0.193(status_Expired In Renewal) - 0.242(status_Permitted) -
 0.084(educational_worker_ratio)</p>
-<p>Interpretation:</p>
+</div>
+<div id="interpretation" class="section level4">
+<h4>Interpretation</h4>
 <p>In this model, the outcome is “rate”, indicating the violation rate
 for each center based on different program type. Our key predictor is
 the numeric variable of “educational_worker_ratio”, which is the
@@ -931,7 +945,9 @@ out_df %&gt;%
   theme_bw() +
   geom_smooth(method = &#39;lm&#39;, se = TRUE, color = &#39;red&#39;) +
   labs(x = &quot;educational worker ratio&quot;, y = &quot;Violation rate&quot;)</code></pre>
-<p><img src="linear_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p><img src="linear_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+</div>
+</div>
 
 
 
