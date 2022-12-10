@@ -18,7 +18,55 @@ h1.title {
 
 ## Introduction
 
+High-quality childcare is important for children safety and health. In our project , we did some data visualization with the NYC restaurant inspection dataset. We find this very inspiring and the idea of analyzing child care center inspections’ data came to our mind. A violation in a health care center would be, to some extent, more serious than violation in the restaurant and we would consider our project as a meaningful and realistic topic. We aim to find out some possible variables that would influence the rate of violation in child care centers in NYC.
+
 ## Website Overview
+
+In our website, we have six parts in total.
+
+In visualization part, we have:
+
+* Violation Rate Distribution
+
+1. Violation rate distribution by program type
+
+2. Violation rate distribution by borough
+
+* Violation Frequency
+
+1. Number of violations by program type
+
+2.  Number of violations by violation category
+
+In statistical analysis part, we have:
+
+* ANOVA test
+
+* Chi-square test
+
+* Proportion test
+
+In shiny dashboard part, we have:
+
+Dashboard related to maximum capacity, educational worker ratio and violation rate for different program types.
+
+Click on [here](https://zuoqiaocui.shinyapps.io/shiny_violation/) to have a look
+
+In model regression part, we have:
+
+* Linear model
+
+* Logistic model
+
+In interactive map part, we have:
+
+Maps that can show the violation rate in different zip code areas.
+
+Click on [here](interactive_map.html) to learn more details.
+
+In project report part, you can overview our final project report:
+
+[Final project report](interactive_map.html)
 
 ## Dataset
 
@@ -49,5 +97,3 @@ Qing Zhou (qz2266)
 Zuoqiao Cui (zc2610)
 
 Yuhuan Lin (yl5221)
-
-
