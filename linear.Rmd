@@ -10,7 +10,7 @@ output:
 
 
 
-### *Model selection*
+## Model selection
 
 To explore the possible predictors contributing to the center-specific violation rate under each program type, we built a linear regression model. In this model, we focused on the violation rate and properties of each individual center.
 
@@ -29,19 +29,9 @@ library(patchwork)
 library(viridis)
 library(fastDummies)
 set.seed(1)
-
-<<<<<<< HEAD
-=======
-
-## Model selection
-
-To explore the possible predictors contributing to the center-specific violation rate under each program type, we built a linear regression model. In this model, we focused on the violation rate and properties of each individual center.
-
-To start with, we created a new variable named "rate", which represents the violation rate for each center, by using violation category column. Here, rate = number of total violation for each center and program / number of total inspection for each center and program, during the past 3 year. This variable was used as the outcome of the linear regression. 
-
+```
 
 ```{r warning= FALSE, message=FALSE}
->>>>>>> d6120567677f4a4aa7fcc102193eecdce9bcadfe
 childcare_inspection_df = read_csv("./data/DOHMH_Childcare_Center_Inspections.csv") %>% 
 janitor::clean_names() %>% 
 distinct()
@@ -77,15 +67,11 @@ center_specific_df = childcare_inspection_df %>%
   arrange(center_name, program_type)
 ```
 
-<<<<<<< HEAD
-#### Linear raw model 1
-=======
-Next, we selected several variables closely related to the properties of each center, as the potential predictors. After a thorough literature review, we chose variables based on a hypothesized structure for the factors underlying violation rate. 
-
 #### Linear model 1
->>>>>>> d6120567677f4a4aa7fcc102193eecdce9bcadfe
 
 First, we fit a full model using program type, borough, status, educational worker ratio of center-specific distinct records.
+
+Next, we selected several variables closely related to the properties of each center, as the potential predictors. After a thorough literature review, we chose variables based on a hypothesized structure for the factors underlying violation rate. 
 
 ```{r warning= FALSE, message=FALSE}
 # select distinct records and related variables of each center
@@ -101,11 +87,7 @@ full_lm %>%
   knitr::kable(digit = 3)
 ```
 
-<<<<<<< HEAD
-#### Linear raw model 2
-=======
 #### Linear model 2
->>>>>>> d6120567677f4a4aa7fcc102193eecdce9bcadfe
 
 We also proposed an alternative model by using maximum_capacity, total educational workers and their interaction term as the predictors, instead of the educational worker ratio. 
 
@@ -122,13 +104,8 @@ alt_lm %>%
 After comparing these two models, we decided to keep full_lm model, due to its better goodness of fit and lower correlation among variables.
 
 
-<<<<<<< HEAD
-### *Model diagnostics*
-=======
-## Model diagnostics
 
-#### Residual assumptions
->>>>>>> d6120567677f4a4aa7fcc102193eecdce9bcadfe
+## Model diagnostics
 
 #### Residual assumptions
 
@@ -150,20 +127,14 @@ plot(full_lm)
 
 #### Multicollinearity 
 
-<<<<<<< HEAD
 Moreover, the full_lm model shows a low multicollinearity since the VIF value for each variable are all below 2.
-=======
-## Model Remedy
-
-#### Variable normality check
->>>>>>> d6120567677f4a4aa7fcc102193eecdce9bcadfe
 
 ```{r warning= FALSE, message=FALSE}
 library(performance) 
 check_collinearity(full_lm) # low correlation
 ```
 
-### *Model remedy*
+## Model remedy
 
 #### Variable normality check
 
@@ -185,8 +156,6 @@ the data more ‘normal’.
 
 Since there are 0 value in these variables, log-transformation is not applicable. Then we did square root transformation to the variable educational_worker_ratio. However, this step didn't significantly improved the model.So we decided to go without transformation.
 
-=======
->>>>>>> d6120567677f4a4aa7fcc102193eecdce9bcadfe
 ```{r warning= FALSE, message=FALSE}
 # Square root transformation
 full_lm_sqrt = center_distinct_df %>%
@@ -209,11 +178,8 @@ full_lm_out %>%
   knitr::kable(digit = 3)
 ```
 
-<<<<<<< HEAD
-### *Model validation*
-=======
+
 ## Model validation
->>>>>>> d6120567677f4a4aa7fcc102193eecdce9bcadfe
 
 We used 5-fold cross validation to test the model performance. Based on a rule of thumb, RMSE values between 0.2 and 0.5 shows that the model can relatively predict the data accurately. Thus our model boasts good RMSE value(RMSE = 0.24), suggesting relatively good predictive ability.
 
@@ -232,15 +198,9 @@ model_caret$finalModel
 print(model_caret)
 ```
 
-<<<<<<< HEAD
-### *Model conclusion*
-
-#### Final linear model
-=======
 ## Model Conclusion
 
 #### Final linear model 
->>>>>>> d6120567677f4a4aa7fcc102193eecdce9bcadfe
 
 We chose full_lm_out as our final linear model:
 

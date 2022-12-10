@@ -27,7 +27,7 @@ distinct()
 ```
 
     ## Rows: 26280 Columns: 34
-    ## ── Column specification ─────────────────────────────────────────────
+    ## ── Column specification ──────
     ## Delimiter: ","
     ## chr (22): Center Name, Legal Name, Building, Street, Borough, Phone, Permit ...
     ## dbl (11): ZipCode, Permit Number, Building Identification Number, Violation ...
