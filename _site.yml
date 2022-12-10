@@ -8,8 +8,8 @@ navbar:
   left:
    - text: 'Visualization'
      menu:
-      - text: "Model 1"
-        href:  model1.html
+      - text: "Violation Rate Distribution"
+        href:  rate_borough_viz.html
       - text: "Model 2"
         href:  model2.html
    - text: 'Statistical analysis'

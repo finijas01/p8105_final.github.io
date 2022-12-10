@@ -260,7 +260,7 @@ $(document).ready(function () {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="model1.html">Model 1</a>
+      <a href="rate_borough_viz.html">Violation Rate Distribution</a>
     </li>
     <li>
       <a href="model2.html">Model 2</a>
@@ -390,7 +390,8 @@ in the same format : lower case</p></li>
     facility_type = as.factor(facility_type),
     child_care_type = as.factor(child_care_type),
     age_range = as.factor(age_range)
-  )
+  ) %&gt;% 
+  filter(program_type != &quot;school age camp&quot;)
   write_csv(childcare_inspection_df,file = &quot;childcare_inspection.csv&quot;,na = &quot;NA&quot;, append = FALSE)</code></pre>
 <p>We calculated a new violation rate for each distinct program using
 violation category column.</p>

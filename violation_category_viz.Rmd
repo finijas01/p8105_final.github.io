@@ -1,0 +1,120 @@
+---
+title: "Number of violations by violation category"
+output: 
+  html_document:
+    code_folding: hide
+    toc: true
+    toc_float: true
+    theme: flatly
+editor_options: 
+  chunk_output_type: inline
+---
+
+## Frequency of violation category
+
+```{r, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(dplyr)
+library(rvest)
+library(purrr)
+library(ggplot2)
+library(modelr)
+library(mgcv)
+library(patchwork)
+library(viridis)
+library(fastDummies)
+
+knitr::opts_chunk$set(
+	echo = TRUE,
+	warning = FALSE,
+  fig.width = 6,
+  fig.asp = .6,
+  out.width = "90%"
+)
+
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
+set.seed(1)
+```
+
+
+```{r}
+knitr::opts_chunk$set(
+  warning = FALSE,
+  message = FALSE)
+```
+
+
+
+
+```{r}
+childcare_inspection_df = read_csv("./data/DOHMH_Childcare_Center_Inspections.csv") %>% 
+janitor::clean_names() %>% 
+distinct() %>% 
+    select(center_name, borough, zip_code, status, age_range, maximum_capacity,program_type, facility_type, 
+         child_care_type, violation_category,
+         violation_status,violation_rate_percent:average_critical_violation_rate,regulation_summary,
+         inspection_summary_result) %>%
+  drop_na(zip_code, age_range, violation_rate_percent,public_health_hazard_violation_rate, critical_violation_rate) %>% 
+  filter(maximum_capacity != 0) %>% 
+  mutate(
+    educational_worker_ratio = total_educational_workers/maximum_capacity,
+    program_type = tolower(program_type),
+    facility_type = tolower(facility_type),
+    borough =  as.factor(borough),
+    status = as.factor(status),
+    program_type = as.factor(program_type),
+    facility_type = as.factor(facility_type),
+    child_care_type = as.factor(child_care_type),
+    age_range = as.factor(age_range)
+  ) 
+```
+
+
+```{r}
+center_specific_df = childcare_inspection_df %>% 
+  relocate(center_name, program_type) %>% 
+  group_by(center_name, program_type) %>% 
+  mutate(
+    n_na = sum(is.na(violation_category)), 
+    n_violation = sum(!is.na(violation_category)), 
+    rate = n_violation/(n_violation + n_na)) %>% 
+  arrange(center_name, program_type)
+```
+
+## Frequency of program type
+
+```{r}
+frequency_program_type = childcare_inspection_df %>% 
+  drop_na(program_type) %>% 
+  count(program_type) %>% 
+  mutate(
+    program_type = fct_reorder(program_type, n)
+    ) %>% 
+  ggplot(aes(x = program_type, y = n, fill = program_type)) + 
+  geom_bar(stat = "identity") + 
+  labs(
+    title = "Frequency of Violations by Program Type",
+    x = "Program Type",
+    y = "Number of Violations",
+    fill = "program_type") +
+  theme(axis.text.x = element_text(angle = 0, hjust = 0.5),plot.title = element_text(hjust = 0.5))
+frequency_program_type
+```
+
+
+
+
+
+
+
+
+
+
