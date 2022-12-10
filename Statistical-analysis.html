@@ -415,6 +415,13 @@ violation category column.</p>
 <h3>Statistical analysis</h3>
 <div id="anova-test" class="section level4">
 <h4>1. Anova test</h4>
+<p>We are curious about whether center location is associated with the
+frequency of their violation. For example, during the past 3 years,
+would the expected violation case number in a random center in Bronx
+varies from the expected violation case number in a random center in
+Manhattan? To explore the answer, We performed ANOVA test across
+boroughs.</p>
+<p>Our hypothesis is:</p>
 <p>H0: The average number of violation in each center are not different
 across boroughs</p>
 <p>H1: The average number of violation in each center are not different
@@ -425,16 +432,17 @@ center_distinct_df_2 = center_specific_df %&gt;%
   select(center_name, program_type, borough, status, maximum_capacity, total_educational_workers, educational_worker_ratio, n_violation, rate) %&gt;%
   distinct()
 
-vio_borough = center_distinct_df_2 %&gt;%
+vio_boro = center_distinct_df_2 %&gt;%
   group_by(borough, center_name) %&gt;%
-  summarize(n_violate = sum(n_violation))</code></pre>
+  summarize(n_violate = sum(n_violation)) %&gt;%
+  arrange(center_name)</code></pre>
 <pre><code>## `summarise()` has grouped output by &#39;borough&#39;. You can override using the
 ## `.groups` argument.</code></pre>
-<pre class="r"><code>fit_borough = lm(n_violate ~ borough, data = vio_borough)
+<pre class="r"><code>fit_borough = lm(n_violate ~ borough, data = vio_boro)
 summary(fit_borough)</code></pre>
 <pre><code>## 
 ## Call:
-## lm(formula = n_violate ~ borough, data = vio_borough)
+## lm(formula = n_violate ~ borough, data = vio_boro)
 ## 
 ## Residuals:
 ##     Min      1Q  Median      3Q     Max 
@@ -485,14 +493,21 @@ summary(fit_borough)</code></pre>
 </tr>
 </tbody>
 </table>
-<p>The p-value of the above Anova test is 3.106e-10. Thus, at 0.05
-significance level, we reject the null hypothesis and conclude that
-during the past 3 years, the average number of violations per center
-varies across boroughs.</p>
+<p><em>Conclusion:</em> The p-value of the above Anova test is
+3.106e-10. Thus, at 0.05 significance level, we reject the null
+hypothesis and conclude that during the past 3 years, the average number
+of violations per center varies across boroughs.</p>
 </div>
 <div id="chi-square-test---3-violation-types-and-boroughs"
 class="section level4">
 <h4>2. Chi-square Test - 3 Violation Types and Boroughs</h4>
+<p>In this dataset, there are three violation types exist: critical
+violation, general violation and public health hazard violation. We’re
+interested if the proportion of each type of violation would vary among
+different boroughs. So we calculated the total number of cases under
+each violation category in each borough and did a chi-square test to see
+if this proportion is associated with its location.</p>
+<p>Our hypothesis is:</p>
 <p>H0: the proportions of ciritical violation among borough levels are
 equal; AND the proportions of general violation among borough levels are
 equal; AND the proportions of public health hazard violation among
@@ -562,13 +577,10 @@ three_violation %&gt;%
 ## 
 ## data:  three_violation
 ## X-squared = 118.01, df = 8, p-value &lt; 2.2e-16</code></pre>
-<p>The result of chi-square shows that , at significant level α=0.05, so
-we reject the null hypothesis and conclude that there does exist at
-least one borough’s proportion of violation amounts is different from
-others. At 0.05 significance level, χ2&gt;χcritical, with p-value &lt;
-2.2e-16. Thus, we reject the null hypothesis and conclude that there is
-sufficient evidence that the category of violation is significantly
-different by borough.</p>
+<p><em>Conclusion:</em> At 0.05 significance level, χ2&gt;χcritical,
+with p-value &lt; 2.2e-16. Thus, we reject the null hypothesis and
+conclude that there is sufficient evidence that the proportion of
+violation category is significantly different by borough.</p>
 </div>
 </div>
 
