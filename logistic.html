@@ -374,7 +374,7 @@ child_data &lt;- child_data %&gt;%
 <p>#fit a logistic regression with violation vs no violation as the
 outcome and the rest as predictors.And Obtain the estimate and CI of the
 adjusted odds ratio for having violation.</p>
-<pre class="r"><code>model_log &lt;- glm(violation ~ status  + facility_type + educational_worker_ratio,data = child_data,family = binomial(link=logit))
+<pre class="r"><code>model_log &lt;- glm(violation ~ status  + program_type + educational_worker_ratio,data = child_data,family = binomial(link=logit))
 model_log %&gt;%
   broom::tidy(conf.int = T) %&gt;% 
   mutate(OR = exp(estimate),
@@ -386,11 +386,11 @@ model_log %&gt;%
                col.names = c(&quot;Term&quot;, &quot;Estimated adjusted OR&quot;, &quot;CI lower bound&quot;, &quot;CI upper bound&quot;, &quot;p-value&quot;))</code></pre>
 <table>
 <colgroup>
-<col width="28%" />
-<col width="26%" />
-<col width="18%" />
-<col width="18%" />
-<col width="9%" />
+<col width="30%" />
+<col width="25%" />
+<col width="17%" />
+<col width="17%" />
+<col width="8%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -404,44 +404,51 @@ model_log %&gt;%
 <tbody>
 <tr class="odd">
 <td align="left">(Intercept)</td>
-<td align="center">2.770</td>
-<td align="center">9.678</td>
-<td align="center">29.820</td>
+<td align="center">2.546</td>
+<td align="center">7.396</td>
+<td align="center">2.575800e+01</td>
 <td align="left">&lt;0.0001</td>
 </tr>
 <tr class="even">
 <td align="left">statusExpired-In Renewal</td>
-<td align="center">0.349</td>
-<td align="center">1.316</td>
-<td align="center">1.556</td>
+<td align="center">0.379</td>
+<td align="center">1.360</td>
+<td align="center">1.593000e+00</td>
 <td align="left">&lt;0.0001</td>
 </tr>
 <tr class="odd">
 <td align="left">statusPermitted</td>
-<td align="center">0.329</td>
-<td align="center">1.291</td>
-<td align="center">1.524</td>
+<td align="center">0.358</td>
+<td align="center">1.341</td>
+<td align="center">1.544000e+00</td>
 <td align="left">&lt;0.0001</td>
 </tr>
 <tr class="even">
-<td align="left">facility_typegdc</td>
-<td align="center">1.065</td>
-<td align="center">2.496</td>
-<td align="center">3.452</td>
-<td align="left">0.42</td>
+<td align="left">program_typeinfant toddler</td>
+<td align="center">0.981</td>
+<td align="center">2.264</td>
+<td align="center">3.248000e+00</td>
+<td align="left">0.84</td>
 </tr>
 <tr class="odd">
-<td align="left">facility_typesbcc</td>
-<td align="center">NA</td>
-<td align="center">NA</td>
-<td align="center">NA</td>
-<td align="left">NA</td>
+<td align="left">program_typepreschool</td>
+<td align="center">1.060</td>
+<td align="center">2.485</td>
+<td align="center">3.434000e+00</td>
+<td align="left">0.45</td>
 </tr>
 <tr class="even">
+<td align="left">program_typeschool age camp</td>
+<td align="center">2.072</td>
+<td align="center">1.219</td>
+<td align="center">2.510005e+19</td>
+<td align="left">0.55</td>
+</tr>
+<tr class="odd">
 <td align="left">educational_worker_ratio</td>
-<td align="center">0.431</td>
-<td align="center">1.409</td>
-<td align="center">1.716</td>
+<td align="center">0.474</td>
+<td align="center">1.444</td>
+<td align="center">1.843000e+00</td>
 <td align="left">&lt;0.0001</td>
 </tr>
 </tbody>
@@ -456,37 +463,42 @@ head(predicted.classes)</code></pre>
 <pre class="r"><code>summary(model_log)</code></pre>
 <pre><code>## 
 ## Call:
-## glm(formula = violation ~ status + facility_type + educational_worker_ratio, 
+## glm(formula = violation ~ status + program_type + educational_worker_ratio, 
 ##     family = binomial(link = logit), data = child_data)
 ## 
 ## Deviance Residuals: 
 ##    Min      1Q  Median      3Q     Max  
-## -1.629  -1.115  -1.023   1.236   1.642  
+## -1.617  -1.117  -1.012   1.233   1.624  
 ## 
-## Coefficients: (1 not defined because of singularities)
-##                          Estimate Std. Error z value Pr(&gt;|z|)    
-## (Intercept)               1.01874    0.10265   9.925  &lt; 2e-16 ***
-## statusExpired-In Renewal -1.05180    0.12118  -8.679  &lt; 2e-16 ***
-## statusPermitted          -1.11244    0.12771  -8.711  &lt; 2e-16 ***
-## facility_typegdc          0.06256    0.07738   0.808    0.419    
-## facility_typesbcc              NA         NA      NA       NA    
-## educational_worker_ratio -0.84257    0.11571  -7.282  3.3e-13 ***
+## Coefficients:
+##                             Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)                  0.93445    0.12360   7.560 4.02e-14 ***
+## statusExpired-In Renewal    -0.96972    0.10542  -9.199  &lt; 2e-16 ***
+## statusPermitted             -1.02804    0.10052 -10.227  &lt; 2e-16 ***
+## program_typeinfant toddler  -0.01907    0.09333  -0.204    0.838    
+## program_typepreschool        0.05803    0.07757   0.748    0.454    
+## program_typeschool age camp  0.72841    1.22644   0.594    0.553    
+## educational_worker_ratio    -0.74612    0.13009  -5.735 9.73e-09 ***
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
 ## (Dispersion parameter for binomial family taken to be 1)
 ## 
 ##     Null deviance: 22719  on 16453  degrees of freedom
-## Residual deviance: 22551  on 16449  degrees of freedom
-## AIC: 22561
+## Residual deviance: 22548  on 16447  degrees of freedom
+## AIC: 22562
 ## 
 ## Number of Fisher Scoring iterations: 4</code></pre>
-<p>###visualization</p>
-<pre class="r"><code>#  Extract the adjusted odds ratio (and CI) for having violation comparing licence type of &quot;permitted&quot; against &quot;Expired-in renewal&quot; from all the boroughs.
-all_logistic = child_data %&gt;% 
+<p>##We can see from the summary that the licence status and educational
+worker ratio of the child care centers are significant predictors of the
+violation rate with p-value&lt; 0.05 while the facility type doesn’t
+significantly influence the violation rate with p-value&gt;0.05.
+###visualization</p>
+<pre class="r"><code>#  Extract the adjusted odds ratio (and CI) for having violation comparing licence type of &quot;active&quot; against &quot;Expired-in renewal&quot; from all the boroughs.
+all_logistic_E = child_data %&gt;% 
   nest(data = -borough) %&gt;% 
   mutate(
-    models = map(data, ~glm(violation ~ status  +  facility_type + educational_worker_ratio, data = ., family = binomial(link = &quot;logit&quot;))),
+    models = map(data, ~glm(violation ~ status  +  program_type + educational_worker_ratio, data = ., family = binomial(link = &quot;logit&quot;))),
     results = map(models, ~broom::tidy(.x, conf.int = T))) %&gt;% 
   select(borough, results) %&gt;% 
   unnest(results) %&gt;% 
@@ -498,7 +510,7 @@ all_logistic = child_data %&gt;%
   ) %&gt;% 
   filter(term == &quot;statusExpired-In Renewal&quot;) %&gt;% 
   select(borough, OR, CI_lower,CI_upper, p_val) 
-all_logistic %&gt;% 
+all_logistic_E %&gt;% 
   knitr::kable(digits = 3, align = &quot;llccc&quot;, col.names = c(&quot;Borough&quot;, &quot;Estimated adjusted OR&quot;, &quot;CI lower bound&quot;, &quot;CI upper bound&quot;, &quot;p-value&quot;))</code></pre>
 <table>
 <colgroup>
@@ -520,58 +532,141 @@ all_logistic %&gt;%
 <tbody>
 <tr class="odd">
 <td align="left">BROOKLYN</td>
-<td align="left">0.224</td>
-<td align="center">0.136</td>
-<td align="center">0.365</td>
+<td align="left">0.406</td>
+<td align="center">0.265</td>
+<td align="center">0.614</td>
 <td align="center">&lt;0.0001</td>
 </tr>
 <tr class="even">
 <td align="left">BRONX</td>
-<td align="left">0.366</td>
-<td align="center">0.149</td>
-<td align="center">0.847</td>
-<td align="center">0.02245</td>
+<td align="left">0.357</td>
+<td align="center">0.165</td>
+<td align="center">0.708</td>
+<td align="center">0.00519</td>
 </tr>
 <tr class="odd">
 <td align="left">QUEENS</td>
-<td align="left">0.417</td>
-<td align="center">0.252</td>
-<td align="center">0.684</td>
-<td align="center">0.0006</td>
+<td align="left">0.644</td>
+<td align="center">0.390</td>
+<td align="center">1.057</td>
+<td align="center">0.08323</td>
 </tr>
 <tr class="even">
 <td align="left">MANHATTAN</td>
-<td align="left">0.602</td>
-<td align="center">0.402</td>
-<td align="center">0.895</td>
-<td align="center">0.01274</td>
+<td align="left">0.592</td>
+<td align="center">0.413</td>
+<td align="center">0.843</td>
+<td align="center">0.00395</td>
 </tr>
 <tr class="odd">
 <td align="left">STATEN ISLAND</td>
-<td align="left">1.188</td>
-<td align="center">0.375</td>
-<td align="center">3.943</td>
-<td align="center">0.77021</td>
+<td align="left">0.721</td>
+<td align="center">0.235</td>
+<td align="center">2.323</td>
+<td align="center">0.56915</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>all_logistic_P = child_data %&gt;% 
+  nest(data = -borough) %&gt;% 
+  mutate(
+    models = map(data, ~glm(violation ~ status  +  program_type + educational_worker_ratio, data = ., family = binomial(link = &quot;logit&quot;))),
+    results = map(models, ~broom::tidy(.x, conf.int = T))) %&gt;% 
+  select(borough, results) %&gt;% 
+  unnest(results) %&gt;% 
+  mutate(
+    OR = exp(estimate),
+    CI_lower = exp(conf.low),
+    CI_upper = exp(conf.high),
+    p_val = rstatix::p_format(p.value, digits = 2)
+  ) %&gt;% 
+  filter(term == &quot;statusPermitted&quot;) %&gt;% 
+  select(borough, OR, CI_lower,CI_upper, p_val) 
+all_logistic_P %&gt;% 
+  knitr::kable(digits = 3, align = &quot;llccc&quot;, col.names = c(&quot;Borough&quot;, &quot;Estimated adjusted OR&quot;, &quot;CI lower bound&quot;, &quot;CI upper bound&quot;, &quot;p-value&quot;))</code></pre>
+<table>
+<colgroup>
+<col width="18%" />
+<col width="28%" />
+<col width="20%" />
+<col width="20%" />
+<col width="11%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Borough</th>
+<th align="left">Estimated adjusted OR</th>
+<th align="center">CI lower bound</th>
+<th align="center">CI upper bound</th>
+<th align="center">p-value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">BROOKLYN</td>
+<td align="left">0.314</td>
+<td align="center">0.206</td>
+<td align="center">0.470</td>
+<td align="center">&lt;0.0001</td>
+</tr>
+<tr class="even">
+<td align="left">BRONX</td>
+<td align="left">0.433</td>
+<td align="center">0.204</td>
+<td align="center">0.836</td>
+<td align="center">0.01894</td>
+</tr>
+<tr class="odd">
+<td align="left">QUEENS</td>
+<td align="left">0.292</td>
+<td align="center">0.198</td>
+<td align="center">0.422</td>
+<td align="center">&lt;0.0001</td>
+</tr>
+<tr class="even">
+<td align="left">MANHATTAN</td>
+<td align="left">0.454</td>
+<td align="center">0.320</td>
+<td align="center">0.640</td>
+<td align="center">&lt;0.0001</td>
+</tr>
+<tr class="odd">
+<td align="left">STATEN ISLAND</td>
+<td align="left">0.478</td>
+<td align="center">0.162</td>
+<td align="center">1.485</td>
+<td align="center">0.18184</td>
 </tr>
 </tbody>
 </table>
 <pre class="r"><code># Create a plot showing the estimated ORs and CIs for each borough
-all_logistic %&gt;% 
+all_logistic_E %&gt;% 
   mutate(borough = fct_reorder(borough, OR)) %&gt;%
   ggplot(aes(x = borough, y = OR)) +
   geom_point() +
   geom_errorbar(aes(ymin = CI_lower, ymax = CI_upper)) +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
-  labs(x = &quot;Borough&quot;, y = &quot;Estimated OR with CI&quot;)</code></pre>
+  labs(x = &quot;Borough&quot;, y = &quot;Estimated OR with CI(expired)&quot;)</code></pre>
 <p><img src="logistic_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
-<p>##From this plot we can see that in Brooklyn, Bronx, Queens and
+<pre class="r"><code>all_logistic_P %&gt;% 
+  mutate(borough = fct_reorder(borough, OR)) %&gt;%
+  ggplot(aes(x = borough, y = OR)) +
+  geom_point() +
+  geom_errorbar(aes(ymin = CI_lower, ymax = CI_upper)) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
+  labs(x = &quot;Borough&quot;, y = &quot;Estimated OR with CI(permitted)&quot;)</code></pre>
+<p><img src="logistic_files/figure-html/unnamed-chunk-9-2.png" width="672" /></p>
+<p>##From these two plots we can see that in Brooklyn, Bronx and
+Manhattan, the 95% confidence interval of odds ratio doesn’t include 1
+and this tells us that in these three regions, cases with licence status
+of active generally have less violation than cases with status of
+expired or in-renewal. Similarly, in Brooklyn, Bronx, Queens and
 Manhattan, the 95% confidence interval of odds ratio doesn’t include 1
 and this tells us that in these four regions, cases with licence status
-of permitted generally have less violation than cases with status of
-expired or in-renewal. ###Model diagnostics #1. Remove categorical
-variables from the original data frame and bind the logit values to the
-data</p>
-<pre class="r"><code>#select only numeric preditors
+of active generally have less violation than cases with status of
+permitted. ###Model diagnostics #1. Remove categorical variables from
+the original data frame and bind the logit values to the data</p>
+<pre class="r"><code>#select only numeric predictors
 child_data &lt;- child_data %&gt;%
   dplyr::select(educational_worker_ratio) 
 predictors &lt;- colnames(child_data)
@@ -595,6 +690,10 @@ ggplot(model_log.data, aes(index, .std.resid)) +
   geom_point(aes(color = violation), alpha = .5) +
   theme_bw()</code></pre>
 <p><img src="logistic_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p>###Diagnostic Conclusion</p>
+<p>From the plot we can see that the standard deviation of the data are
+all in acceptable region which means there’s no significant outliers in
+the dataset.</p>
 
 
 
