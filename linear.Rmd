@@ -17,11 +17,13 @@ h1.title {
 }
 </style>
 
-## Model selection
+## **Model selection**
 
 To explore the possible predictors contributing to the center-specific violation rate under each program type, we built a linear regression model. In this model, we focused on the violation rate and properties of each individual center.
 
 To start with, we created a new variable named "rate", which represents the violation rate for each center, by using violation category column. Here, rate = number of total violation for each center and program / number of total inspection for each center and program, during the past 3 year. This variable was used as the outcome of the linear regression. 
+Next, we selected several variables closely related to the properties of each center, as the potential predictors. After a thorough literature review, we chose variables based on a hypothesized structure for the factors underlying violation rate. 
+
 Next, we selected several variables closely related to the properties of each center, as the potential predictors. After a thorough literature review, we chose variables based on a hypothesized structure for the factors underlying violation rate. 
 
 ```{r warning= FALSE, message=FALSE}
@@ -36,9 +38,7 @@ library(patchwork)
 library(viridis)
 library(fastDummies)
 set.seed(1)
-```
 
-```{r warning= FALSE, message=FALSE}
 childcare_inspection_df = read_csv("./data/DOHMH_Childcare_Center_Inspections.csv") %>% 
 janitor::clean_names() %>% 
 distinct()
@@ -78,8 +78,6 @@ center_specific_df = childcare_inspection_df %>%
 
 First, we fit a full model using program type, borough, status, educational worker ratio of center-specific distinct records.
 
-Next, we selected several variables closely related to the properties of each center, as the potential predictors. After a thorough literature review, we chose variables based on a hypothesized structure for the factors underlying violation rate. 
-
 ```{r warning= FALSE, message=FALSE}
 # select distinct records and related variables of each center
 center_distinct_df = center_specific_df %>%
@@ -112,7 +110,7 @@ After comparing these two models, we decided to keep full_lm model, due to its b
 
 
 
-## Model diagnostics
+## **Model diagnostics**
 
 ### Residual assumptions
 
@@ -141,7 +139,7 @@ library(performance)
 check_collinearity(full_lm) # low correlation
 ```
 
-## Model remedy
+## **Model remedy**
 
 ### Variable normality check
 
@@ -157,8 +155,7 @@ boxplot(center_distinct_df$rate, main = "Violation Rate")
 
 ### Transformation
 
-Therefore, to address the slight model assumption violation issue, we firstly tried transformation to make 
-the data more ‘normal’. 
+Therefore, to address the slight model assumption violation issue, we firstly tried transformation to make the data more ‘normal’. 
 
 Since there are 0 value in these variables, log-transformation is not applicable. Then we did square root transformation to the variable educational_worker_ratio. However, this step didn't significantly improved the model.So we decided to go without transformation.
 
@@ -171,6 +168,8 @@ full_lm_sqrt = center_distinct_df %>%
 ### Outliers removal
 
 In addition, although there is no influential points, case 12349 and 12318 affect the regression assumption as shown repeatedly.So we tried to fit a new model named full_lm_out by removing these two cases. This model works better then full_lm due to its increased adjusted R-square. 
+
+Revised model named full_lm_out:
 
 ```{r warning= FALSE, message=FALSE}
 # exclude two influential records
@@ -185,32 +184,42 @@ full_lm_out %>%
 ```
 
 
-## Model validation
+## **Model validation**
 
-We used 5-fold cross validation to test the model performance. Based on a rule of thumb, RMSE values between 0.2 and 0.5 shows that the model can relatively predict the data accurately. Thus our model boasts good RMSE value(RMSE = 0.24), suggesting relatively good predictive ability.
+We used 5-fold cross validation to test the model performance. 
 
-```{r warning= FALSE, message=FALSE}
+```{r warning= FALSE, message=FALSE, results='hide'}
 library(caret)
 # Use 5-fold validation and create the training sets
 train = trainControl(method = "cv", number = 5)
-
 model_caret = train(rate ~ program_type + borough + status + educational_worker_ratio,
                    data = out_df,
                    trControl = train,
                    method = 'lm',
                    na.action = na.pass)
-
 model_caret$finalModel
+```
+
+Based on a rule of thumb, RMSE values between 0.2 and 0.5 shows that the model can relatively predict the data accurately. Thus our model boasts good RMSE value(RMSE = 0.24), suggesting relatively good predictive ability.
+
+```{r}
 print(model_caret)
 ```
 
-## Model Conclusion
+## **Model Conclusion**
 
 ### Final linear model 
 
 We chose full_lm_out as our final linear model:
 
 rate = 0.868 - 0.027(program_type_infant toddler) - 0.245(borough_BROOKLYN) -0.186(borough_MANHATTAN) - 0.103(borough_QUEENS) - 0.323(borough_STATEN ISLAND) - 0.193(status_Expired In Renewal) - 0.242(status_Permitted) - 0.084(educational_worker_ratio)
+
+```{r}
+full_lm_out %>% 
+  broom::tidy() %>%
+  knitr::kable(digit = 3)
+```
+
 
 ### Interpretation
 
@@ -230,7 +239,8 @@ out_df %>%
   ggplot(aes(educational_worker_ratio, rate)) + geom_point(color = 'blue') + 
   theme_bw() +
   geom_smooth(method = 'lm', se = TRUE, color = 'red') +
-  labs(x = "educational worker ratio", y = "Violation rate")
+  labs(x = "educational worker ratio", y = "Violation rate",
+       title = "Association between Violation Rate and Educational Worker Ratio")
 ```
 
 
