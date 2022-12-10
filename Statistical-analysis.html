@@ -413,8 +413,9 @@ violation category column.</p>
   arrange(center_name, program_type)</code></pre>
 <div id="statistical-analysis" class="section level3">
 <h3>Statistical analysis</h3>
-<div id="anova-test" class="section level4">
-<h4>1. Anova test</h4>
+<div id="anova-test---violation-cases-number-and-boroughs"
+class="section level4">
+<h4>1. Anova test - Violation Cases Number and Boroughs</h4>
 <p>We are curious about whether center location is associated with the
 frequency of their violation. For example, during the past 3 years,
 would the expected violation case number in a random center in Bronx
@@ -432,13 +433,15 @@ center_distinct_df_2 = center_specific_df %&gt;%
   select(center_name, program_type, borough, status, maximum_capacity, total_educational_workers, educational_worker_ratio, n_violation, rate) %&gt;%
   distinct()
 
+# total violation number of each center
 vio_boro = center_distinct_df_2 %&gt;%
   group_by(borough, center_name) %&gt;%
   summarize(n_violate = sum(n_violation)) %&gt;%
   arrange(center_name)</code></pre>
 <pre><code>## `summarise()` has grouped output by &#39;borough&#39;. You can override using the
 ## `.groups` argument.</code></pre>
-<pre class="r"><code>fit_borough = lm(n_violate ~ borough, data = vio_boro)
+<pre class="r"><code># anova
+fit_borough = lm(n_violate ~ borough, data = vio_boro)
 summary(fit_borough)</code></pre>
 <pre><code>## 
 ## Call:
@@ -581,6 +584,2522 @@ three_violation %&gt;%
 with p-value &lt; 2.2e-16. Thus, we reject the null hypothesis and
 conclude that there is sufficient evidence that the proportion of
 violation category is significantly different by borough.</p>
+</div>
+<div id="proportion-test---total-violation-proportion-within-center"
+class="section level4">
+<h4>3. Proportion Test - Total Violation Proportion within Center</h4>
+<p>With the belief that violation record is an important parameter to
+evaluate the performance of a child healthcare center, we conducted a
+proportion test to estimate the total violation proportion and its 95%
+confidence interval for each center, regardless of its program type. We
+defined the estimated total violation proportion &gt; 0.8 as high
+proportion. Next, we pinpointed all the centers with high violation
+proportion in each borough.</p>
+<pre class="r"><code># Divide the inspection results as violated vs. not violated
+vio_sum = 
+center_specific_df %&gt;%
+mutate(
+    verdiction = case_when(
+      violation_category == &quot;NA&quot; ~ &quot;not violated&quot;,
+      violation_category == &quot;GENERAL&quot;  ~ &quot;violated&quot;,
+      violation_category == &quot;CRITICAL&quot;   ~ &quot;violated&quot;,
+      violation_category == &quot;PUBLIC HEALTH HAZARD&quot;   ~ &quot;violated&quot;)
+  ) %&gt;% 
+ select(center_name, program_type, borough, verdiction)</code></pre>
+<pre class="r"><code># Summary of the total number of inspection and the total number of violation within center
+verdiction_center = 
+  vio_sum %&gt;% 
+  mutate(verdiction = as.character(verdiction)) %&gt;%
+  group_by(center_name,borough) %&gt;% 
+  summarize(
+    inspect_total = n(),
+    inspect_vio = sum(!is.na(verdiction)))</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;center_name&#39;. You can override using the
+## `.groups` argument.</code></pre>
+<pre class="r"><code># prop.test for all centers in staten island
+center_prop_staten = 
+  verdiction_center %&gt;% 
+  filter(borough == &quot;STATEN ISLAND&quot;) %&gt;%
+  mutate(
+    prop_result = map2(.x = inspect_vio, .y = inspect_total, ~prop.test(x = .x, n = .y)),
+    tidy_result = map(.x = prop_result, ~broom::tidy(.x))
+  ) %&gt;% 
+  select(-prop_result) %&gt;% 
+  unnest(tidy_result) %&gt;% 
+  select(center_name, estimate, conf.low, conf.high)</code></pre>
+<pre><code>## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect</code></pre>
+<pre class="r"><code># a plot that shows the estimates and CIs for each center in staten island with the proportion of violation greater than 0.8
+center_prop_staten %&gt;% 
+  filter(estimate &gt; 0.8) %&gt;%
+  mutate(center_name = factor(center_name)) %&gt;% 
+  mutate(center_name = forcats::fct_reorder(center_name, estimate)) %&gt;% 
+  
+  ggplot(aes(x = center_name, y = estimate)) +
+  geom_point(color = &quot;red&quot;) +
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high)) +
+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.6))) +
+  labs( x = &quot;Center&quot;,
+    y = &quot;Estimated proportion of violation&quot;,
+    title = &quot;Centers with high violation proportion in Staten Island&quot;)</code></pre>
+<p><img src="Statistical-analysis_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<pre class="r"><code># prop.test for all centers in Bronx
+center_prop_bronx = 
+  verdiction_center %&gt;% 
+  filter(borough == &quot;BRONX&quot;) %&gt;%
+  mutate(
+    prop_result = map2(.x = inspect_vio, .y = inspect_total, ~prop.test(x = .x, n = .y)),
+    tidy_result = map(.x = prop_result, ~broom::tidy(.x))
+  ) %&gt;% 
+  select(-prop_result) %&gt;% 
+  unnest(tidy_result) %&gt;% 
+  select(center_name, estimate, conf.low, conf.high)</code></pre>
+<pre><code>## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect</code></pre>
+<pre class="r"><code># a plot that shows the estimates and CIs for each center in Bronx with violation proportion greater than 0.8
+center_prop_bronx %&gt;% 
+  filter(estimate &gt; 0.8) %&gt;%
+  mutate(center_name = factor(center_name)) %&gt;% 
+  mutate(center_name = forcats::fct_reorder(center_name, estimate)) %&gt;% 
+  
+  ggplot(aes(x = center_name, y = estimate)) +
+  geom_point(color = &quot;red&quot;) +
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high)) +
+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.6))) +
+  labs( x = &quot;Center&quot;,
+    y = &quot;Estimated proportion of violation&quot;,
+    title = &quot;Centers with high violation proportion in Bronx&quot;)</code></pre>
+<p><img src="Statistical-analysis_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<pre class="r"><code># prop.test for all centers in Manhattan
+center_prop_manhattan = 
+  verdiction_center %&gt;% 
+  filter(borough == &quot;MANHATTAN&quot;) %&gt;%
+  mutate(
+    prop_result = map2(.x = inspect_vio, .y = inspect_total, ~prop.test(x = .x, n = .y)),
+    tidy_result = map(.x = prop_result, ~broom::tidy(.x))
+  ) %&gt;% 
+  select(-prop_result) %&gt;% 
+  unnest(tidy_result) %&gt;% 
+  select(center_name, estimate, conf.low, conf.high)</code></pre>
+<pre><code>## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect</code></pre>
+<pre class="r"><code># a plot that shows the estimates and CIs for each center in Manhattan with violation proportion greater than 0.8
+center_prop_manhattan %&gt;% 
+  filter(estimate &gt; 0.8) %&gt;%
+  mutate(center_name = factor(center_name)) %&gt;% 
+  mutate(center_name = forcats::fct_reorder(center_name, estimate)) %&gt;% 
+  
+  ggplot(aes(x = center_name, y = estimate)) +
+  geom_point(color = &quot;red&quot;) +
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high)) +
+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.6))) +
+  labs( x = &quot;Center&quot;,
+    y = &quot;Estimated proportion of violation&quot;,
+    title = &quot;Centers with high violation proportion in Manhattan&quot;)</code></pre>
+<p><img src="Statistical-analysis_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<pre class="r"><code># prop.test for all centers in Brooklyn
+center_prop_brooklyn = 
+  verdiction_center %&gt;% 
+  filter(borough == &quot;BROOKLYN&quot;) %&gt;%
+  mutate(
+    prop_result = map2(.x = inspect_vio, .y = inspect_total, ~prop.test(x = .x, n = .y)),
+    tidy_result = map(.x = prop_result, ~broom::tidy(.x))
+  ) %&gt;% 
+  select(-prop_result) %&gt;% 
+  unnest(tidy_result) %&gt;% 
+  select(center_name, estimate, conf.low, conf.high)</code></pre>
+<pre><code>## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect</code></pre>
+<pre class="r"><code># a plot that shows the estimates and CIs for each center in Brooklyn with violation proportion greater than 0.8
+center_prop_brooklyn %&gt;% 
+  filter(estimate &gt; 0.8) %&gt;%
+  mutate(center_name = factor(center_name)) %&gt;% 
+  mutate(center_name = forcats::fct_reorder(center_name, estimate)) %&gt;% 
+  
+  ggplot(aes(x = center_name, y = estimate)) +
+  geom_point(color = &quot;red&quot;) +
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high)) +
+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.6))) +
+  labs( x = &quot;Center&quot;,
+    y = &quot;Estimated proportion of violation&quot;,
+    title = &quot;Centers with high violation proportion in Brooklyn&quot;)</code></pre>
+<p><img src="Statistical-analysis_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<pre class="r"><code># prop.test for all centers in Queens
+center_prop_queens = 
+  verdiction_center %&gt;% 
+  filter(borough == &quot;QUEENS&quot;) %&gt;%
+  mutate(
+    prop_result = map2(.x = inspect_vio, .y = inspect_total, ~prop.test(x = .x, n = .y)),
+    tidy_result = map(.x = prop_result, ~broom::tidy(.x))
+  ) %&gt;% 
+  select(-prop_result) %&gt;% 
+  unnest(tidy_result) %&gt;% 
+  select(center_name, estimate, conf.low, conf.high)</code></pre>
+<pre><code>## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect
+
+## Warning in prop.test(x = .x, n = .y): Chi-squared approximation may be incorrect</code></pre>
+<pre class="r"><code># a plot that shows the estimates and CIs for each center in Queens with violation proportion greater than 0.8
+center_prop_manhattan %&gt;% 
+  filter(estimate &gt; 0.8) %&gt;%
+  mutate(center_name = factor(center_name)) %&gt;% 
+  mutate(center_name = forcats::fct_reorder(center_name, estimate)) %&gt;% 
+  
+  ggplot(aes(x = center_name, y = estimate)) +
+  geom_point(color = &quot;red&quot;) +
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high)) +
+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.6))) +
+  labs( x = &quot;Center&quot;,
+    y = &quot;Estimated proportion of violation&quot;,
+    title = &quot;Centers with high violation proportion in Queens&quot;)</code></pre>
+<p><img src="Statistical-analysis_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<p><em>Conclusion:</em></p>
+<p>From the plot, we can see the names and estimates of the centers with
+high violation proportion in each borough. These plots can serve as a
+good reference for NYC residents when selecting the childcare centers
+for their kids.</p>
 </div>
 </div>
 
