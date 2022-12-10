@@ -78,9 +78,14 @@ center_specific_df = childcare_inspection_df %>%
 
 #### 1. Anova test
 
+We are curious about whether center location is associated with the frequency of their violation. For example, during the past 3 years, would the expected violation case number in a random center in Bronx varies from the expected violation case number in a random center in Manhattan? To explore the answer, We performed ANOVA test across boroughs.
+
+Our hypothesis is:
+
 H0: The average number of violation in each center are not different across boroughs
 
 H1: The average number of violation in each center are not different across boroughs
+
 ```{r}
 # select distinct records of each center
 
@@ -88,27 +93,34 @@ center_distinct_df_2 = center_specific_df %>%
   select(center_name, program_type, borough, status, maximum_capacity, total_educational_workers, educational_worker_ratio, n_violation, rate) %>%
   distinct()
 
-vio_borough = center_distinct_df_2 %>%
+vio_boro = center_distinct_df_2 %>%
   group_by(borough, center_name) %>%
-  summarize(n_violate = sum(n_violation))
+  summarize(n_violate = sum(n_violation)) %>%
+  arrange(center_name)
 
 
-fit_borough = lm(n_violate ~ borough, data = vio_borough)
+fit_borough = lm(n_violate ~ borough, data = vio_boro)
 summary(fit_borough)
 anova(fit_borough) %>% knitr::kable(caption = "One way anova of violation frequency and borough")
 ```
+
+*Conclusion:*
 The p-value of the above Anova test is 3.106e-10. Thus, at 0.05 significance level, we reject the null hypothesis and conclude that during the past 3 years, the average number of violations per center varies across boroughs. 
+
+
 
 #### 2. Chi-square Test - 3 Violation Types and Boroughs
 
 In this dataset, there are three violation types exist: critical violation, general violation and public health hazard violation. We're interested if the proportion of each type of violation would vary among different boroughs. So we calculated the total number of cases under each violation category in each borough and did a chi-square test to see if this proportion is associated with its location.
 
 Our hypothesis is:
+
 H0:  the proportions of ciritical violation among borough levels are equal;
 AND  the proportions of general violation among borough levels are equal;
 AND  the proportions of public health hazard violation among borough levels are equal;
 vs.
 H1:  not all proportions are equal.
+
 ```{r}
 three_violation = 
   childcare_inspection_df %>%
@@ -131,5 +143,5 @@ three_violation %>%
 chisq.test(three_violation)
 ```
 
-Conclusion:
+*Conclusion:*
 At 0.05 significance level, χ2>χcritical, with p-value < 2.2e-16. Thus, we reject the null hypothesis and conclude that there is sufficient evidence that the proportion of violation category is significantly different by borough.
