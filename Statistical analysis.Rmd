@@ -170,7 +170,7 @@ verdiction_center =
 ```
 
 
-## Staten island
+#### *Staten island*
 
 ```{r warning= FALSE, message=FALSE}
 # prop.test for all centers in staten island
@@ -202,7 +202,7 @@ center_prop_staten %>%
 ```
 
 
-### **Bronx**
+#### **Bronx**
 
 ```{r warning= FALSE, message=FALSE}
 # prop.test for all centers in Bronx
@@ -234,7 +234,7 @@ center_prop_bronx %>%
 ```
 
 
-### **Manhattan**
+#### **Manhattan**
 
 ```{r warning= FALSE, message=FALSE}
 # prop.test for all centers in Manhattan
@@ -266,7 +266,7 @@ center_prop_manhattan %>%
 ```
 
 
-### **Brooklyn**
+#### **Brooklyn**
 
 ```{r warning= FALSE, message=FALSE}
 # prop.test for all centers in Brooklyn
@@ -298,7 +298,7 @@ center_prop_brooklyn %>%
 ```
 
 
-### **Queens**
+#### **Queens**
 
 ```{r warning= FALSE, message=FALSE}
 # prop.test for all centers in Queens
