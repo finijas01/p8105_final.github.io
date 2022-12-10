@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Project Report</title>
+
+<script src="site_libs/header-attrs-2.18/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Home</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Visualization
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="rate_borough_viz.html">Violation Rate Distribution</a>
+    </li>
+    <li>
+      <a href="violation_category_viz.html">Violation Frequency</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="Statistical-analysis.html">Statistical analysis</a>
+</li>
+<li>
+  <a href="https://zuoqiaocui.shinyapps.io/shiny_violation/">Shiny Dashboard</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Model Regression
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="linear.html">Linear Model</a>
+    </li>
+    <li>
+      <a href="logistic.html">Logistic Model</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="interactive_map.html">Interactive Map</a>
+</li>
+<li>
+  <a href="http://github.com/finijas01/">Project Report</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="http://github.com/finijas01/">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Project Report</h1>
+
+</div>
+
+
+<div id="group-member" class="section level1">
+<h1>Group member</h1>
+<p>Han Bao (hb2699)</p>
+<p>Jasmine Niu (jn2855)</p>
+<p>Qing Zhou (qz2266)</p>
+<p>Zuoqiao Cui (zc2610)</p>
+<p>Yuhuan Lin (yl5221)</p>
+</div>
+<div id="motivation" class="section level1">
+<h1>Motivation</h1>
+<p>High-quality childcare is important for children safety and health.
+As one of the most expansive cities to live at, New York City also has a
+high level of childcare expense. The lack of access to affordable
+childcare may also worsen other social problems such as difficulty of
+mothers returning to workforce. Reacting to the issue, federal funding
+in the Coronavirus Aid, Relief, and Economic Security (CARES) Act and
+American Rescue Plan Act (ARPA), enabled New York State to award
+millions of dollars to childcare providers in an effort to keep programs
+open during the coronavirus pandemic.</p>
+<p>In our homework, we did some data manipulation with the NYC
+restaurant inspection dataset. We found this very inspiring. To get a
+sense of childcare centers’ quality all over NYC, we found data on
+childcare programs inspection, which is the DOHMH Childcare Center
+Inspections dataset. We decided to take the violation rate as an
+assessment method for programs’ quality. This project aims to find some
+possible variables that would influence and explain the ratio of
+violation.</p>
+</div>
+<div id="related-work" class="section level1">
+<h1>Related work</h1>
+<p>A report by Office of Children and Family Services focused on three
+primary sources of federal emergency relief funding for child care
+providers — CARES II, CARES III, and the Child Care Stabilization Grant
+1.0.2 The report finds out data collection on age of child served and
+provider’s gender, age, ethnicity is necessary to track and support
+childcare. Our regression analysis also includes variables such as
+boroughs, and age range to explain the violation rate.</p>
+</div>
+<div id="data-processing-and-cleaning" class="section level1">
+<h1>Data processing and cleaning</h1>
+<div id="raw-data" class="section level2">
+<h2>Raw data</h2>
+<p>The DOHMH Childcare Center Inspections dataset contains 26280
+observations with 34 variables, including “center name”, “(a center’s)
+legal name”, “building (number)”, “street”, “borough”, “zip code”,
+“phone (number)”, “(a center’s) permit number”, “permit expiration”,
+“status”, “age range”, “maximum capacity”, “day care ID”, “program
+type”, “facility type”, “childcare type”, “building identification
+number”, “URL (website)”, “date permitted”, “actual” (i.e., flag for
+correct date of original permit), “violation rate percent”, “average
+violation rate percent”, “total educational workers”, “average total
+educational workers”, “public health hazard violation rate”, “average
+public health hazard violation rate”, “critical violation rate”,
+“average critical violation rate”, “inspection date”, “regulation
+summary”, “violation category”, “health code sub section”, “violation
+status” and “inspection summary result.” Each row is a single violation
+cited during an inspection.</p>
+</div>
+<div id="data-cleaning-and-manipulation" class="section level2">
+<h2>Data cleaning and manipulation</h2>
+<p>First, we observed that there were repeated observations in the
+dataset, so we deleted them, remaining 21541 observations.</p>
+<p>Based on our purpose of data analysis, we selected 22 key variables
+in this dataset, including “center name”, “borough”, “zip code”,
+“status”, “age range”, “maximum capacity”, “program type”, “facility
+type”, “child care type”, “violation category”, “violation status”,
+“violation rate percent”, “average violation rate percent”, “total
+educational workers”, “average total educational workers”, “public
+health hazard violation rate”, “average public health hazard violation
+rate”, “critical violation rate”, “average critical violation rate”,
+“regulation summary,” and “inspection summary result.”</p>
+<p>Next, we dropped NAs in the following variables: “zip code”, “age
+range”, “violation rate percent”, “public health hazard violation rate”
+and “critical violation rate.” We also dropped the observations whose
+value of maximum capacity equals to 0. Additionally, we found that the
+format in “program type” and “facility type” is inconsistent, which
+might lead to wrong analysis results, so we made the two categorical
+variables all shown in lower case.</p>
+<p>Furthermore, we created a new variable called “educational worker
+ratio” (total educational workers divided by maximum capacity) to
+explore whether violation is associated with the proportion of
+educational workers. Last but not least, we calculated a new violation
+rate for each distinct program using “violation category”. (the number
+of violation cases divided by inspection cases)</p>
+<p>After tidying the data, we have 16451 observations with 25 variables
+for the following analysis.</p>
+</div>
+</div>
+<div id="exploratory-analysis-through-visualization"
+class="section level1">
+<h1>Exploratory analysis through visualization</h1>
+<div id="exploratory-graphs" class="section level2">
+<h2>Exploratory graphs</h2>
+<p>In terms of program type, preschool has a higher density on the right
+end of violation rate distribution, which means this program type may
+generally has a higher mean violation rate. When we examine violation
+rate distribution by boroughs, Bronx clearly has a higher density of
+high violation rate. Please refer to <a
+href="rate_borough_viz.html">Violation Rate Distribution</a> to see the
+plot.</p>
+<p>Preschool has the greatest number of violations. This needs to be
+interpreted with total number of inspections of each type to make
+reasonable inference. The most common level for violation category is
+general. The more serious the violation is, the frequency is lower.
+Please refer to <a href="violation_category_viz.html">Violation
+Frequency</a> to see the plot.</p>
+</div>
+<div id="shiny-dashboard" class="section level2">
+<h2>Shiny dashboard</h2>
+<p>In the dashboard, we examine each program type’s violation rate,
+maximum capacity, and educational worker ratio’s boxplots of each
+violation category by boroughs. We lack data for all age camp’s
+educational worker of each violation’s category. Therefore, it is not
+showing the distribution of “educational worker ratio.”</p>
+<p>We found out that the maximum capacity for all age camp, school age
+camp, infant toddler is in a descending order. The violation category of
+public health hazard tends to have a higher median of maximum capacity
+of all-age program. The hygiene condition may be associated with maximum
+capacity of the program. Queens and Bronx have a slightly lower
+educational worker ratio, which may be associated with higher violation
+rate in these two boroughs.</p>
+<p>For more details, please refer to <a href="">Shiny Dashboard</a>.</p>
+</div>
+<div id="interactive-map" class="section level2">
+<h2>Interactive map</h2>
+<p>We can infer that Bronx and Queens have a higher center’s violation
+rate compared to other boroughs. The Southern tail of Staten Island’s
+violation rate skyrockets to 1, while rate of other parts of the Island
+remains low. We revisited the shiny dashboard and noticed the median
+violation rate for all age group on Staten Island is 1, which may
+contribute to the unusual violation rate distribution.</p>
+<p>For more details, please refer to <a
+href="interactive_map.html">Interactive Map</a>.</p>
+</div>
+</div>
+<div id="statistical-analysis" class="section level1">
+<h1>Statistical analysis</h1>
+<div
+id="anova-the-association-between-the-number-of-violation-cases-and-boroughs"
+class="section level2">
+<h2>ANOVA: the association between the number of violation cases and
+boroughs</h2>
+<div id="purpose" class="section level3">
+<h3>Purpose</h3>
+<p>We would like to explore whether center location is associated with
+the frequency of their violation; that is, during the past 3 years,
+whether the expected number of violation cases in a random center varies
+across different borough. Therefore, we performed ANOVA test across
+boroughs.</p>
+</div>
+<div id="hypothesis" class="section level3">
+<h3>Hypothesis</h3>
+<p>H0: The average number of violation cases in each center are not
+different across boroughs H1: The average number of violation cases in
+each center are different across boroughs</p>
+</div>
+<div id="conclusion" class="section level3">
+<h3>Conclusion</h3>
+<p>At a 0.05 significance level, we reject the null hypothesis and
+conclude that during the past 3 years, the average number of violations
+per center varies across boroughs.</p>
+</div>
+</div>
+<div
+id="chi-square-test-the-association-between-violation-categories-and-boroughs"
+class="section level2">
+<h2>Chi-square test: the association between violation categories and
+boroughs</h2>
+<div id="purpose-1" class="section level3">
+<h3>Purpose</h3>
+<p>We would like to explore whether the proportion of each violation
+category would vary among different boroughs, so we performed a
+Chi-Square test.</p>
+</div>
+<div id="hypothesis-1" class="section level3">
+<h3>Hypothesis</h3>
+<p>H0: the proportions of critical violation among boroughs are
+equal;</p>
+<p>AND the proportions of general violation among boroughs are
+equal;</p>
+<p>AND the proportions of public health hazard violation among boroughs
+are equal</p>
+<p>H1: not all proportions are equal</p>
+</div>
+<div id="conclusion-1" class="section level3">
+<h3>Conclusion</h3>
+<p>At a 0.05 significance level, we reject the null hypothesis and
+conclude that there is sufficient evidence that the proportion of each
+violation category is significantly different by borough.</p>
+</div>
+</div>
+<div
+id="proportion-test-centers-with-high-violation-proportion-in-each-borough"
+class="section level2">
+<h2>Proportion test: centers with high violation proportion in each
+borough</h2>
+<div id="purpose-2" class="section level3">
+<h3>Purpose</h3>
+<p>We performed a proportion test to estimate the total violation
+proportion and its 95% confidence interval for each center, regardless
+of its program type. We defined the estimated total violation proportion
+&gt; 0.8 as a high-risk of violation. Next, we pinpointed all the
+centers with high violation proportion in each borough.</p>
+</div>
+<div id="conclusion-2" class="section level3">
+<h3>Conclusion</h3>
+<p>The results can serve as a good reference for NYC residents when
+selecting the childcare centers for their kids.</p>
+<p>Fore more details, please refer to <a
+href="Statistical-analysis.html">Statistical analysis</a>.</p>
+</div>
+</div>
+<div id="regression-analysis" class="section level2">
+<h2>Regression analysis</h2>
+<div
+id="linear-model-of-violation-rate-program_type-borough-status-educational_worker_ratio"
+class="section level3">
+<h3>Linear Model of violation rate ~ program_type + borough + status +
+educational_worker_ratio</h3>
+<p>Our linear model employs Violation Rate as its dependent variable.
+Significant predictors left in the final model is “program type”,
+“borough”, “status”, and “educational worker ratio.” The key predictor
+is the numeric variable of “educational worker ratio”.</p>
+<ol style="list-style-type: decimal">
+<li><p>Violation Rate: (Number of Violations)/(Number of Inspections)
+for each center</p></li>
+<li><p>Program_type: There are three childcare program types: all age
+camp, infant toddler, and preschool. All age camp is the reference type.
+In the linear regression model, we will only keep infant toddler
+program, which is significantly different from the all age
+camp.</p></li>
+<li><p>Borough: There are five boroughs: Brooklyn, Manhattan, Queens,
+Staten Island, Bronx. Bronx is the reference borough.</p></li>
+<li><p>Status: The status of the program can be expired-in renewal,
+active or permitted. Active is the reference status.</p></li>
+<li><p>Educational_Worker_Ratio: (Total Number of Educational Worker
+)/(Maximum capacity of Program)</p></li>
+</ol>
+<p>For more details, please refer to <a href="linear.html">Linear
+Model</a></p>
+</div>
+<div
+id="logistic-model-of-log-p1-p-status-borough-educational_worker_ratio"
+class="section level3">
+<h3>Logistic Model of log p/(1-p) ~ status + borough +
+educational_worker_ratio</h3>
+<p>P : probability of resulting in a violation of a inspection</p>
+<p>In this logistic model, the outcome is log of odds ratio of violation
+rate. Our key predictor is the numeric variable of “educational worker
+ratio”. The program type is found to be not statistically significant in
+predicting probability of violation.</p>
+<p>For more details, please refer to <a href="logistic.html">Logistic
+Model</a></p>
+<p>Our linear and logistics model both suggested that the higher the
+educational worker ratio, the lower the estimated violation rate. For
+categorical variables: Bronx, as a reference borough, has higher mean
+violation rate than any other boroughs. Centers holding a “active”
+license has higher mean violation rate than centers holding an
+“expired-in renewal” and “permitted” license.</p>
+</div>
+</div>
+</div>
+<div id="discussion" class="section level1">
+<h1>Discussion</h1>
+<div id="main-findings" class="section level2">
+<h2>Main findings</h2>
+<p>According to our analysis, we can conclude that during 2019-2022 in
+NYC, a high-risk violation center could be mostly located in Bronx or
+with an “active” licence. Public health hazard cases tend to occur at
+centers with “all-age programs” with higher maximum capacity.</p>
+<p>From the explanatory plots, we observed higher violation rates in
+“preschool” programs. However, after conducting statistical analysis, we
+don’t have evidence that mean violation rate of “preschool” programs is
+significantly different from that of “all age camp”; on the contrary,
+centers with “infant toddler programs” usually have lower violation
+rates, which is statistically significant in our analysis.</p>
+<p>Also, the “educational worker ratio” has an inverse relationship with
+the violation rates. Among all the boroughs, Queens and Bronx has a
+slightly lower educational worker ratio, which can be verified that
+centers in Bronx usually have more violation cases.</p>
+</div>
+<div id="implications" class="section level2">
+<h2>Implications</h2>
+<div id="strength" class="section level3">
+<h3>Strength</h3>
+<p>Our analysis is based on a public open dataset whose data source is
+reliable. The dataset is recently updated and includes data during
+2019-2022, which can be an important reference for exploring violation
+situations of chidcare centers in NYC.</p>
+<p>Besides, we conducted multiple analysis from various aspects,
+including interactive plots and statistical tests, which can fairly
+represent the relationship between violation rates and boroughs, program
+types, violation categories, licence status, and so on. This project
+aims to become an important indication for parents in NYC to look for a
+safe childcare center.</p>
+</div>
+<div id="limitations" class="section level3">
+<h3>Limitations</h3>
+<p>First, the raw data is not flawless. According to the definitions of
+the variables, the inspection records seem to be incomplete, which could
+result in biases in analysis. Second, we didn’t have enough predictors
+without linkage with another related database, so it remains questioned
+that whether our prediction models are valid enough.</p>
+</div>
+<div id="future-directions" class="section level3">
+<h3>Future directions</h3>
+<p>We hope we will find another childcare related dataset to conduct
+further analysis. Also, the COVID-19 pandemic could have a huge impact
+on childcare centers, which might further lead to significant changes in
+violation situations. Therefore, pandemic-related analysis is highly
+recommended for future.</p>
+</div>
+</div>
+</div>
+<div id="reference" class="section level1">
+<h1>Reference</h1>
+<ol style="list-style-type: decimal">
+<li><p><a
+href="https://data.cityofnewyork.us/Health/DOHMH-Childcare-Center-Inspections/dsg6-ifza">The
+DOHMH Childcare Center Inspections dataset</a></p></li>
+<li><p><a
+href="https://raisingnewyork.org/wp-content/uploads/sites/2/2022/08/RNY-OCFS-Report.pdf">Raising
+NY OCFS CARES II, CARES III, &amp; Stabilization Grant Data
+Report</a></p></li>
+</ol>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

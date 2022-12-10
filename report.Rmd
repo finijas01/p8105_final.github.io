@@ -1,0 +1,213 @@
+---
+title: "Project Report"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+# Group member
+
+Han Bao (hb2699)
+
+Jasmine Niu (jn2855)
+
+Qing Zhou (qz2266)
+
+Zuoqiao Cui (zc2610)
+
+Yuhuan Lin (yl5221)
+
+# Motivation
+
+High-quality childcare is important for children safety and health. As one of the most expansive cities to live at, New York City also has a high level of childcare expense. The lack of access to affordable childcare may also worsen other social problems such as difficulty of mothers returning to workforce. Reacting to the issue, federal funding in the Coronavirus Aid, Relief, and Economic Security (CARES) Act and American Rescue Plan Act (ARPA), enabled New York State to award millions of dollars to childcare providers in an effort to keep programs open during the coronavirus pandemic.
+
+
+In our homework, we did some data manipulation with the NYC restaurant inspection dataset. We found this very inspiring. To get a sense of childcare centers’ quality all over NYC, we found data on childcare programs inspection, which is the DOHMH Childcare Center Inspections dataset. We decided to take the violation rate as an assessment method for programs’ quality. This project aims to find some possible variables that would influence and explain the ratio of violation.
+
+
+# Related work
+
+A report by Office of Children and Family Services focused on three primary sources of federal emergency relief funding for child care providers — CARES II, CARES III, and the Child Care Stabilization Grant 1.0.2 The report finds out data collection on age of child served and provider’s gender, age, ethnicity is necessary to track and support childcare. Our regression analysis also includes variables such as boroughs, and age range to explain the violation rate.
+
+# Data processing and cleaning
+
+
+## Raw data
+
+The DOHMH Childcare Center Inspections dataset contains 26280 observations with 34 variables, including “center name”, “(a center’s) legal name”, “building (number)”, “street”, “borough”, “zip code”, “phone (number)”, “(a center’s) permit number”, “permit expiration”, “status”, “age range”, “maximum capacity”, “day care ID”, “program type”, “facility type”, “childcare type”, “building identification number”, “URL (website)”, “date permitted”, “actual” (i.e., flag for correct date of original permit), “violation rate percent”, “average violation rate percent”, “total educational workers”, “average total educational workers”, “public health hazard violation rate”, “average public health hazard violation rate”, “critical violation rate”, “average critical violation rate”, “inspection date”, “regulation summary”, “violation category”, “health code sub section”, “violation status” and “inspection summary result.” Each row is a single violation cited during an inspection.
+
+
+## Data cleaning and manipulation
+
+First, we observed that there were repeated observations in the dataset, so we deleted them, remaining 21541 observations.
+
+
+Based on our purpose of data analysis, we selected 22 key variables in this dataset, including “center name”, “borough”, “zip code”, “status”, “age range”, “maximum capacity”, “program type”, “facility type”, “child care type”, “violation category”, “violation status”, “violation rate percent”, “average violation rate percent”, “total educational workers”, “average total educational workers”, “public health hazard violation rate”, “average public health hazard violation rate”, “critical violation rate”, “average critical violation rate”, “regulation summary,” and “inspection summary result.”
+
+
+Next, we dropped NAs in the following variables: “zip code”, “age range”, “violation rate percent”, “public health hazard violation rate” and “critical violation rate.” We also dropped the observations whose value of maximum capacity equals to 0. Additionally, we found that the format in "program type" and "facility type" is inconsistent, which might lead to wrong analysis results, so we made the two categorical variables all shown in lower case. 
+
+
+Furthermore, we created a new variable called “educational worker ratio” (total educational workers divided by maximum capacity) to explore whether violation is associated with the proportion of educational workers. Last but not least, we calculated a new violation rate for each distinct program using “violation category”. (the number of violation cases divided by inspection cases)
+
+
+After tidying the data, we have 16451 observations with 25 variables for the following analysis.
+
+
+
+# Exploratory analysis through visualization
+
+
+## Exploratory graphs
+
+In terms of program type, preschool has a higher density on the right end of violation rate distribution, which means this program type may generally has a higher mean violation rate. When we examine violation rate distribution by boroughs, Bronx clearly has a higher density of high violation rate. Please refer to [Violation Rate Distribution](rate_borough_viz.html) to see the plot.
+
+
+
+Preschool has the greatest number of violations. This needs to be interpreted with total number of inspections of each type to make reasonable inference. The most common level for violation category is general. The more serious the violation is, the frequency is lower. Please refer to [Violation Frequency](violation_category_viz.html) to see the plot.
+
+## Shiny dashboard
+
+In the dashboard, we examine each program type’s violation rate, maximum capacity, and educational worker ratio’s boxplots of each violation category by boroughs. We lack data for all age camp’s educational worker of each violation’s category. Therefore, it is not showing the distribution of “educational worker ratio.”
+
+
+We found out that the maximum capacity for all age camp, school age camp, infant toddler is in a descending order. The violation category of public health hazard tends to have a higher median of maximum capacity of all-age program. The hygiene condition may be associated with maximum capacity of the program. Queens and Bronx have a slightly lower educational worker ratio, which may be associated with higher violation rate in these two boroughs.
+
+For more details, please refer to [Shiny Dashboard]().
+
+
+
+## Interactive map
+
+We can infer that Bronx and Queens have a higher center’s violation rate compared to other boroughs. The Southern tail of Staten Island’s violation rate skyrockets to 1, while rate of other parts of the Island remains low. We revisited the shiny dashboard and noticed the median violation rate for all age group on Staten Island is 1, which may contribute to the unusual violation rate distribution.
+
+For more details, please refer to [Interactive Map](interactive_map.html).
+
+
+# Statistical analysis
+
+
+## ANOVA: the association between the number of violation cases and boroughs
+
+### Purpose
+
+We would like to explore whether center location is associated with the frequency of their violation; that is, during the past 3 years, whether the expected number of violation cases in a random center varies across different borough. Therefore, we performed ANOVA test across boroughs.
+
+### Hypothesis
+
+H0: The average number of violation cases in each center are not different across boroughs
+H1: The average number of violation cases in each center are different across boroughs
+
+### Conclusion
+
+At a 0.05 significance level, we reject the null hypothesis and conclude that during the past 3 years, the average number of violations per center varies across boroughs.
+
+
+## Chi-square test: the association between violation categories and boroughs
+
+### Purpose
+
+We would like to explore whether the proportion of each violation category would vary among different boroughs, so we performed a Chi-Square test.
+
+
+### Hypothesis
+
+H0: the proportions of critical violation among boroughs are equal;
+
+AND the proportions of general violation among boroughs are equal;
+
+AND the proportions of public health hazard violation among boroughs are equal
+
+
+H1: not all proportions are equal
+
+### Conclusion
+
+At a 0.05 significance level,  we reject the null hypothesis and conclude that there is sufficient evidence that the proportion of each violation category is significantly different by borough.
+
+
+## Proportion test: centers with high violation proportion in each borough
+
+### Purpose
+
+We performed a proportion test to estimate the total violation proportion and its 95% confidence interval for each center, regardless of its program type. We defined the estimated total violation proportion > 0.8 as a high-risk of violation. Next, we pinpointed all the centers with high violation proportion in each borough.
+
+### Conclusion
+
+The results can serve as a good reference for NYC residents when selecting the childcare centers for their kids.
+
+
+Fore more details, please refer to [Statistical analysis](Statistical-analysis.html).
+
+
+## Regression analysis
+
+
+### Linear Model of violation rate ~ program_type + borough + status + educational_worker_ratio
+
+Our linear model employs Violation Rate as its dependent variable. Significant predictors left in the final model is "program type", "borough", "status", and "educational worker ratio." The key predictor is the numeric variable of "educational worker ratio". 
+
+1) Violation Rate: (Number of Violations)/(Number of Inspections) for each center
+
+2) Program_type: There are three childcare program types: all age camp, infant toddler, and preschool. All age camp is the reference type. In the linear regression model, we will only keep infant toddler program, which is significantly different from the all age camp.
+
+3) Borough: There are five boroughs: Brooklyn, Manhattan, Queens, Staten Island, Bronx. Bronx is the reference borough.
+
+4) Status: The status of the program can be expired-in renewal, active or permitted. Active is the reference status.
+
+5) Educational_Worker_Ratio:  (Total Number of Educational Worker )/(Maximum capacity of Program)
+
+For more details, please refer to [Linear Model](linear.html)
+
+
+### Logistic Model of log p/(1-p) ~ status  +  borough + educational_worker_ratio
+
+P : probability of resulting in a violation of a inspection
+
+In this logistic model, the outcome is log of odds ratio of violation rate. Our key predictor is the numeric variable of "educational worker ratio". The program type is found to be not statistically significant in predicting probability of violation. 
+
+For more details, please refer to [Logistic Model](logistic.html)
+
+
+Our linear and logistics model both suggested that the higher the educational worker ratio, the lower the estimated violation rate. For categorical variables: Bronx, as a reference borough, has higher mean violation rate than any other boroughs. Centers holding a “active” license has higher mean violation rate than centers holding an "expired-in renewal" and "permitted" license. 
+
+
+# Discussion
+
+
+## Main findings
+
+According to our analysis, we can conclude that during 2019-2022 in NYC, a high-risk violation center could be mostly located in Bronx or with an "active" licence. Public health hazard cases tend to occur at centers with "all-age programs" with higher maximum capacity.
+
+From the explanatory plots, we observed higher violation rates in "preschool" programs. However, after conducting statistical analysis, we don’t have evidence that mean violation rate of "preschool" programs is significantly different from that of "all age camp"; on the contrary, centers with "infant toddler programs" usually have lower violation rates, which is statistically significant in our analysis.
+
+Also, the "educational worker ratio" has an inverse relationship with the violation rates. Among all the boroughs, Queens and Bronx has a slightly lower educational worker ratio, which can be verified that centers in Bronx usually have more violation cases.
+
+## Implications
+
+### Strength
+
+Our analysis is based on a public open dataset whose data source is reliable. The dataset is recently updated and includes data during 2019-2022, which can be an important reference for exploring violation situations of chidcare centers in NYC.
+
+Besides, we conducted multiple analysis from various aspects, including interactive plots and statistical tests, which can fairly represent the relationship between violation rates and boroughs, program types, violation categories, licence status, and so on. This project aims to become an important indication for parents in NYC to look for a safe childcare center.
+
+
+### Limitations
+
+First, the raw data is not flawless. According to the definitions of the variables, the inspection records seem to be incomplete, which could result in biases in analysis. Second, we didn't have enough predictors without linkage with another related database, so it remains questioned that whether our prediction models are valid enough.
+
+
+### Future directions
+
+We hope we will find another childcare related dataset to conduct further analysis. Also, the COVID-19 pandemic could have a huge impact on childcare centers, which might further lead to significant changes in violation situations. Therefore, pandemic-related analysis is highly recommended for future. 
+
+
+# Reference
+
+1) [The DOHMH Childcare Center Inspections dataset](https://data.cityofnewyork.us/Health/DOHMH-Childcare-Center-Inspections/dsg6-ifza)
+
+2) [Raising NY OCFS CARES II, CARES III, & Stabilization Grant Data Report](https://raisingnewyork.org/wp-content/uploads/sites/2/2022/08/RNY-OCFS-Report.pdf)
+
+
