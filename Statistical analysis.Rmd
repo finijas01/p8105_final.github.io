@@ -11,9 +11,7 @@ output:
 <<<<<<< HEAD
 
 ```{r warning= FALSE, message=FALSE}
-=======
-```{r}
->>>>>>> 08b61dcd09147f6f0b50aa148c1c5b3752bfb243
+
 library(tidyverse)
 library(dplyr)
 library(rvest)
