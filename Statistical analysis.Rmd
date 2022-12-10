@@ -1,10 +1,12 @@
 ---
-title: "Statistical analysis"
-author: "Qing Zhou"
-date: "2022-12-09"
-output: github_document
+title: "Logistic Regression"
+output: 
+  html_document:
+    code_folding: hide
+    toc: true
+    toc_float: true
+    theme: flatly
 ---
-
 
 ```{r}
 library(tidyverse)
@@ -29,16 +31,6 @@ childcare_inspection_df = read_csv("./data/DOHMH_Childcare_Center_Inspections.cs
 janitor::clean_names() %>% 
 distinct()
 ```
-
-Basic data cleaning
-
-1. We select 22 key variables in this dataset to finish our analysis
-
-2. Drop NA
-
-3. Create a new variable "educational_worker_ratio"
-
-4. Make all data in "program_type" and "facility_type" columns show in the same format : lower case
 
 ```{r}
 childcare_inspection_df = childcare_inspection_df %>% 

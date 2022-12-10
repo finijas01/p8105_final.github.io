@@ -13,7 +13,7 @@ navbar:
       - text: "Violation Frequency"
         href:  violation_category_viz.html
    - text: 'Statistical analysis'
-     href: http://github.com/finijas01/
+     href: Statistical-analysis.html
    - text: 'Shiny Dashboard'
      href:  https://zuoqiaocui.shinyapps.io/shiny_violation/
    - text: 'Model Regression'
