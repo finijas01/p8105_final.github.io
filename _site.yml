@@ -18,10 +18,10 @@ navbar:
      href:  https://zuoqiaocui.shinyapps.io/shiny_violation/
    - text: 'Model Regression'
      menu:
+      - text: "Linear Model"
+        href:  linear.html
       - text: "Logistic Model"
         href:  logistic.html
-      - text: "Model 2"
-        href:  model2.html
    - text: 'Interactive Map'
      href: interactive_map.html
    - text: 'Project Report'
