@@ -171,13 +171,12 @@ ggplot(model_log.data, aes(index, .std.resid)) +
 From the plot we can see that the standard deviation of the data are all in acceptable region which means there's no significant outliers in the dataset.
 
 ###Model interpretation
-In this model, the outcome is log of odds ratio of violation rate. Our key predictor is the numeric variable of "educational_worker_ratio", which is the program-specific total number of educational worker in each center,  divided by the maximum capacity, based on the square footage of class and play rooms, the number of toilets and sinks, and overall estimates from the NYC Department of Buildings. Our model suggests the log of odds ratio of estimated mean violation rate decreases by 34.8% for each unit increase in educational worker ratio, while holding all other variables fixed.  
+In this model, the outcome is log of odds ratio of violation rate. Our key predictor is the numeric variable of "educational_worker_ratio", which is the program-specific total number of educational worker in each center,  divided by the maximum capacity, based on the square footage of class and play rooms, the number of toilets and sinks, and overall estimates from the NYC Department of Buildings. With the log of odds ratio for the association between violation and educational_worker_ratio = -0.34, holding other variables fixed, the odds of having the violation will decrease by 29%, for one unit increase in educational worker ratio.
 
 We also included several categorical variables into our model. Based on the output, the interpretations of coefficients estimates are as follows:
+with log(odds ratio) =  -1.04, -0.79, -0.33 and -1.40, the odds of having violation in Brooklyn, Manhattan, Queens and Staten island is 0.35, 0.45, 0.65 and 0.24 times of that in Bronx.
+with log(odds ratio) = -0.80 and -1.03, the odds of having violation in centers with "expired-in renewal" and "permitted" license is  0.45 and 0.36 times of that among centers with "active" license
 
-The estimated mean violation rates for centers located in Brooklyn,  Manhattan, Queens and Staten island are less than centers located in Bronx, respectively, while holding other variables constant.
-
-The estimated mean violation rate for centers with licence status as expired in renewal and as permitted is less than  centers with licence status as active, while holding other variables constant.
 
 
 
