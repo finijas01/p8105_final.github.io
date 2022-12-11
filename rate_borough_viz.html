@@ -457,6 +457,8 @@ distinct() %&gt;%
 <div id="violation-rate-distribution-by-program-type"
 class="section level2">
 <h2>Violation Rate Distribution by Program Type</h2>
+<div id="density-plot" class="section level3">
+<h3>Density plot</h3>
 <pre class="r"><code>center_specific_df %&gt;%
   ggplot(aes(x = rate, fill = program_type)) +
   geom_density(alpha = .5) + 
@@ -470,8 +472,18 @@ class="section level2">
   )</code></pre>
 <p><img src="rate_borough_viz_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 </div>
+<div id="interpretation" class="section level3">
+<h3>Interpretation:</h3>
+<p>From the density plot above, we can learn that the “preschool”
+program type has the highest rate density when the violation rate is
+about 0.625, which may probably mean that childcare centers with
+preschool program type have a higher mean violation rate.</p>
+</div>
+</div>
 <div id="violation-rate-distribution-by-borough" class="section level2">
 <h2>Violation Rate Distribution by Borough</h2>
+<div id="density-plot-1" class="section level3">
+<h3>Density plot</h3>
 <pre class="r"><code>center_specific_df %&gt;%
   ggplot(aes(x = rate, fill = borough)) +
   geom_density(alpha = .5) + 
@@ -484,6 +496,12 @@ class="section level2">
     y = &quot;Rate Density&quot;
   )</code></pre>
 <p><img src="rate_borough_viz_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+</div>
+<div id="interpretation-1" class="section level3">
+<h3>Interpretation:</h3>
+<p>From the density plot above, we can learn that Bronx has a higher
+density of high violation rate compared with other boroughs.</p>
+</div>
 </div>
 
 
