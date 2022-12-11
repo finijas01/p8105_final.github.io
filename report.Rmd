@@ -89,7 +89,7 @@ In the dashboard, we examine each program type’s violation rate, maximum capac
 
 We found out that the maximum capacity for all age camp, school age camp, infant toddler is in a descending order. The violation category of public health hazard tends to have a higher median of maximum capacity of all-age program. The hygiene condition may be associated with maximum capacity of the program. Queens and Bronx have a slightly lower educational worker ratio, which may be associated with higher violation rate in these two boroughs.
 
-For more details, please refer to [Shiny Dashboard]().
+For more details, please refer to [Shiny Dashboard](https://zuoqiaocui.shinyapps.io/shiny_violation/).
 
 
 
