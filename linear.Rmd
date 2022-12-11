@@ -154,6 +154,7 @@ outside of the dashed line of Cook’s distance 0.5, suggesting no influential o
 
 ```{r warning= FALSE, message=FALSE}
 # model diagnostics: Residuals vs Fitted plot, QQ plot, Scale_location, Residuals vs Leverage
+par(mfrow = c(2,2))
 plot(full_lm)
 ```
 
