@@ -13,7 +13,7 @@
 
 <title>Linear Regression Model</title>
 
-<script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.18/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
@@ -184,8 +184,8 @@ $(document).ready(function () {
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -193,16 +193,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -412,7 +405,7 @@ h1.title {
 }
 </style>
 <div id="model-selection" class="section level2">
-<h2>Model selection</h2>
+<h2><strong>Model selection</strong></h2>
 <p>To explore the possible predictors contributing to the
 center-specific violation rate under each program type, we built a
 linear regression model. In this model, we focused on the violation rate
@@ -420,12 +413,13 @@ and properties of each individual center.</p>
 <p>To start with, we created a new variable named “rate”, which
 represents the violation rate for each center, by using violation
 category column. Here, rate = number of total violation for each center
-and program / number of total inspection for each center and program,
+and program number of total inspection for each center and program,
 during the past 3 year. This variable was used as the outcome of the
-linear regression. Next, we selected several variables closely related
-to the properties of each center, as the potential predictors. After a
-thorough literature review, we chose variables based on a hypothesized
-structure for the factors underlying violation rate.</p>
+linear regression.</p>
+<p>Next, we selected several variables closely related to the properties
+of each center, as the potential predictors. After a thorough literature
+review, we chose variables based on a hypothesized structure for the
+factors underlying violation rate.</p>
 <pre class="r"><code>library(tidyverse)
 library(dplyr)
 library(rvest)
@@ -436,8 +430,9 @@ library(mgcv)
 library(patchwork)
 library(viridis)
 library(fastDummies)
-set.seed(1)</code></pre>
-<pre class="r"><code>childcare_inspection_df = read_csv(&quot;./data/DOHMH_Childcare_Center_Inspections.csv&quot;) %&gt;% 
+set.seed(1)
+
+childcare_inspection_df = read_csv(&quot;./data/DOHMH_Childcare_Center_Inspections.csv&quot;) %&gt;% 
 janitor::clean_names() %&gt;% 
 distinct()
 
@@ -470,14 +465,17 @@ center_specific_df = childcare_inspection_df %&gt;%
     n_violation = sum(!is.na(violation_category)), 
     rate = n_violation/(n_violation + n_na)) %&gt;% 
   arrange(center_name, program_type)</code></pre>
-<div id="linear-model-1" class="section level3">
-<h3>Linear model 1</h3>
+<div id="linear-raw-model-1" class="section level3">
+<h3><em>Linear raw model 1</em></h3>
 <p>First, we fit a full model using program type, borough, status,
 educational worker ratio of center-specific distinct records.</p>
-<p>Next, we selected several variables closely related to the properties
-of each center, as the potential predictors. After a thorough literature
-review, we chose variables based on a hypothesized structure for the
-factors underlying violation rate.</p>
+<p>raw model 1 named full_lm:</p>
+<p>rate = 0.865 - 0.028 * X <sub>infant_toddler</sub> - 0.245 * X
+<sub>BROOKLYN</sub> - 0.186 * X <sub>MANHATTAN</sub> - 0.104 * X
+<sub>QUEENS</sub> - 0.323 * X <sub>STATEN_ISLAND</sub> - 0.19 * X
+<sub>Expired_In_Renewal</sub> - 0.239 * X <sub>Permitted</sub> - 0.08 *
+X <sub>educational_worker_ratio</sub></p>
+<p>Detailed information is as follows:</p>
 <pre class="r"><code># select distinct records and related variables of each center
 center_distinct_df = center_specific_df %&gt;%
   select(center_name, program_type, borough, status, maximum_capacity, total_educational_workers, educational_worker_ratio, rate)
@@ -574,10 +572,16 @@ full_lm %&gt;%
 </table>
 </div>
 <div id="linear-model-2" class="section level3">
-<h3>Linear model 2</h3>
+<h3><em>Linear model 2</em></h3>
 <p>We also proposed an alternative model by using maximum_capacity,
 total educational workers and their interaction term as the predictors,
 instead of the educational worker ratio.</p>
+<p>raw model 2 named alt_lm:</p>
+<p>rate = 0.842 - 0.041 * X <sub>infant_toddler</sub> - 0.248 * X
+<sub>BROOKLYN</sub> - 0.187 * X <sub>MANHATTAN</sub> - 0.106 * X
+<sub>QUEENS</sub> - 0.329 * X <sub>STATEN_ISLAND</sub> - 0.182 * X
+<sub>Expired_In_Renewal</sub> - 0.231 * X <sub>Permitted</sub></p>
+<p>Detailed information is as follows:</p>
 <pre class="r"><code># fit an alternative model
 alt_lm = center_distinct_df %&gt;%
  lm(rate ~ program_type + borough + status + maximum_capacity * total_educational_workers, data = .) 
@@ -691,13 +695,14 @@ alt_lm %&gt;%
 </table>
 <p>After comparing these two models, we decided to keep full_lm model,
 due to its better goodness of fit and lower correlation among
-variables.</p>
+variables.Moreover, our key predictors related to maximum capacity and
+educaitonal workder only show up in the former model.</p>
 </div>
 </div>
 <div id="model-diagnostics" class="section level2">
-<h2>Model diagnostics</h2>
+<h2><strong>Model diagnostics</strong></h2>
 <div id="residual-assumptions" class="section level3">
-<h3>Residual assumptions</h3>
+<h3><em>Residual assumptions</em></h3>
 <p>We checked the assumptions of the residuals by using 4 plots as
 follows:</p>
 <ol style="list-style-type: decimal">
@@ -718,14 +723,14 @@ influential observations.</p></li>
 </ol>
 <pre class="r"><code># model diagnostics: Residuals vs Fitted plot, QQ plot, Scale_location, Residuals vs Leverage
 plot(full_lm)</code></pre>
-<p><img src="linear_files/figure-html/unnamed-chunk-5-1.png" width="672" /><img src="linear_files/figure-html/unnamed-chunk-5-2.png" width="672" /><img src="linear_files/figure-html/unnamed-chunk-5-3.png" width="672" /><img src="linear_files/figure-html/unnamed-chunk-5-4.png" width="672" /></p>
+<p><img src="linear_files/figure-html/unnamed-chunk-4-1.png" width="672" /><img src="linear_files/figure-html/unnamed-chunk-4-2.png" width="672" /><img src="linear_files/figure-html/unnamed-chunk-4-3.png" width="672" /><img src="linear_files/figure-html/unnamed-chunk-4-4.png" width="672" /></p>
 </div>
 <div id="multicollinearity" class="section level3">
-<h3>Multicollinearity</h3>
+<h3><em>Multicollinearity</em></h3>
 <p>Moreover, the full_lm model shows a low multicollinearity since the
 VIF value for each variable are all below 2.</p>
 <pre class="r"><code>library(performance) 
-check_collinearity(full_lm) # low correlation</code></pre>
+check_collinearity(full_lm)  # low correlation</code></pre>
 <pre><code>## # Check for Multicollinearity
 ## 
 ## Low Correlation
@@ -743,9 +748,9 @@ check_collinearity(full_lm) # low correlation</code></pre>
 </div>
 </div>
 <div id="model-remedy" class="section level2">
-<h2>Model remedy</h2>
+<h2><strong>Model remedy</strong></h2>
 <div id="variable-normality-check" class="section level3">
-<h3>Variable normality check</h3>
+<h3><em>Variable normality check</em></h3>
 <p>We checked the normality of two numerical variables of educational
 worker ratio and rate. Boxplot suggests the first variable has a right
 skewed distribution.</p>
@@ -754,10 +759,10 @@ center_distinct_df  %&gt;%
 par(mfrow = c(1,2))
 boxplot(center_distinct_df$educational_worker_ratio, main = &quot;Edu-worker Ratio&quot;)
 boxplot(center_distinct_df$rate, main = &quot;Violation Rate&quot;)</code></pre>
-<p><img src="linear_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p><img src="linear_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 </div>
 <div id="transformation" class="section level3">
-<h3>Transformation</h3>
+<h3><em>Transformation</em></h3>
 <p>Therefore, to address the slight model assumption violation issue, we
 firstly tried transformation to make the data more ‘normal’.</p>
 <p>Since there are 0 value in these variables, log-transformation is not
@@ -769,12 +774,19 @@ full_lm_sqrt = center_distinct_df %&gt;%
   lm(rate ~ program_type + borough + status + sqrt(educational_worker_ratio), data = .)</code></pre>
 </div>
 <div id="outliers-removal" class="section level3">
-<h3>Outliers removal</h3>
+<h3><em>Outliers removal</em></h3>
 <p>In addition, although there is no influential points, case 12349 and
 12318 affect the regression assumption as shown repeatedly.So we tried
 to fit a new model named full_lm_out by removing these two cases. This
 model works better then full_lm due to its increased adjusted
 R-square.</p>
+<p>Revised model named full_lm_out:</p>
+<p>rate = 0.868 - 0.027 * X <sub>infant_toddler</sub> - 0.245 * X
+<sub>BROOKLYN</sub> - 0.186 * X <sub>MANHATTAN</sub> - 0.103 * X
+<sub>QUEENS</sub> - 0.323 * X <sub>STATEN_ISLAND</sub> - 0.193 * X
+<sub>Expired_In_Renewal</sub> - 0.242 * X <sub>Permitted</sub> - 0.084 *
+X <sub>educational_worker_ratio</sub></p>
+<p>Detailed information is as follows:</p>
 <pre class="r"><code># exclude two influential records
 out_df = center_distinct_df[-c(12349, 12318),]
 
@@ -870,40 +882,21 @@ full_lm_out %&gt;%
 </div>
 </div>
 <div id="model-validation" class="section level2">
-<h2>Model validation</h2>
-<p>We used 5-fold cross validation to test the model performance. Based
-on a rule of thumb, RMSE values between 0.2 and 0.5 shows that the model
-can relatively predict the data accurately. Thus our model boasts good
-RMSE value(RMSE = 0.24), suggesting relatively good predictive
-ability.</p>
+<h2><strong>Model validation</strong></h2>
+<p>We used 5-fold cross validation to test the model performance.</p>
 <pre class="r"><code>library(caret)
 # Use 5-fold validation and create the training sets
 train = trainControl(method = &quot;cv&quot;, number = 5)
-
 model_caret = train(rate ~ program_type + borough + status + educational_worker_ratio,
                    data = out_df,
                    trControl = train,
                    method = &#39;lm&#39;,
                    na.action = na.pass)
-
 model_caret$finalModel</code></pre>
-<pre><code>## 
-## Call:
-## lm(formula = .outcome ~ ., data = dat)
-## 
-## Coefficients:
-##                   (Intercept)   `program_typeinfant toddler`  
-##                      0.867766                      -0.027051  
-##         program_typepreschool  `program_typeschool age camp`  
-##                     -0.003946                             NA  
-##               boroughBROOKLYN               boroughMANHATTAN  
-##                     -0.244722                      -0.186472  
-##                 boroughQUEENS         `boroughSTATEN ISLAND`  
-##                     -0.103485                      -0.323262  
-##    `statusExpired-In Renewal`                statusPermitted  
-##                     -0.192734                      -0.242073  
-##      educational_worker_ratio  
-##                     -0.083874</code></pre>
+<p>Based on a rule of thumb, RMSE values between 0.2 and 0.5 shows that
+the model can relatively predict the data accurately. Thus our model
+boasts good RMSE value(RMSE = 0.24), suggesting relatively good
+predictive ability.</p>
 <pre class="r"><code>print(model_caret)</code></pre>
 <pre><code>## Linear Regression 
 ## 
@@ -915,24 +908,117 @@ model_caret$finalModel</code></pre>
 ## Summary of sample sizes: 13159, 13160, 13159, 13159, 13159 
 ## Resampling results:
 ## 
-##   RMSE       Rsquared  MAE      
-##   0.2431548  0.15661   0.1982741
+##   RMSE       Rsquared   MAE      
+##   0.2431557  0.1565823  0.1982754
 ## 
 ## Tuning parameter &#39;intercept&#39; was held constant at a value of TRUE</code></pre>
 </div>
 <div id="model-conclusion" class="section level2">
-<h2>Model Conclusion</h2>
+<h2><strong>Model Conclusion</strong></h2>
 <div id="final-linear-model" class="section level3">
-<h3>Final linear model</h3>
+<h3><em>Final linear model</em></h3>
 <p>We chose full_lm_out as our final linear model:</p>
-<p>rate = 0.868 - 0.027(program_type_infant toddler) -
-0.245(borough_BROOKLYN) -0.186(borough_MANHATTAN) -
-0.103(borough_QUEENS) - 0.323(borough_STATEN ISLAND) -
-0.193(status_Expired In Renewal) - 0.242(status_Permitted) -
-0.084(educational_worker_ratio)</p>
+<p>rate = 0.868 - 0.027 * X <sub>infant_toddler</sub> - 0.245 * X
+<sub>BROOKLYN</sub> - 0.186 * X <sub>MANHATTAN</sub> - 0.103 * X
+<sub>QUEENS</sub> - 0.323 * X <sub>STATEN_ISLAND</sub> - 0.193 * X
+<sub>Expired_In_Renewal</sub> - 0.242 * X <sub>Permitted</sub> - 0.084 *
+X <sub>educational_worker_ratio</sub></p>
+<p>The 95% CI for each estimate and p_value are shown as follows:</p>
+<pre class="r"><code>full_lm_out %&gt;% 
+  broom::tidy() %&gt;%
+  mutate(
+    lower_CI = estimate - 1.96*std.error,
+    upper_CI = estimate + 1.96*std.error,
+    p_val = rstatix::p_format(p.value, digits = 2)
+  ) %&gt;% 
+  select(term, estimate, lower_CI, upper_CI, p_val) %&gt;%
+  knitr::kable(digits = 3)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">term</th>
+<th align="right">estimate</th>
+<th align="right">lower_CI</th>
+<th align="right">upper_CI</th>
+<th align="left">p_val</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">(Intercept)</td>
+<td align="right">0.868</td>
+<td align="right">0.838</td>
+<td align="right">0.897</td>
+<td align="left">&lt;0.0001</td>
+</tr>
+<tr class="even">
+<td align="left">program_typeinfant toddler</td>
+<td align="right">-0.027</td>
+<td align="right">-0.049</td>
+<td align="right">-0.005</td>
+<td align="left">0.017</td>
+</tr>
+<tr class="odd">
+<td align="left">program_typepreschool</td>
+<td align="right">-0.004</td>
+<td align="right">-0.022</td>
+<td align="right">0.015</td>
+<td align="left">0.676</td>
+</tr>
+<tr class="even">
+<td align="left">boroughBROOKLYN</td>
+<td align="right">-0.245</td>
+<td align="right">-0.256</td>
+<td align="right">-0.234</td>
+<td align="left">&lt;0.0001</td>
+</tr>
+<tr class="odd">
+<td align="left">boroughMANHATTAN</td>
+<td align="right">-0.186</td>
+<td align="right">-0.198</td>
+<td align="right">-0.174</td>
+<td align="left">&lt;0.0001</td>
+</tr>
+<tr class="even">
+<td align="left">boroughQUEENS</td>
+<td align="right">-0.103</td>
+<td align="right">-0.115</td>
+<td align="right">-0.092</td>
+<td align="left">&lt;0.0001</td>
+</tr>
+<tr class="odd">
+<td align="left">boroughSTATEN ISLAND</td>
+<td align="right">-0.323</td>
+<td align="right">-0.343</td>
+<td align="right">-0.304</td>
+<td align="left">&lt;0.0001</td>
+</tr>
+<tr class="even">
+<td align="left">statusExpired-In Renewal</td>
+<td align="right">-0.193</td>
+<td align="right">-0.216</td>
+<td align="right">-0.169</td>
+<td align="left">&lt;0.0001</td>
+</tr>
+<tr class="odd">
+<td align="left">statusPermitted</td>
+<td align="right">-0.242</td>
+<td align="right">-0.264</td>
+<td align="right">-0.220</td>
+<td align="left">&lt;0.0001</td>
+</tr>
+<tr class="even">
+<td align="left">educational_worker_ratio</td>
+<td align="right">-0.084</td>
+<td align="right">-0.114</td>
+<td align="right">-0.054</td>
+<td align="left">&lt;0.0001</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="interpretation" class="section level3">
-<h3>Interpretation</h3>
+<h3><em>Interpretation</em></h3>
 <p>In this model, the outcome is “rate”, indicating the violation rate
 for each center based on different program type. Our key predictor is
 the numeric variable of “educational_worker_ratio”, which is the
@@ -957,13 +1043,16 @@ variables constant.</p>
 <p>The value of the estimated mean violation rate for centers implement
 infant toddler program is 0.028 less than centers implement all age camp
 program, while holding other variables constant.</p>
+<p>The plot below displays the relationship between the outcome as
+violation rate and our key predictor as educational worker ratio:</p>
 <pre class="r"><code># Scatter plot with regression line overlaid and 95% confidence bands, between rate and our main predictor:educational worker ratio 
 out_df %&gt;% 
   ggplot(aes(educational_worker_ratio, rate)) + geom_point(color = &#39;blue&#39;) + 
   theme_bw() +
   geom_smooth(method = &#39;lm&#39;, se = TRUE, color = &#39;red&#39;) +
-  labs(x = &quot;educational worker ratio&quot;, y = &quot;Violation rate&quot;)</code></pre>
-<p><img src="linear_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+  labs(x = &quot;educational worker ratio&quot;, y = &quot;Violation rate&quot;,
+       title = &quot;Association between Violation Rate and Educational Worker Ratio&quot;)</code></pre>
+<p><img src="linear_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
 </div>
 </div>
 
