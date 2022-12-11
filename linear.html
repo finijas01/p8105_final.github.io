@@ -13,7 +13,7 @@
 
 <title>Linear Regression Model</title>
 
-<script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.18/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
@@ -184,8 +184,8 @@ $(document).ready(function () {
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -193,16 +193,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -411,6 +404,7 @@ h1.title {
   text-align: center;
 }
 </style>
+<p><br> <br></p>
 <div id="model-selection" class="section level2">
 <h2><strong>Model selection</strong></h2>
 <p>To explore the possible predictors contributing to the
@@ -476,6 +470,7 @@ center_specific_df = childcare_inspection_df %&gt;%
 <h3><em>Linear model 1</em></h3>
 <p>First, we fit a full model using program type, borough, status,
 educational worker ratio of center-specific distinct records.</p>
+<p><br></p>
 <p>raw model 1 named full_lm:</p>
 <p>rate = 0.865 - 0.028 * X <sub>infant_toddler</sub> - 0.245 * X
 <sub>BROOKLYN</sub> - 0.186 * X <sub>MANHATTAN</sub> - 0.104 * X
@@ -583,6 +578,7 @@ full_lm %&gt;%
 <p>We also proposed an alternative model by using maximum_capacity,
 total educational workers and their interaction term as the predictors,
 instead of the educational worker ratio.</p>
+<p><br></p>
 <p>raw model 2 named alt_lm:</p>
 <p>rate = 0.842 - 0.041 * X <sub>infant_toddler</sub> - 0.248 * X
 <sub>BROOKLYN</sub> - 0.187 * X <sub>MANHATTAN</sub> - 0.106 * X
@@ -704,10 +700,12 @@ alt_lm %&gt;%
 due to its better goodness of fit and lower correlation among
 variables.Moreover, our key predictors related to maximum capacity and
 educaitonal workder only show up in the former model.</p>
+<p><br> <br></p>
 </div>
 </div>
 <div id="model-diagnostics" class="section level2">
 <h2><strong>Model diagnostics</strong></h2>
+<p><br></p>
 <div id="residual-assumptions" class="section level3">
 <h3><em>Residual assumptions</em></h3>
 <p>We checked the assumptions of the residuals by using 4 plots as
@@ -731,6 +729,7 @@ influential observations.</p></li>
 <pre class="r"><code># model diagnostics: Residuals vs Fitted plot, QQ plot, Scale_location, Residuals vs Leverage
 plot(full_lm)</code></pre>
 <p><img src="linear_files/figure-html/unnamed-chunk-4-1.png" width="672" /><img src="linear_files/figure-html/unnamed-chunk-4-2.png" width="672" /><img src="linear_files/figure-html/unnamed-chunk-4-3.png" width="672" /><img src="linear_files/figure-html/unnamed-chunk-4-4.png" width="672" /></p>
+<p><br></p>
 </div>
 <div id="multicollinearity" class="section level3">
 <h3><em>Multicollinearity</em></h3>
@@ -752,10 +751,12 @@ check_collinearity(full_lm)  # low correlation</code></pre>
 ##      [0.88, 0.91]
 ##      [0.71, 0.74]
 ##      [0.67, 0.70]</code></pre>
+<p><br> <br></p>
 </div>
 </div>
 <div id="model-remedy" class="section level2">
 <h2><strong>Model remedy</strong></h2>
+<p><br></p>
 <div id="variable-normality-check" class="section level3">
 <h3><em>Variable normality check</em></h3>
 <p>We checked the normality of two numerical variables of educational
@@ -787,6 +788,7 @@ full_lm_sqrt = center_distinct_df %&gt;%
 to fit a new model named full_lm_out by removing these two cases. This
 model works better then full_lm due to its increased adjusted
 R-square.</p>
+<p><br></p>
 <p>Revised model named full_lm_out:</p>
 <p>rate = 0.868 - 0.027 * X <sub>infant_toddler</sub> - 0.245 * X
 <sub>BROOKLYN</sub> - 0.186 * X <sub>MANHATTAN</sub> - 0.103 * X
@@ -886,11 +888,13 @@ full_lm_out %&gt;%
 </tr>
 </tbody>
 </table>
+<p><br></p>
 <p>In addition, we diagnose the revised model again to confirm there’s
 no violation against the residuals assumption:</p>
 <pre class="r"><code>#run regression diagnostics
 check_model(full_lm_out, check = c(&quot;linearity&quot;, &quot;outliers&quot;, &quot;qq&quot;, &quot;normality&quot;))</code></pre>
 <p><img src="linear_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p><br> <br></p>
 </div>
 </div>
 <div id="model-validation" class="section level2">
@@ -921,13 +925,15 @@ predictive ability.</p>
 ## Summary of sample sizes: 13159, 13160, 13159, 13158, 13160 
 ## Resampling results:
 ## 
-##   RMSE       Rsquared   MAE      
-##   0.2431547  0.1563588  0.1982945
+##   RMSE       Rsquared  MAE      
+##   0.2431576  0.156342  0.1982926
 ## 
 ## Tuning parameter &#39;intercept&#39; was held constant at a value of TRUE</code></pre>
+<p><br> <br></p>
 </div>
 <div id="model-conclusion" class="section level2">
 <h2><strong>Model Conclusion</strong></h2>
+<p><br></p>
 <div id="final-linear-model" class="section level3">
 <h3><em>Final linear model</em></h3>
 <p>We chose full_lm_out as our final linear model:</p>
@@ -936,6 +942,7 @@ predictive ability.</p>
 <sub>QUEENS</sub> - 0.323 * X <sub>STATEN_ISLAND</sub> - 0.193 * X
 <sub>Expired_In_Renewal</sub> - 0.242 * X <sub>Permitted</sub> - 0.084 *
 X <sub>educational_worker_ratio</sub></p>
+<p><br></p>
 <p>The 95% CI for each estimate and p_value are shown as follows:</p>
 <pre class="r"><code>full_lm_out %&gt;% 
   broom::tidy() %&gt;%

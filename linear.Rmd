@@ -18,6 +18,8 @@ h1.title {
 </style>
 
 
+<br>
+<br>
 
 ## **Model selection**
 
@@ -79,6 +81,8 @@ center_specific_df = childcare_inspection_df %>%
 
 First, we fit a full model using program type, borough, status, educational worker ratio of center-specific distinct records.
 
+<br>
+
 raw model 1 named full_lm:
 
 rate = 0.865  -  0.028 * X ~infant_toddler~   -  0.245 * X ~BROOKLYN~   -  0.186 * X ~MANHATTAN~  -  0.104 * X ~QUEENS~  -  0.323 * X ~STATEN_ISLAND~  -  0.19 * X ~Expired_In_Renewal~  -  0.239 * X ~Permitted~  -  0.08 * X ~educational_worker_ratio~
@@ -103,6 +107,8 @@ full_lm %>%
 
 We also proposed an alternative model by using maximum_capacity, total educational workers and their interaction term as the predictors, instead of the educational worker ratio. 
 
+<br>
+
 raw model 2 named alt_lm:
 
 rate = 0.842  -  0.041 * X ~infant_toddler~   -  0.248 * X ~BROOKLYN~   -  0.187 * X ~MANHATTAN~  -  0.106 * X ~QUEENS~  -  0.329 * X ~STATEN_ISLAND~  -  0.182 * X ~Expired_In_Renewal~  -  0.231 * X ~Permitted~
@@ -121,9 +127,12 @@ alt_lm %>%
 
 After comparing these two models, we decided to keep full_lm model, due to its better goodness of fit and lower correlation among variables.Moreover, our key predictors related to maximum capacity and educaitonal workder only show up in the former model.
 
-
+<br>
+<br>
 
 ## **Model diagnostics**
+
+<br>
 
 ### *Residual assumptions*
 
@@ -143,6 +152,8 @@ outside of the dashed line of Cook’s distance 0.5, suggesting no influential o
 plot(full_lm)
 ```
 
+<br>
+
 ### *Multicollinearity* 
 
 Moreover, the full_lm model shows a low multicollinearity since the VIF value for each variable are all below 2.
@@ -152,7 +163,12 @@ library(performance)
 check_collinearity(full_lm)  # low correlation
 ```
 
+<br>
+<br>
+
 ## **Model remedy**
+
+<br>
 
 ### *Variable normality check*
 
@@ -182,6 +198,8 @@ full_lm_sqrt = center_distinct_df %>%
 
 In addition, although there is no influential points, case 12349 and 12318 affect the regression assumption as shown repeatedly.So we tried to fit a new model named full_lm_out by removing these two cases. This model works better then full_lm due to its increased adjusted R-square. 
 
+<br>
+
 Revised model named full_lm_out:
 
 rate = 0.868  -  0.027 * X ~infant_toddler~   -  0.245 * X ~BROOKLYN~   -  0.186 * X ~MANHATTAN~  -  0.103 * X ~QUEENS~  -  0.323 * X ~STATEN_ISLAND~  -  0.193 * X ~Expired_In_Renewal~  -  0.242 * X ~Permitted~  -  0.084 * X ~educational_worker_ratio~
@@ -200,6 +218,8 @@ full_lm_out %>%
   knitr::kable(digit = 3)
 ```
 
+<br>
+
 In addition, we diagnose the revised model again to confirm there's no violation against the residuals assumption:
 
 ```{r}
@@ -207,6 +227,8 @@ In addition, we diagnose the revised model again to confirm there's no violation
 check_model(full_lm_out, check = c("linearity", "outliers", "qq", "normality"))
 ```
 
+<br>
+<br>
 
 ## **Model validation**
 
@@ -230,14 +252,20 @@ Based on a rule of thumb, RMSE values between 0.2 and 0.5 shows that the model c
 print(model_caret)
 ```
 
+<br>
+<br>
+
 ## **Model Conclusion**
 
+<br>
 
 ### *Final linear model* 
 
 We chose full_lm_out as our final linear model:
 
 rate = 0.868  -  0.027 * X ~infant_toddler~   -  0.245 * X ~BROOKLYN~   -  0.186 * X ~MANHATTAN~  -  0.103 * X ~QUEENS~  -  0.323 * X ~STATEN_ISLAND~  -  0.193 * X ~Expired_In_Renewal~  -  0.242 * X ~Permitted~  -  0.084 * X ~educational_worker_ratio~
+
+<br>
 
 The 95% CI for each estimate and p_value are shown as follows:
 
