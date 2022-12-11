@@ -146,12 +146,12 @@ For more details, please refer to [Linear Model](linear.html)
 
 P : probability of resulting in a violation of a inspection
 
-In this logistic model, the outcome is log of odds ratio of violation rate. Our key predictor is the numeric variable of "educational worker ratio". The program type is found to be not statistically significant in predicting probability of violation. 
+In this logistic model, the outcome is log of odds ratio of violation. Our key predictor is the numeric variable of "educational worker ratio". The program type is found to be not statistically significant in predicting probability of violation.
 
 For more details, please refer to [Logistic Model](logistic.html)
 
 
-Our linear and logistics model both suggested that the higher the educational worker ratio, the lower the estimated violation rate. For categorical variables: Bronx, as a reference borough, has higher mean violation rate than any other boroughs. Centers holding a “active” license has higher mean violation rate than centers holding an "expired-in renewal" and "permitted" license. 
+Our linear and logistics model both suggested that the higher the educational worker ratio, the lower the estimated violation odds ratio, holding everything else constant. For categorical variables: Bronx, as a reference borough, has higher mean violation odds ratio than any other boroughs. Centers holding a "active" license has higher mean violation odds ratio than centers holding an “expired-in renewal” and “permitted” license.
 
 
 # Discussion
