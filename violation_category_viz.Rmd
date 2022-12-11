@@ -93,6 +93,7 @@ frequency_program_type = childcare_inspection_df %>%
   theme(axis.text.x = element_text(angle = 0, hjust = 0.5),plot.title = element_text(hjust = 0.5))
 frequency_program_type
 ```
+
 ### Interpretation
 
 From the histogram plot above, we can learn that preschool has the greatest number of violations.
