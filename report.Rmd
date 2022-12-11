@@ -1,7 +1,21 @@
 ---
 title: "Project Report"
-output: github_document
+output: 
+  html_document:
+    code_folding: hide
+    toc: true
+    toc_float: true
+    theme: flatly
 ---
+
+<style type="text/css">
+
+h1.title {
+  font-size: 38px;
+  color: Black;
+  text-align: center;
+}
+</style>
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
@@ -209,5 +223,7 @@ We hope we will find another childcare related dataset to conduct further analys
 1) [The DOHMH Childcare Center Inspections dataset](https://data.cityofnewyork.us/Health/DOHMH-Childcare-Center-Inspections/dsg6-ifza)
 
 2) [Raising NY OCFS CARES II, CARES III, & Stabilization Grant Data Report](https://raisingnewyork.org/wp-content/uploads/sites/2/2022/08/RNY-OCFS-Report.pdf)
+
+3) [Boundaries for NYC zip codes dataset](https://data.cityofnewyork.us/Business/Zip-Code-Boundaries/i8iw-xf4u)
 
 
