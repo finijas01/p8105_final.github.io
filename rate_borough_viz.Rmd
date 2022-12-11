@@ -78,6 +78,8 @@ center_specific_df = childcare_inspection_df %>%
 
 ## Violation Rate Distribution by Program Type
 
+### Density plot
+
 ```{r}
 center_specific_df %>%
   ggplot(aes(x = rate, fill = program_type)) +
@@ -92,7 +94,14 @@ center_specific_df %>%
   )
 ```
 
+
+### Interpretation:
+
+From the density plot above, we can learn that the "preschool" program type has the highest rate density when the violation rate is about 0.625, which may probably mean that childcare centers with preschool program type have a higher mean violation rate.
+
 ## Violation Rate Distribution by Borough
+
+### Density plot
 
 ```{r}
 center_specific_df %>%
@@ -107,6 +116,10 @@ center_specific_df %>%
     y = "Rate Density"
   )
 ```
+
+### Interpretation:
+
+From the density plot above, we can learn that Bronx has a higher density of high violation rate compared with other boroughs.
 
 
 
