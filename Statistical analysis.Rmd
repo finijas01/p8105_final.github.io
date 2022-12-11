@@ -92,7 +92,8 @@ anova(fit_borough) %>% knitr::kable(caption = "One way anova of violation freque
 
 The p-value of the above Anova test is 3.106e-10. Thus, at 0.05 significance level, we reject the null hypothesis and conclude that during the past 3 years, the average number of violations per center varies across boroughs. 
 
-
+<br>
+<br>
 
 ## Chi-square Test - 3 Violation Types and Boroughs
 
