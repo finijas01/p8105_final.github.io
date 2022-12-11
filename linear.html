@@ -879,11 +879,17 @@ full_lm_out %&gt;%
 </tr>
 </tbody>
 </table>
+<p>In addition, we diagnose the revised model again to confirm there’s
+no violation against the residuals assumption:</p>
+<pre class="r"><code>#run regression diagnostics
+check_model(full_lm_out, check = c(&quot;linearity&quot;, &quot;outliers&quot;, &quot;qq&quot;, &quot;normality&quot;))</code></pre>
+<p><img src="linear_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 </div>
 </div>
 <div id="model-validation" class="section level2">
 <h2><strong>Model validation</strong></h2>
-<p>We used 5-fold cross validation to test the model performance.</p>
+<p>We used 5-fold cross validation to test the performance of the
+revised model full_lm_out.</p>
 <pre class="r"><code>library(caret)
 # Use 5-fold validation and create the training sets
 train = trainControl(method = &quot;cv&quot;, number = 5)
@@ -905,11 +911,11 @@ predictive ability.</p>
 ## 
 ## No pre-processing
 ## Resampling: Cross-Validated (5 fold) 
-## Summary of sample sizes: 13159, 13160, 13159, 13159, 13159 
+## Summary of sample sizes: 13159, 13160, 13159, 13158, 13160 
 ## Resampling results:
 ## 
-##   RMSE       Rsquared   MAE      
-##   0.2431557  0.1565823  0.1982754
+##   RMSE       Rsquared  MAE      
+##   0.2431576  0.156342  0.1982926
 ## 
 ## Tuning parameter &#39;intercept&#39; was held constant at a value of TRUE</code></pre>
 </div>
@@ -1052,7 +1058,7 @@ out_df %&gt;%
   geom_smooth(method = &#39;lm&#39;, se = TRUE, color = &#39;red&#39;) +
   labs(x = &quot;educational worker ratio&quot;, y = &quot;Violation rate&quot;,
        title = &quot;Association between Violation Rate and Educational Worker Ratio&quot;)</code></pre>
-<p><img src="linear_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p><img src="linear_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
 </div>
 </div>
 

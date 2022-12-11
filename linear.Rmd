@@ -200,10 +200,17 @@ full_lm_out %>%
   knitr::kable(digit = 3)
 ```
 
+In addition, we diagnose the revised model again to confirm there's no violation against the residuals assumption:
+
+```{r}
+#run regression diagnostics
+check_model(full_lm_out, check = c("linearity", "outliers", "qq", "normality"))
+```
+
 
 ## **Model validation**
 
-We used 5-fold cross validation to test the model performance. 
+We used 5-fold cross validation to test the performance of the revised model full_lm_out. 
 
 ```{r warning= FALSE, message=FALSE, results='hide'}
 library(caret)
