@@ -460,8 +460,11 @@ child_data &lt;- child_data %&gt;%
 <div id="fit-the-logistic-regression-model" class="section level2">
 <h2>Fit the logistic regression model</h2>
 <ul>
-<li>fit a logistic regression with violation vs no violation as the
-outcome and the rest as predictors.And Obtain the estimate and CI of the
+<li>We created a binary variable, violation, which represents the result
+of every inspection. Then we fitted a logistic regression with log of
+odds ratio of violation rate as the outcome and borough, program_type,
+status and educational_worker_ratio as predictors, using every
+observation as one case. Then we obtained the estimate and CI of the
 adjusted odds ratio for having violation.</li>
 </ul>
 <div id="build-model" class="section level3">
@@ -846,9 +849,9 @@ the dataset.</p>
 </div>
 <div id="model-interpretation" class="section level2">
 <h2>Model interpretation</h2>
-<p>In this model, the outcome is log of odds ratio of violation rate.
-Our key predictor is the numeric variable of “educational_worker_ratio”,
-which is the program-specific total number of educational worker in each
+<p>In this model, the outcome is log odds ratio of violation. Our key
+predictor is the numeric variable of “educational_worker_ratio”, which
+is the program-specific total number of educational worker in each
 center, divided by the maximum capacity, based on the square footage of
 class and play rooms, the number of toilets and sinks, and overall
 estimates from the NYC Department of Buildings. With the log of odds

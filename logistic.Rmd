@@ -61,7 +61,7 @@ head(child_data, 10)
 
 ## Fit the logistic regression model
 
-* fit a logistic regression with violation vs no violation as the outcome and the rest as predictors.And Obtain the estimate and CI of the adjusted odds ratio for having violation.
+* We created a binary variable, violation, which represents the result of every inspection. Then we fitted a logistic regression with log of odds ratio of violation rate as the outcome and borough, program_type, status and educational_worker_ratio as predictors, using every observation as one case. Then we obtained the estimate and CI of the adjusted odds ratio for having violation.
 
 ### Build Model
 
@@ -204,7 +204,7 @@ From the plot we can see that the standard deviation of the data are all in acce
 
 ## Model interpretation
 
-In this model, the outcome is log of odds ratio of violation rate. Our key predictor is the numeric variable of "educational_worker_ratio", which is the program-specific total number of educational worker in each center,  divided by the maximum capacity, based on the square footage of class and play rooms, the number of toilets and sinks, and overall estimates from the NYC Department of Buildings. With the log of odds ratio for the association between violation and educational_worker_ratio = -0.34, holding other variables fixed, the odds of having the violation will decrease by 29%, for one unit increase in educational worker ratio.
+In this model, the outcome is log odds ratio of violation. Our key predictor is the numeric variable of "educational_worker_ratio", which is the program-specific total number of educational worker in each center,  divided by the maximum capacity, based on the square footage of class and play rooms, the number of toilets and sinks, and overall estimates from the NYC Department of Buildings. With the log of odds ratio for the association between violation and educational_worker_ratio = -0.34, holding other variables fixed, the odds of having the violation will decrease by 29%, for one unit increase in educational worker ratio.
 
 We also included several categorical variables into our model. Based on the output, the interpretations of coefficients estimates are as follows:
 with log(odds ratio) =  -1.04, -0.79, -0.33 and -1.40, the odds of having violation in Brooklyn, Manhattan, Queens and Staten island is 0.35, 0.45, 0.65 and 0.24 times of that in Bronx.
