@@ -332,4 +332,4 @@ center_prop_manhattan %>%
 
 ### *Conclusion*
 
-From the plot, we can see the names and estimates of the centers with high violation proportion in each borough. These plots can serve as a good reference for NYC residents when selecting the childcare centers for their kids. 
+From the plot, we can see the names and estimates of the centers with high violation proportion in each borough. These plots can serve as good reference for NYC residents when selecting the childcare centers for their kids. 
