@@ -84,7 +84,6 @@ vio_boro = center_distinct_df_2 %>%
 
 # anova
 fit_borough = lm(n_violate ~ borough, data = vio_boro)
-summary(fit_borough)
 anova(fit_borough) %>% knitr::kable(caption = "One way anova of violation frequency and borough")
 ```
 
@@ -195,7 +194,7 @@ center_prop_staten %>%
   geom_point(color = "red") +
   geom_errorbar(aes(ymin = conf.low, ymax = conf.high)) +
 
-  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.6))) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.9))) +
   labs( x = "Center name",
     y = "Estimated proportion of violation",
     title = "Centers with high violation proportion in Staten Island")
@@ -227,7 +226,7 @@ center_prop_bronx %>%
   geom_point(color = "red") +
   geom_errorbar(aes(ymin = conf.low, ymax = conf.high)) +
 
-  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.6))) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.8))) +
   labs( x = "Center name",
     y = "Estimated proportion of violation",
     title = "Centers with high violation proportion in Bronx")
@@ -291,7 +290,7 @@ center_prop_brooklyn %>%
   geom_point(color = "red") +
   geom_errorbar(aes(ymin = conf.low, ymax = conf.high)) +
 
-  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.6))) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.8))) +
   labs( x = "Center name",
     y = "Estimated proportion of violation",
     title = "Centers with high violation proportion in Brooklyn")
@@ -332,4 +331,4 @@ center_prop_manhattan %>%
 
 ### *Conclusion*
 
-From the plot, we can see the names and estimates of the centers with high violation proportion in each borough. These plots can serve as good reference for NYC residents when selecting the childcare centers for their kids. 
+From the plots, we can see the names and estimates of the centers with high violation proportion in each borough. These plots can serve as good reference for NYC residents when selecting the childcare centers for their kids. 

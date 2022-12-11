@@ -469,29 +469,7 @@ vio_boro = center_distinct_df_2 %&gt;%
 
 # anova
 fit_borough = lm(n_violate ~ borough, data = vio_boro)
-summary(fit_borough)</code></pre>
-<pre><code>## 
-## Call:
-## lm(formula = n_violate ~ borough, data = vio_boro)
-## 
-## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -11.547  -4.148  -2.450   0.611 243.852 
-## 
-## Coefficients:
-##                      Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)           11.5468     0.9719  11.881  &lt; 2e-16 ***
-## boroughBROOKLYN       -7.6286     1.1113  -6.865 9.19e-12 ***
-## boroughMANHATTAN      -5.3993     1.1805  -4.574 5.12e-06 ***
-## boroughQUEENS         -5.1575     1.1968  -4.309 1.73e-05 ***
-## boroughSTATEN ISLAND  -8.0968     1.6917  -4.786 1.84e-06 ***
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## Residual standard error: 13.85 on 1778 degrees of freedom
-## Multiple R-squared:  0.02789,    Adjusted R-squared:  0.0257 
-## F-statistic: 12.75 on 4 and 1778 DF,  p-value: 3.106e-10</code></pre>
-<pre class="r"><code>anova(fit_borough) %&gt;% knitr::kable(caption = &quot;One way anova of violation frequency and borough&quot;)</code></pre>
+anova(fit_borough) %&gt;% knitr::kable(caption = &quot;One way anova of violation frequency and borough&quot;)</code></pre>
 <table>
 <caption>One way anova of violation frequency and borough</caption>
 <thead>
@@ -678,7 +656,7 @@ center_prop_staten %&gt;%
   geom_point(color = &quot;red&quot;) +
   geom_errorbar(aes(ymin = conf.low, ymax = conf.high)) +
 
-  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.6))) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.9))) +
   labs( x = &quot;Center name&quot;,
     y = &quot;Estimated proportion of violation&quot;,
     title = &quot;Centers with high violation proportion in Staten Island&quot;)</code></pre>
@@ -708,7 +686,7 @@ center_prop_bronx %&gt;%
   geom_point(color = &quot;red&quot;) +
   geom_errorbar(aes(ymin = conf.low, ymax = conf.high)) +
 
-  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.6))) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.8))) +
   labs( x = &quot;Center name&quot;,
     y = &quot;Estimated proportion of violation&quot;,
     title = &quot;Centers with high violation proportion in Bronx&quot;)</code></pre>
@@ -768,7 +746,7 @@ center_prop_brooklyn %&gt;%
   geom_point(color = &quot;red&quot;) +
   geom_errorbar(aes(ymin = conf.low, ymax = conf.high)) +
 
-  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.6))) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.8))) +
   labs( x = &quot;Center name&quot;,
     y = &quot;Estimated proportion of violation&quot;,
     title = &quot;Centers with high violation proportion in Brooklyn&quot;)</code></pre>
@@ -807,10 +785,10 @@ center_prop_manhattan %&gt;%
 </div>
 <div id="conclusion-2" class="section level3">
 <h3><em>Conclusion</em></h3>
-<p>From the plot, we can see the names and estimates of the centers with
-high violation proportion in each borough. These plots can serve as good
-reference for NYC residents when selecting the childcare centers for
-their kids.</p>
+<p>From the plots, we can see the names and estimates of the centers
+with high violation proportion in each borough. These plots can serve as
+good reference for NYC residents when selecting the childcare centers
+for their kids.</p>
 </div>
 </div>
 
