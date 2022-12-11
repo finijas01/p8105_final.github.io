@@ -87,9 +87,7 @@ raw model 1 named full_lm:
 
 rate = 0.865  -  0.028 * X ~infant_toddler~   -  0.245 * X ~BROOKLYN~   -  0.186 * X ~MANHATTAN~  -  0.104 * X ~QUEENS~  -  0.323 * X ~STATEN_ISLAND~  -  0.19 * X ~Expired_In_Renewal~  -  0.239 * X ~Permitted~  -  0.08 * X ~educational_worker_ratio~
 
-<br>
 
-Detailed information is as follows:
 
 ```{r warning= FALSE, message=FALSE}
 # select distinct records and related variables of each center
@@ -117,9 +115,7 @@ raw model 2 named alt_lm:
 
 rate = 0.842  -  0.041 * X ~infant_toddler~   -  0.248 * X ~BROOKLYN~   -  0.187 * X ~MANHATTAN~  -  0.106 * X ~QUEENS~  -  0.329 * X ~STATEN_ISLAND~  -  0.182 * X ~Expired_In_Renewal~  -  0.231 * X ~Permitted~
 
-<br>
 
-Detailed information is as follows:
 
 ```{r warning= FALSE, message=FALSE}
 # fit an alternative model
@@ -213,9 +209,7 @@ Revised model named full_lm_out:
 
 rate = 0.868  -  0.027 * X ~infant_toddler~   -  0.245 * X ~BROOKLYN~   -  0.186 * X ~MANHATTAN~  -  0.103 * X ~QUEENS~  -  0.323 * X ~STATEN_ISLAND~  -  0.193 * X ~Expired_In_Renewal~  -  0.242 * X ~Permitted~  -  0.084 * X ~educational_worker_ratio~
 
-<br>
 
-Detailed information is as follows:
 
 ```{r warning= FALSE, message=FALSE}
 # exclude two influential records
@@ -271,6 +265,8 @@ print(model_caret)
 <br>
 
 ### *- Final linear model* 
+
+<br>
 
 We chose full_lm_out as our final linear model:
 
