@@ -458,6 +458,8 @@ center_specific_df = childcare_inspection_df %&gt;%
   arrange(center_name, program_type)</code></pre>
 <div id="number-of-violations-by-program-type" class="section level2">
 <h2>Number of violations by program type</h2>
+<div id="histogram-plot" class="section level3">
+<h3>Histogram plot</h3>
 <pre class="r"><code>frequency_program_type = childcare_inspection_df %&gt;% 
   count(program_type) %&gt;% 
   mutate(
@@ -472,11 +474,17 @@ center_specific_df = childcare_inspection_df %&gt;%
     fill = &quot;program_type&quot;) +
   theme(axis.text.x = element_text(angle = 0, hjust = 0.5),plot.title = element_text(hjust = 0.5))
 frequency_program_type</code></pre>
-<p><img src="violation_category_viz_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p><img src="violation_category_viz_files/figure-html/unnamed-chunk-3-1.png" width="672" />
+### Interpretation</p>
+<p>From the histogram plot above, we can learn that preschool has the
+greatest number of violations.</p>
+</div>
 </div>
 <div id="number-of-violations-by-violation-category"
 class="section level2">
 <h2>Number of violations by violation category</h2>
+<div id="histogram-plot-1" class="section level3">
+<h3>Histogram plot</h3>
 <pre class="r"><code>frequency_violation_category = childcare_inspection_df %&gt;% 
   drop_na(violation_category) %&gt;% 
   count(violation_category) %&gt;% 
@@ -493,6 +501,12 @@ class="section level2">
   theme(axis.text.x = element_text(angle = 0, hjust = 0.5),plot.title = element_text(hjust = 0.5))
 frequency_violation_category </code></pre>
 <p><img src="violation_category_viz_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+</div>
+<div id="interpretation" class="section level3">
+<h3>Interpretation</h3>
+<p>From the histogram plot above, we can learn that most of the
+violations belong to general violation category.</p>
+</div>
 </div>
 
 
