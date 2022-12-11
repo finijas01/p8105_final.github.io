@@ -59,6 +59,7 @@ center_specific_df = childcare_inspection_df %>%
 ## **Anova test - Violation Cases Number and Boroughs**
 
 <br>
+
 ### *Introduction*
 
 We are curious about whether center location is associated with the frequency of their violation. For example, during the past 3 years, would the expected violation case number in a random center in Bronx varies from the expected violation case number in a random center in Manhattan? To explore the answer, We performed ANOVA test across boroughs.
@@ -98,6 +99,7 @@ The p-value of the above Anova test is 3.106e-10. Thus, at 0.05 significance lev
 ## **Chi-square Test - 3 Violation Types and Boroughs**
 
 <br>
+
 ### *Introduction*
 
 In this dataset, there are three violation types exist: critical violation, general violation and public health hazard violation. We're interested if the proportion of each type of violation would vary among different boroughs. So we calculated the total number of cases under each violation category in each borough and did a chi-square test to see if this proportion is associated with its location.
@@ -107,7 +109,9 @@ Our hypothesis is:
 H0:  the proportions of ciritical violation among borough levels are equal;
 AND  the proportions of general violation among borough levels are equal;
 AND  the proportions of public health hazard violation among borough levels are equal;
-vs.
+
+<br>
+
 H1:  not all proportions are equal.
 
 ```{r warning= FALSE, message=FALSE}
@@ -143,6 +147,7 @@ At 0.05 significance level, χ2>χcritical, with p-value < 2.2e-16. Thus, we rej
 ## Proportion Test - Total Violation Proportion within Center
 
 <br>
+
 ### *Introduction*
 
 With the belief that violation record is an important parameter to evaluate the performance of a child healthcare center, we conducted a proportion test to estimate the total violation proportion and its 95% confidence interval for each center, regardless of its program type. We defined the estimated total violation proportion > 0.8 as high proportion. Next, we pinpointed all the centers with high violation proportion in each borough. 

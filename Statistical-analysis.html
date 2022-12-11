@@ -443,7 +443,9 @@ center_specific_df = childcare_inspection_df %&gt;%
 class="section level2">
 <h2><strong>Anova test - Violation Cases Number and
 Boroughs</strong></h2>
-<p><br> ### <em>Introduction</em></p>
+<p><br></p>
+<div id="introduction" class="section level3">
+<h3><em>Introduction</em></h3>
 <p>We are curious about whether center location is associated with the
 frequency of their violation. For example, during the past 3 years,
 would the expected violation case number in a random center in Bronx
@@ -501,6 +503,7 @@ anova(fit_borough) %&gt;% knitr::kable(caption = &quot;One way anova of violatio
 </tr>
 </tbody>
 </table>
+</div>
 <div id="conclusion" class="section level3">
 <h3><em>Conclusion</em></h3>
 <p>The p-value of the above Anova test is 3.106e-10. Thus, at 0.05
@@ -514,7 +517,9 @@ varies across boroughs.</p>
 class="section level2">
 <h2><strong>Chi-square Test - 3 Violation Types and
 Boroughs</strong></h2>
-<p><br> ### <em>Introduction</em></p>
+<p><br></p>
+<div id="introduction-1" class="section level3">
+<h3><em>Introduction</em></h3>
 <p>In this dataset, there are three violation types exist: critical
 violation, general violation and public health hazard violation. We’re
 interested if the proportion of each type of violation would vary among
@@ -525,7 +530,9 @@ if this proportion is associated with its location.</p>
 <p>H0: the proportions of ciritical violation among borough levels are
 equal; AND the proportions of general violation among borough levels are
 equal; AND the proportions of public health hazard violation among
-borough levels are equal; vs. H1: not all proportions are equal.</p>
+borough levels are equal;</p>
+<p><br></p>
+<p>H1: not all proportions are equal.</p>
 <pre class="r"><code>three_violation = 
   childcare_inspection_df %&gt;%
   select(borough, violation_category) %&gt;% 
@@ -591,6 +598,7 @@ three_violation %&gt;%
 ## 
 ## data:  three_violation
 ## X-squared = 118.01, df = 8, p-value &lt; 2.2e-16</code></pre>
+</div>
 <div id="conclusion-1" class="section level3">
 <h3><em>Conclusion</em></h3>
 <p>At 0.05 significance level, χ2&gt;χcritical, with p-value &lt;
@@ -603,7 +611,9 @@ significantly different by borough.</p>
 <div id="proportion-test---total-violation-proportion-within-center"
 class="section level2">
 <h2>Proportion Test - Total Violation Proportion within Center</h2>
-<p><br> ### <em>Introduction</em></p>
+<p><br></p>
+<div id="introduction-2" class="section level3">
+<h3><em>Introduction</em></h3>
 <p>With the belief that violation record is an important parameter to
 evaluate the performance of a child healthcare center, we conducted a
 proportion test to estimate the total violation proportion and its 95%
@@ -780,6 +790,7 @@ center_prop_manhattan %&gt;%
     y = &quot;Estimated proportion of violation&quot;,
     title = &quot;Centers with high violation proportion in Queens&quot;)</code></pre>
 <p><img src="Statistical-analysis_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+</div>
 </div>
 <div id="conclusion-2" class="section level3">
 <h3><em>Conclusion</em></h3>
