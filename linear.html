@@ -477,8 +477,6 @@ educational worker ratio of center-specific distinct records.</p>
 <sub>QUEENS</sub> - 0.323 * X <sub>STATEN_ISLAND</sub> - 0.19 * X
 <sub>Expired_In_Renewal</sub> - 0.239 * X <sub>Permitted</sub> - 0.08 *
 X <sub>educational_worker_ratio</sub></p>
-<p><br></p>
-<p>Detailed information is as follows:</p>
 <pre class="r"><code># select distinct records and related variables of each center
 center_distinct_df = center_specific_df %&gt;%
   select(center_name, program_type, borough, status, maximum_capacity, total_educational_workers, educational_worker_ratio, rate)
@@ -586,8 +584,6 @@ instead of the educational worker ratio.</p>
 <sub>BROOKLYN</sub> - 0.187 * X <sub>MANHATTAN</sub> - 0.106 * X
 <sub>QUEENS</sub> - 0.329 * X <sub>STATEN_ISLAND</sub> - 0.182 * X
 <sub>Expired_In_Renewal</sub> - 0.231 * X <sub>Permitted</sub></p>
-<p><br></p>
-<p>Detailed information is as follows:</p>
 <pre class="r"><code># fit an alternative model
 alt_lm = center_distinct_df %&gt;%
  lm(rate ~ program_type + borough + status + maximum_capacity * total_educational_workers, data = .) 
@@ -802,8 +798,6 @@ R-square.</p>
 <sub>QUEENS</sub> - 0.323 * X <sub>STATEN_ISLAND</sub> - 0.193 * X
 <sub>Expired_In_Renewal</sub> - 0.242 * X <sub>Permitted</sub> - 0.084 *
 X <sub>educational_worker_ratio</sub></p>
-<p><br></p>
-<p>Detailed information is as follows:</p>
 <pre class="r"><code># exclude two influential records
 out_df = center_distinct_df[-c(12349, 12318),]
 
@@ -944,6 +938,7 @@ predictive ability.</p>
 <p><br></p>
 <div id="final-linear-model" class="section level3">
 <h3><em>- Final linear model</em></h3>
+<p><br></p>
 <p>We chose full_lm_out as our final linear model:</p>
 <p>rate = 0.868 - 0.027 * X <sub>infant_toddler</sub> - 0.245 * X
 <sub>BROOKLYN</sub> - 0.186 * X <sub>MANHATTAN</sub> - 0.103 * X
