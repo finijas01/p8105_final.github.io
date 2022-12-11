@@ -170,7 +170,7 @@ verdiction_center =
 ```
 
 
-#### *Staten island*
+#### **Staten island**
 
 ```{r warning= FALSE, message=FALSE}
 # prop.test for all centers in staten island
