@@ -467,7 +467,7 @@ center_specific_df = childcare_inspection_df %&gt;%
     rate = n_violation/(n_violation + n_na)) %&gt;% 
   arrange(center_name, program_type)</code></pre>
 <div id="linear-model-1" class="section level3">
-<h3><em>Linear model 1</em></h3>
+<h3><em>- Linear model 1</em></h3>
 <p>First, we fit a full model using program type, borough, status,
 educational worker ratio of center-specific distinct records.</p>
 <p><br></p>
@@ -477,6 +477,7 @@ educational worker ratio of center-specific distinct records.</p>
 <sub>QUEENS</sub> - 0.323 * X <sub>STATEN_ISLAND</sub> - 0.19 * X
 <sub>Expired_In_Renewal</sub> - 0.239 * X <sub>Permitted</sub> - 0.08 *
 X <sub>educational_worker_ratio</sub></p>
+<p><br></p>
 <p>Detailed information is as follows:</p>
 <pre class="r"><code># select distinct records and related variables of each center
 center_distinct_df = center_specific_df %&gt;%
@@ -572,9 +573,10 @@ full_lm %&gt;%
 </tr>
 </tbody>
 </table>
+<p><br></p>
 </div>
 <div id="linear-model-2" class="section level3">
-<h3><em>Linear model 2</em></h3>
+<h3><em>- Linear model 2</em></h3>
 <p>We also proposed an alternative model by using maximum_capacity,
 total educational workers and their interaction term as the predictors,
 instead of the educational worker ratio.</p>
@@ -584,6 +586,7 @@ instead of the educational worker ratio.</p>
 <sub>BROOKLYN</sub> - 0.187 * X <sub>MANHATTAN</sub> - 0.106 * X
 <sub>QUEENS</sub> - 0.329 * X <sub>STATEN_ISLAND</sub> - 0.182 * X
 <sub>Expired_In_Renewal</sub> - 0.231 * X <sub>Permitted</sub></p>
+<p><br></p>
 <p>Detailed information is as follows:</p>
 <pre class="r"><code># fit an alternative model
 alt_lm = center_distinct_df %&gt;%
@@ -696,6 +699,10 @@ alt_lm %&gt;%
 </tr>
 </tbody>
 </table>
+<p><br></p>
+</div>
+<div id="decision" class="section level3">
+<h3><em>- Decision</em></h3>
 <p>After comparing these two models, we decided to keep full_lm model,
 due to its better goodness of fit and lower correlation among
 variables.Moreover, our key predictors related to maximum capacity and
@@ -707,7 +714,7 @@ educaitonal workder only show up in the former model.</p>
 <h2><strong>Model diagnostics</strong></h2>
 <p><br></p>
 <div id="residual-assumptions" class="section level3">
-<h3><em>Residual assumptions</em></h3>
+<h3><em>- Residual assumptions</em></h3>
 <p>We checked the assumptions of the residuals by using 4 plots as
 follows:</p>
 <ol style="list-style-type: decimal">
@@ -732,7 +739,7 @@ plot(full_lm)</code></pre>
 <p><br></p>
 </div>
 <div id="multicollinearity" class="section level3">
-<h3><em>Multicollinearity</em></h3>
+<h3><em>- Multicollinearity</em></h3>
 <p>Moreover, the full_lm model shows a low multicollinearity since the
 VIF value for each variable are all below 2.</p>
 <pre class="r"><code>library(performance) 
@@ -758,7 +765,7 @@ check_collinearity(full_lm)  # low correlation</code></pre>
 <h2><strong>Model remedy</strong></h2>
 <p><br></p>
 <div id="variable-normality-check" class="section level3">
-<h3><em>Variable normality check</em></h3>
+<h3><em>- Variable normality check</em></h3>
 <p>We checked the normality of two numerical variables of educational
 worker ratio and rate. Boxplot suggests the first variable has a right
 skewed distribution.</p>
@@ -770,7 +777,7 @@ boxplot(center_distinct_df$rate, main = &quot;Violation Rate&quot;)</code></pre>
 <p><img src="linear_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 </div>
 <div id="transformation" class="section level3">
-<h3><em>Transformation</em></h3>
+<h3><em>- Transformation</em></h3>
 <p>Therefore, to address the slight model assumption violation issue, we
 firstly tried transformation to make the data more ‘normal’.</p>
 <p>Since there are 0 value in these variables, log-transformation is not
@@ -782,7 +789,7 @@ full_lm_sqrt = center_distinct_df %&gt;%
   lm(rate ~ program_type + borough + status + sqrt(educational_worker_ratio), data = .)</code></pre>
 </div>
 <div id="outliers-removal" class="section level3">
-<h3><em>Outliers removal</em></h3>
+<h3><em>- Outliers removal</em></h3>
 <p>In addition, although there is no influential points, case 12349 and
 12318 affect the regression assumption as shown repeatedly.So we tried
 to fit a new model named full_lm_out by removing these two cases. This
@@ -795,6 +802,7 @@ R-square.</p>
 <sub>QUEENS</sub> - 0.323 * X <sub>STATEN_ISLAND</sub> - 0.193 * X
 <sub>Expired_In_Renewal</sub> - 0.242 * X <sub>Permitted</sub> - 0.084 *
 X <sub>educational_worker_ratio</sub></p>
+<p><br></p>
 <p>Detailed information is as follows:</p>
 <pre class="r"><code># exclude two influential records
 out_df = center_distinct_df[-c(12349, 12318),]
@@ -935,7 +943,7 @@ predictive ability.</p>
 <h2><strong>Model Conclusion</strong></h2>
 <p><br></p>
 <div id="final-linear-model" class="section level3">
-<h3><em>Final linear model</em></h3>
+<h3><em>- Final linear model</em></h3>
 <p>We chose full_lm_out as our final linear model:</p>
 <p>rate = 0.868 - 0.027 * X <sub>infant_toddler</sub> - 0.245 * X
 <sub>BROOKLYN</sub> - 0.186 * X <sub>MANHATTAN</sub> - 0.103 * X
@@ -1038,7 +1046,7 @@ X <sub>educational_worker_ratio</sub></p>
 </table>
 </div>
 <div id="interpretation" class="section level3">
-<h3><em>Interpretation</em></h3>
+<h3><em>- Interpretation</em></h3>
 <p>In this model, the outcome is “rate”, indicating the violation rate
 for each center based on different program type. Our key predictor is
 the numeric variable of “educational_worker_ratio”, which is the
