@@ -25,7 +25,7 @@ navbar:
    - text: 'Interactive Map'
      href: interactive_map.html
    - text: 'Project Report'
-     href: http://github.com/finijas01/
+     href: report.html
 output:
   html_document:
     theme: flatly
