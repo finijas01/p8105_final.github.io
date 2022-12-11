@@ -422,7 +422,7 @@ h1.title {
 <div id="motivation" class="section level1">
 <h1>Motivation</h1>
 <p>High-quality childcare is important for children safety and health.
-As one of the most expansive cities to live at, New York City also has a
+As one of the most expensive cities to live at, New York City also has a
 high level of childcare expense. The lack of access to affordable
 childcare may also worsen other social problems such as difficulty of
 mothers returning to workforce. Reacting to the issue, federal funding
@@ -550,80 +550,46 @@ href="interactive_map.html">Interactive Map</a>.</p>
 </div>
 <div id="statistical-analysis" class="section level1">
 <h1>Statistical analysis</h1>
+<p>In addition to exploratory graphs, we conducted multiple statistic
+tests to explore the relationship between different predictors and the
+outcome – namely, violation cases/rates. Furthermore, we aim to build
+models to estimate the violation cases/rates based on valid
+predictors.</p>
 <div
 id="anova-the-association-between-the-number-of-violation-cases-and-boroughs"
 class="section level2">
 <h2>ANOVA: the association between the number of violation cases and
 boroughs</h2>
-<div id="purpose" class="section level3">
-<h3>Purpose</h3>
-<p>We would like to explore whether center location is associated with
-the frequency of their violation; that is, during the past 3 years,
-whether the expected number of violation cases in a random center varies
-across different borough. Therefore, we performed ANOVA test across
-boroughs.</p>
-</div>
-<div id="hypothesis" class="section level3">
-<h3>Hypothesis</h3>
-<p>H0: The average number of violation cases in each center are not
-different across boroughs H1: The average number of violation cases in
-each center are different across boroughs</p>
-</div>
-<div id="conclusion" class="section level3">
-<h3>Conclusion</h3>
-<p>At a 0.05 significance level, we reject the null hypothesis and
-conclude that during the past 3 years, the average number of violations
-per center varies across boroughs.</p>
-</div>
+<p>We explore whether center location is associated with the frequency
+of their violation using an ANOVA test. Finally, we conclude that during
+the past 3 years, the average number of violations per center varies
+across boroughs at a 0.05 significance level. (F-statistic: 12.75,
+p-value: 3.106e-10)</p>
 </div>
 <div
 id="chi-square-test-the-association-between-violation-categories-and-boroughs"
 class="section level2">
 <h2>Chi-square test: the association between violation categories and
 boroughs</h2>
-<div id="purpose-1" class="section level3">
-<h3>Purpose</h3>
-<p>We would like to explore whether the proportion of each violation
-category would vary among different boroughs, so we performed a
-Chi-Square test.</p>
-</div>
-<div id="hypothesis-1" class="section level3">
-<h3>Hypothesis</h3>
-<p>H0: the proportions of critical violation among boroughs are
-equal;</p>
-<p>AND the proportions of general violation among boroughs are
-equal;</p>
-<p>AND the proportions of public health hazard violation among boroughs
-are equal</p>
-<p>H1: not all proportions are equal</p>
-</div>
-<div id="conclusion-1" class="section level3">
-<h3>Conclusion</h3>
-<p>At a 0.05 significance level, we reject the null hypothesis and
-conclude that there is sufficient evidence that the proportion of each
-violation category is significantly different by borough.</p>
-</div>
+<p>We explore whether the proportion of each violation category would
+vary among different boroughs using a Chi-Square test. We have enough
+evidence that that the proportion of each violation category is
+significantly different by borough at a 0.05 significance level.
+(X-squared = 118.01, p-value &lt; 2.2e-16)</p>
 </div>
 <div
 id="proportion-test-centers-with-high-violation-proportion-in-each-borough"
 class="section level2">
 <h2>Proportion test: centers with high violation proportion in each
 borough</h2>
-<div id="purpose-2" class="section level3">
-<h3>Purpose</h3>
-<p>We performed a proportion test to estimate the total violation
-proportion and its 95% confidence interval for each center, regardless
-of its program type. We defined the estimated total violation proportion
-&gt; 0.8 as a high-risk of violation. Next, we pinpointed all the
-centers with high violation proportion in each borough.</p>
-</div>
-<div id="conclusion-2" class="section level3">
-<h3>Conclusion</h3>
-<p>The results can serve as a good reference for NYC residents when
-selecting the childcare centers for their kids.</p>
+<p>We estimate the total violation proportion and its 95% confidence
+interval for each center using a proportion test, regardless of its
+program type. We defined the estimated total violation proportion &gt;
+0.8 as a high-risk of violation. The results present a list of high-risk
+childcare centers, and they are great references for NYC parents to
+choose a safer one.</p>
 <p>Fore more details, please refer to <a
 href="Statistical-analysis.html">Statistical analysis</a>.</p>
-</div>
 </div>
 <div id="regression-analysis" class="section level2">
 <h2>Regression analysis</h2>

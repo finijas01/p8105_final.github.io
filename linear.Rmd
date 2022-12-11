@@ -75,7 +75,7 @@ center_specific_df = childcare_inspection_df %>%
   arrange(center_name, program_type)
 ```
 
-### *Linear raw model 1*
+### *Linear model 1*
 
 First, we fit a full model using program type, borough, status, educational worker ratio of center-specific distinct records.
 

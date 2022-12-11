@@ -75,6 +75,8 @@ center_specific_df = childcare_inspection_df %>%
 
 ## Number of violations by program type
 
+### Histogram plot
+
 ```{r}
 frequency_program_type = childcare_inspection_df %>% 
   count(program_type) %>% 
@@ -92,7 +94,13 @@ frequency_program_type = childcare_inspection_df %>%
 frequency_program_type
 ```
 
+### Interpretation
+
+From the histogram plot above, we can learn that preschool has the greatest number of violations.
+
 ## Number of violations by violation category
+
+### Histogram plot
 
 ```{r}
 frequency_violation_category = childcare_inspection_df %>% 
@@ -111,6 +119,10 @@ frequency_violation_category = childcare_inspection_df %>%
   theme(axis.text.x = element_text(angle = 0, hjust = 0.5),plot.title = element_text(hjust = 0.5))
 frequency_violation_category 
 ```
+
+### Interpretation
+
+From the histogram plot above, we can learn that most of the violations belong to general violation category.
 
 
 
