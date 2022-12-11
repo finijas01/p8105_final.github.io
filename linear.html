@@ -472,8 +472,8 @@ center_specific_df = childcare_inspection_df %&gt;%
     n_violation = sum(!is.na(violation_category)), 
     rate = n_violation/(n_violation + n_na)) %&gt;% 
   arrange(center_name, program_type)</code></pre>
-<div id="linear-raw-model-1" class="section level3">
-<h3><em>Linear raw model 1</em></h3>
+<div id="linear-model-1" class="section level3">
+<h3><em>Linear model 1</em></h3>
 <p>First, we fit a full model using program type, borough, status,
 educational worker ratio of center-specific distinct records.</p>
 <p>raw model 1 named full_lm:</p>
