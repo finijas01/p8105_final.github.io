@@ -13,7 +13,7 @@
 
 <title>Logistic Regression</title>
 
-<script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.18/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
@@ -184,8 +184,8 @@ $(document).ready(function () {
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -193,16 +193,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -411,11 +404,13 @@ library(broom)
 library(viridis)
 library(purrr)
 library(modelr)
-theme_set(theme_classic())</code></pre>
-<pre class="r"><code>child_data = read_csv(&quot;./data/DOHMH_Childcare_Center_Inspections.csv&quot;) %&gt;%
-  janitor::clean_names()%&gt;%
-  distinct()</code></pre>
-<pre class="r"><code>child_data = child_data %&gt;% 
+theme_set(theme_classic())
+
+child_data = read_csv(&quot;./data/DOHMH_Childcare_Center_Inspections.csv&quot;) %&gt;%
+  janitor::clean_names() %&gt;%
+  distinct()
+
+child_data = child_data %&gt;% 
   select(center_name, borough, zip_code, status, age_range, maximum_capacity,program_type, facility_type, 
          child_care_type, violation_category,
          violation_status,violation_rate_percent:average_critical_violation_rate,regulation_summary,
@@ -431,34 +426,15 @@ theme_set(theme_classic())</code></pre>
     program_type = as.factor(program_type),
     facility_type = as.factor(facility_type),
     child_care_type = as.factor(child_care_type)
-  )</code></pre>
-<pre class="r"><code>#create binary variable according to regulation_summary
+  )
+
+#create binary variable according to regulation_summary
 child_data &lt;- child_data %&gt;%
   mutate(violation = if_else(.$regulation_summary == &#39;There were no new violations observed at the time of this inspection/visit.&#39;,&#39;0&#39;,&#39;1&#39;),
          violation = as.factor(violation))</code></pre>
-<pre class="r"><code>head(child_data, 10)</code></pre>
-<pre><code>## # A tibble: 10 × 23
-##    center_name    borough zip_c…¹ status age_r…² maxim…³ progr…⁴ facil…⁵ child…⁶
-##    &lt;chr&gt;          &lt;fct&gt;     &lt;dbl&gt; &lt;fct&gt;  &lt;chr&gt;     &lt;dbl&gt; &lt;fct&gt;   &lt;fct&gt;   &lt;fct&gt;  
-##  1 TRADITIONAL E… BROOKL…   11221 Expir… 0 YEAR…      60 infant… gdc     Child …
-##  2 BOYS &amp; GIRL S… BROOKL…   11212 Expir… 0 YEAR…      60 all ag… camp    Camp   
-##  3 ITTY BITTY AD… BROOKL…   11234 Permi… 2 YEAR…      42 presch… gdc     Child …
-##  4 MAGIC MOMENTS… BROOKL…   11238 Permi… 2 YEAR…      24 presch… gdc     Child …
-##  5 YELED VYALDA … BROOKL…   11213 Expir… 2 YEAR…      75 presch… gdc     Child …
-##  6 EAST SIDE HOU… BRONX     10454 Expir… 2 YEAR…      80 presch… gdc     Child …
-##  7 NAT AZAROW CH… BROOKL…   11212 Permi… 2 YEAR…      98 presch… gdc     Child …
-##  8 BRIGHT START … QUEENS    11101 Permi… 2 YEAR…      72 presch… gdc     Child …
-##  9 UNIVERSITY SE… BROOKL…   11201 Expir… 0 YEAR…     550 all ag… camp    Camp   
-## 10 THE FRIENDS O… BROOKL…   11213 Permi… 2 YEAR…     100 presch… gdc     Child …
-## # … with 14 more variables: violation_category &lt;chr&gt;, violation_status &lt;chr&gt;,
-## #   violation_rate_percent &lt;dbl&gt;, average_violation_rate_percent &lt;dbl&gt;,
-## #   total_educational_workers &lt;dbl&gt;, average_total_educational_workers &lt;dbl&gt;,
-## #   public_health_hazard_violation_rate &lt;dbl&gt;,
-## #   average_public_health_hazard_violation_rate &lt;dbl&gt;,
-## #   critical_violation_rate &lt;dbl&gt;, average_critical_violation_rate &lt;dbl&gt;,
-## #   regulation_summary &lt;chr&gt;, inspection_summary_result &lt;chr&gt;, …</code></pre>
-<div id="fit-the-logistic-regression-model" class="section level2">
-<h2>Fit the logistic regression model</h2>
+<p><br></p>
+<div id="model-fit" class="section level2">
+<h2><strong>Model fit</strong></h2>
 <ul>
 <li>We created a binary variable, violation, which represents the result
 of every inspection. Then we fitted a logistic regression with log of
@@ -467,8 +443,9 @@ status and educational_worker_ratio as predictors, using every
 observation as one case. Then we obtained the estimate and CI of the
 adjusted odds ratio for having violation.</li>
 </ul>
+<p><br></p>
 <div id="build-model" class="section level3">
-<h3>Build Model</h3>
+<h3><em>- Build Model</em></h3>
 <pre class="r"><code>model_log &lt;- glm(violation ~ borough + status  + program_type + educational_worker_ratio,data = child_data,family = binomial(link=logit))
 model_log %&gt;%
   broom::tidy(conf.int = T) %&gt;% 
@@ -583,9 +560,10 @@ head(predicted.classes)</code></pre>
 <pre><code>##     1     2     3     4     5     6 
 ## &quot;neg&quot; &quot;neg&quot; &quot;neg&quot; &quot;neg&quot; &quot;neg&quot; &quot;pos&quot;</code></pre>
 <pre class="r"><code>#probabilities</code></pre>
+<p><br></p>
 </div>
-<div id="results-and-summary-of-model" class="section level3">
-<h3>Results and summary of model</h3>
+<div id="results-and-summary" class="section level3">
+<h3><em>- Results and summary</em></h3>
 <pre class="r"><code>summary(model_log)</code></pre>
 <pre><code>## 
 ## Call:
@@ -619,16 +597,20 @@ head(predicted.classes)</code></pre>
 ## AIC: 21955
 ## 
 ## Number of Fisher Scoring iterations: 4</code></pre>
-<p>Conclusion:</p>
+<ul>
+<li>Conclusion:</li>
+</ul>
 <p>We can see from the summary that the licence status and educational
 worker ratio of the child care centers are</p>
 <p>significant predictors of the violation rate with p-value&lt; 0.05
 while the facility type doesn’t significantly</p>
 <p>influence the violation rate with p-value&gt;0.05.</p>
+<p><br> <br></p>
 </div>
 </div>
 <div id="visualization" class="section level2">
-<h2>Visualization</h2>
+<h2><strong>Visualization</strong></h2>
+<p><br></p>
 <ul>
 <li>Estimated OR with CI</li>
 </ul>
@@ -785,7 +767,7 @@ all_logistic_E %&gt;%
   geom_errorbar(aes(ymin = CI_lower, ymax = CI_upper)) +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
   labs(x = &quot;Borough&quot;, y = &quot;Estimated OR with CI(expired)&quot;)</code></pre>
-<p><img src="logistic_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p><img src="logistic_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 <pre class="r"><code>all_logistic_P %&gt;% 
   mutate(borough = fct_reorder(borough, OR)) %&gt;%
   ggplot(aes(x = borough, y = OR)) +
@@ -793,7 +775,7 @@ all_logistic_E %&gt;%
   geom_errorbar(aes(ymin = CI_lower, ymax = CI_upper)) +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
   labs(x = &quot;Borough&quot;, y = &quot;Estimated OR with CI(permitted)&quot;)</code></pre>
-<p><img src="logistic_files/figure-html/unnamed-chunk-10-2.png" width="672" /></p>
+<p><img src="logistic_files/figure-html/unnamed-chunk-6-2.png" width="672" /></p>
 <ul>
 <li>Conclusion:</li>
 </ul>
@@ -806,9 +788,10 @@ and Manhattan, the 95% confidence interval of odds ratio doesn’t include
 1 and this tells us that in these four regions, cases with licence
 status of active generally have more violation probability than cases
 with status of permitted.</p>
+<p><br> <br></p>
 </div>
 <div id="model-diagnostics" class="section level2">
-<h2>Model diagnostics</h2>
+<h2><strong>Model diagnostics</strong></h2>
 <ul>
 <li>Remove categorical variables from the original data frame and bind
 the logit values to the data</li>
@@ -828,7 +811,7 @@ child_data &lt;- child_data %&gt;%
   geom_smooth(method = &quot;loess&quot;) + 
   theme_bw() + 
   facet_wrap(~predictors, scales = &quot;free_y&quot;)</code></pre>
-<p><img src="logistic_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p><img src="logistic_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 <ul>
 <li>From this plot we can see that variable educational_worker_ratio is
 quite linearly associated with the violation rate in logit scale.</li>
@@ -839,16 +822,17 @@ model_log.data &lt;- augment(model_log) %&gt;%
 ggplot(model_log.data, aes(index, .std.resid)) + 
   geom_point(aes(color = violation), alpha = .5) +
   theme_bw()</code></pre>
-<p><img src="logistic_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p><img src="logistic_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 <ul>
 <li>Diagnostic Conclusion</li>
 </ul>
 <p>From the plot we can see that the standard deviation of the data are
 all in acceptable region which means there’s no significant outliers in
 the dataset.</p>
+<p><br> <br></p>
 </div>
 <div id="model-interpretation" class="section level2">
-<h2>Model interpretation</h2>
+<h2><strong>Model interpretation</strong></h2>
 <p>In this model, the outcome is log odds ratio of violation. Our key
 predictor is the numeric variable of “educational_worker_ratio”, which
 is the program-specific total number of educational worker in each
